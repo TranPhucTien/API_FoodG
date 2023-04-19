@@ -31,7 +31,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     // Get all category
     @Override
-    @Transactional
     public List<TblCategoryEntity> getAll() {
         return categoryRepository.findAll();
     }
@@ -59,7 +58,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     // Search category by category name
     @Override
-    public List<TblCategoryEntity> searchCategory(String keyword) {
+    public List<TblCategoryEntity> search(String keyword) {
         List<TblCategoryEntity> rs = new ArrayList<>();
         List<TblCategoryEntity> categories = categoryRepository.findAll();
 
