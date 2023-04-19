@@ -31,7 +31,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     // Get all category
     @Override
-    @Transactional
     public List<TblCategoryEntity> getAll() {
         return categoryRepository.findAll();
     }
