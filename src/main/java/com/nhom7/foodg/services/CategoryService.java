@@ -12,9 +12,9 @@ public interface CategoryService {
 
     List<TblProductEntity> getProductsByCategory(String categoryName);
 
-    List<TblCategoryEntity> searchCategory(String keyword);
+    List<TblCategoryEntity> search(String keyword);
 
-    TblCategoryEntity getByID(int categoryID);
+    TblCategoryEntity getByID(int id);
 
     void insert(TblCategoryEntity tblCategoryEntity);
 

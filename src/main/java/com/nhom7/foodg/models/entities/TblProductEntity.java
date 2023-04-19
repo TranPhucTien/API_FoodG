@@ -14,7 +14,7 @@ import java.util.Objects;
 @Table(name = "tbl_product", schema = "dbo", catalog = "foodg")
 @NoArgsConstructor
 @AllArgsConstructor(staticName = "create")
-@SQLDelete(sql = "UPDATE tbl_category SET deleted = 1 WHERE id = ?", check = ResultCheckStyle.COUNT)
+@SQLDelete(sql = "UPDATE tbl_product SET deleted = 1 WHERE id = ?", check = ResultCheckStyle.COUNT)
 @Where(clause = "deleted = false")
 public class TblProductEntity {
     @Id

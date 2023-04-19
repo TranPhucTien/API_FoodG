@@ -1,7 +1,6 @@
 package com.nhom7.foodg.controllers;
 
 import com.nhom7.foodg.models.FuncResult;
-import com.nhom7.foodg.models.entities.TblCategoryEntity;
 import com.nhom7.foodg.models.entities.TblProductEntity;
 import com.nhom7.foodg.services.ProductService;
 import com.nhom7.foodg.shareds.Constants;
@@ -18,7 +17,7 @@ import java.util.List;
 //localhost:8080/products
 public class ProductController {
     private final ProductService productService;
-    private final String TABLE_NAME = "tbl_category";
+    private final String TABLE_NAME = "tbl_product";
 
     public ProductController(ProductService productService) {
         this.productService = productService;
@@ -40,7 +39,7 @@ public class ProductController {
     // create new product
     @PostMapping(path = "")
     // [POST] localhost:8080/products
-    public ResponseEntity<FuncResult<TblProductEntity>> createCategory(@RequestBody TblProductEntity tblProductEntity) {
+    public ResponseEntity<FuncResult<TblProductEntity>> create(@RequestBody TblProductEntity tblProductEntity) {
         productService.insert(tblProductEntity);
 
         FuncResult<TblProductEntity> rs = FuncResult.create(

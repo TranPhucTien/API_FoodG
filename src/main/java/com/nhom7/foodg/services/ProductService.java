@@ -8,9 +8,9 @@ import java.util.List;
 public interface ProductService {
     List<TblProductEntity> getAll();
 
-    List<TblProductEntity> searchCategory(String keyword);
+    List<TblProductEntity> search(String keyword);
 
-    TblProductEntity getByID(int categoryID);
+    TblProductEntity getByID(String id);
 
     void insert(TblProductEntity tblProductEntity);
 

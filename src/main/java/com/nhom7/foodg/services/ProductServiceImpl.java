@@ -2,7 +2,6 @@ package com.nhom7.foodg.services;
 
 import com.nhom7.foodg.exceptions.DuplicateRecordException;
 import com.nhom7.foodg.exceptions.ModifyException;
-import com.nhom7.foodg.models.entities.TblCategoryEntity;
 import com.nhom7.foodg.models.entities.TblProductEntity;
 import com.nhom7.foodg.repositories.ProductRepository;
 import com.nhom7.foodg.shareds.Constants;
@@ -28,12 +27,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<TblProductEntity> searchCategory(String keyword) {
+    public List<TblProductEntity> search(String keyword) {
         return null;
     }
 
     @Override
-    public TblProductEntity getByID(int categoryID) {
+    public TblProductEntity getByID(String id) {
         return null;
     }
 
@@ -49,7 +48,7 @@ public class ProductServiceImpl implements ProductService {
 
             Date currentDate = Constants.getCurrentDay();
 
-            TblProductEntity tblCategoryEntity = TblProductEntity.
+            TblProductEntity tblProductEntity = TblProductEntity.
                     create(
                             productID,
                             newProduct.getImg(),
@@ -64,7 +63,7 @@ public class ProductServiceImpl implements ProductService {
                             currentDate,
                             false
                     );
-            productRepository.save(tblCategoryEntity);
+            productRepository.save(tblProductEntity);
 
         } catch (DataIntegrityViolationException ex) {
             throw new ModifyException(MessageFormat.format(Constants.MODIFY_DATA_FAIL_CATCH, TABLE_NAME) + ex.getMessage());

@@ -42,11 +42,11 @@ public class CategoryController {
     // get category after searching by category name
     @GetMapping(path = "/search")
     // [GET] https:localhost:8080/categories/search?keyword=brea
-    public ResponseEntity<FuncResult<List<TblCategoryEntity>>> searchCategory(@RequestParam(name = "keyword", required = false, defaultValue = "") String name) {
+    public ResponseEntity<FuncResult<List<TblCategoryEntity>>> search(@RequestParam(name = "keyword", required = false, defaultValue = "") String name) {
         FuncResult<List<TblCategoryEntity>> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.SEARCH_SUCCESS, TABLE_NAME, name),
-                categoryService.searchCategory(name)
+                categoryService.search(name)
         );
 
         return ResponseEntity.ok(rs);
@@ -68,7 +68,7 @@ public class CategoryController {
     // create new category
     @PostMapping(path = "")
     // [POST] https:localhost:8080/categories
-    public ResponseEntity<FuncResult<TblCategoryEntity>> createCategory(@RequestBody TblCategoryEntity tblCategoryEntity) {
+    public ResponseEntity<FuncResult<TblCategoryEntity>> create(@RequestBody TblCategoryEntity tblCategoryEntity) {
         categoryService.insert(tblCategoryEntity);
 
         FuncResult<TblCategoryEntity> rs = FuncResult.create(
@@ -83,7 +83,7 @@ public class CategoryController {
     // update name of category by category id
     @PutMapping(path = "")
     // [PUT] https:localhost:8080/categories/1
-    public ResponseEntity<FuncResult<TblCategoryEntity>> updateCategory(@RequestBody TblCategoryEntity tblCategoryEntity) {
+    public ResponseEntity<FuncResult<TblCategoryEntity>> update(@RequestBody TblCategoryEntity tblCategoryEntity) {
         categoryService.update(tblCategoryEntity);
 
         FuncResult<TblCategoryEntity> rs = FuncResult.create(
@@ -98,7 +98,7 @@ public class CategoryController {
     // delete category by category id
     @DeleteMapping(path = "{categoryID}")
     // [DELETE] https:localhost:8080/categories/1
-    public ResponseEntity<FuncResult<Integer>> deleteCategory(@PathVariable("categoryID") int categoryID) {
+    public ResponseEntity<FuncResult<Integer>> delete(@PathVariable("categoryID") int categoryID) {
         categoryService.solfDelete(categoryID);
 
         FuncResult<Integer> rs = FuncResult.create(
