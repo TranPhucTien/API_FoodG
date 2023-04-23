@@ -3,6 +3,7 @@ package com.nhom7.foodg.services;
 import com.nhom7.foodg.exceptions.DuplicateRecordException;
 import com.nhom7.foodg.exceptions.ModifyException;
 import com.nhom7.foodg.exceptions.NotFoundException;
+import com.nhom7.foodg.models.dto.TblCategoryDto;
 import com.nhom7.foodg.models.entities.TblCategoryEntity;
 import com.nhom7.foodg.models.entities.TblProductEntity;
 import com.nhom7.foodg.repositories.CategoryRepository;
@@ -48,12 +49,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     // Get category by category id
     @Override
-    public TblCategoryEntity getByID(int categoryID) {
-        if (!categoryRepository.existsById(categoryID)) {
-            throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, categoryID));
+    public TblCategoryEntity getByID(int id) {
+        if (!categoryRepository.existsById(id)) {
+            throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, id));
         }
 
-        return categoryRepository.findById(categoryID).orElse(null);
+        return categoryRepository.findById(id).orElse(null);
     }
 
     // Search category by category name
@@ -72,7 +73,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void insert(TblCategoryEntity newCategory) {
+    public void insert(TblCategoryDto newCategory) {
         String categoryName = newCategory.getName();
         try {
             if (categoryRepository.existsByName(categoryName)) {
@@ -117,7 +118,6 @@ public class CategoryServiceImpl implements CategoryService {
                 category.setIcon(tblCategoryEntity.getIcon());
                 category.setUpdatedAt(Constants.getCurrentDay());
 
-                System.out.println(category);
                 categoryRepository.save(category);
             }
         } catch (NullPointerException ex) {
@@ -127,7 +127,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Transactional
     @Override
-    public void delete(int id) {
+    public void deletePermanently(int id) {
         if (!categoryRepository.existsById(id)) {
             throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, id));
         }
@@ -137,7 +137,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Transactional
     @Override
-    public void solfDelete(int id) {
+    public void softDelete(int id) {
         if (!categoryRepository.existsById(id)) {
             throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, id));
         }
@@ -165,7 +165,7 @@ public class CategoryServiceImpl implements CategoryService {
         TblCategoryEntity category = categoryRepository.findById(id).orElse(null);
         if (category != null) {
             category.setDeleted(false);
-            category.setDeletedAt(Constants.getCurrentDay());
+            category.setDeletedAt(null);
             categoryRepository.save(category);
         }
     }

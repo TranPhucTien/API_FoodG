@@ -8,11 +8,10 @@ import java.sql.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor(staticName = "create")
-public class CategoryDto {
+public class TblCategoryDto {
     private String name;
     private String icon;
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;
-    private Boolean deleted;
 }

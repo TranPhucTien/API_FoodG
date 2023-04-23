@@ -32,7 +32,7 @@ public class TblDiscountEntity {
     @Column(name = "end_date")
     private Date endDate;
     @Basic
-    @Column(name = "IsActive")
+    @Column(name = "is_active")
     private Boolean isActive;
     @Basic
     @Column(name = "create_at")
@@ -46,6 +46,14 @@ public class TblDiscountEntity {
     @Basic
     @Column(name = "deleted")
     private Boolean deleted;
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
 
     public int getId() {
         return id;
@@ -107,6 +115,10 @@ public class TblDiscountEntity {
         return isActive;
     }
 
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
     public void setActive(Boolean active) {
         isActive = active;
     }
@@ -137,6 +149,10 @@ public class TblDiscountEntity {
 
     public Boolean getDeleted() {
         return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public void setDeleted(Boolean deleted) {
