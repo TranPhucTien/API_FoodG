@@ -12,7 +12,12 @@ public class Constants {
     public static final String MODIFY_DATA_FAIL_CATCH = "`{0}` không có thay đổi. Kiểm tra xem đúng type đầu vào chưa. ";
     public static final String DELETE_SUCCESS = "Xoá `{1}` thành công của bảng `{0}` rồi nhé! ";
     public static final String DELETE_FAIL_CATCH = "Thất bại khi xoá `{1}` của bảng `{0}`. ";
-    public static final String DUPLICATE_ERROR = "Giá trị `{1}` đã tồn tại trong bảng `{0}` rồi! ";
+    public static final String DUPLICATE_ERROR = "Giá trị `{1}` đã tồn tại trong bảng `{0}` rồi. Nếu `{1}` xuất hiện trong thùng rác, hãy xoá hoặc khôi phục nó! ";
+
+    // actions
+    public static final String ACTION_CREATE = "CREATE";
+    public static final String ACTION_UPDATE = "UPDATE";
+    public static final String ACTION_DELETE = "DELETE";
 
     // regex
     public static final String REGEX_URL_IMAGE = "(https?:\\/\\/.*\\.(?:png|jpg))";

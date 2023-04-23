@@ -53,6 +53,19 @@ public class TblProductEntity {
     @Basic
     @Column(name = "deleted")
     private Boolean deleted;
+    @Basic
+    @Column(name = "created_by")
+    private int createdBy;
+    @Basic
+    @Column(name = "updated_by")
+    private int updatedBy;
+    @Basic
+    @Column(name = "deleted_by")
+    private Integer deletedBy;
+
+    public boolean isDeleted() {
+        return deleted;
+    }
 
     public String getId() {
         return id;
@@ -146,6 +159,10 @@ public class TblProductEntity {
         return deleted;
     }
 
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
@@ -161,5 +178,29 @@ public class TblProductEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, img, name, dsc, price, rate, country, idCategory, createdAt, updatedAt, deletedAt, deleted);
+    }
+
+    public int getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(int createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public int getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(int updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public Integer getDeletedBy() {
+        return deletedBy;
+    }
+
+    public void setDeletedBy(Integer deletedBy) {
+        this.deletedBy = deletedBy;
     }
 }

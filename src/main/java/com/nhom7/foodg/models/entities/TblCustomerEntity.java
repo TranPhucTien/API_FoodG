@@ -49,6 +49,10 @@ public class TblCustomerEntity {
     @Column(name = "deleted")
     private Boolean deleted;
 
+    public boolean isDeleted() {
+        return deleted;
+    }
+
     public int getId() {
         return id;
     }
@@ -147,6 +151,10 @@ public class TblCustomerEntity {
 
     public Boolean getDeleted() {
         return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public void setDeleted(Boolean deleted) {

@@ -1,6 +1,7 @@
 package com.nhom7.foodg.controllers;
 
 import com.nhom7.foodg.models.FuncResult;
+import com.nhom7.foodg.models.dto.TblCategoryDto;
 import com.nhom7.foodg.models.entities.TblCategoryEntity;
 import com.nhom7.foodg.models.entities.TblProductEntity;
 import com.nhom7.foodg.services.CategoryService;
@@ -16,7 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/categories")
 @CrossOrigin(origins = "*")
-//https:localhost:8080/categories
+//localhost:8080/categories
 public class CategoryController {
     private final CategoryService categoryService;
     private final String TABLE_NAME = "tbl_category";
@@ -28,7 +29,7 @@ public class CategoryController {
 
     // Get all category
     @GetMapping(path = "")
-    // [GET] https:localhost:8080/categories
+    // [GET] localhost:8080/categories
     public ResponseEntity<FuncResult<List<TblCategoryEntity>>> getAll() {
         FuncResult<List<TblCategoryEntity>> rs = FuncResult.create(
                 HttpStatus.OK,
@@ -41,7 +42,7 @@ public class CategoryController {
 
     // get category after searching by category name
     @GetMapping(path = "/search")
-    // [GET] https:localhost:8080/categories/search?keyword=brea
+    // [GET] localhost:8080/categories/search?keyword=brea
     public ResponseEntity<FuncResult<List<TblCategoryEntity>>> search(@RequestParam(name = "keyword", required = false, defaultValue = "") String name) {
         FuncResult<List<TblCategoryEntity>> rs = FuncResult.create(
                 HttpStatus.OK,
@@ -54,7 +55,7 @@ public class CategoryController {
 
     // get all product of category by category name
     @GetMapping(path = "{categoryName}")
-    // [GET] https:localhost:8080/categories/breads
+    // [GET] localhost:8080/categories/breads
     public ResponseEntity<FuncResult<List<TblProductEntity>>> getProductsByCategoryName(@PathVariable("categoryName") String categoryName) {
         FuncResult<List<TblProductEntity>> rs = FuncResult.create(
                 HttpStatus.OK,
@@ -67,14 +68,14 @@ public class CategoryController {
 
     // create new category
     @PostMapping(path = "")
-    // [POST] https:localhost:8080/categories
-    public ResponseEntity<FuncResult<TblCategoryEntity>> create(@RequestBody TblCategoryEntity tblCategoryEntity) {
-        categoryService.insert(tblCategoryEntity);
+    // [POST] localhost:8080/categories
+    public ResponseEntity<FuncResult<TblCategoryDto>> create(@RequestBody TblCategoryDto tblCategoryDto) {
+        categoryService.insert(tblCategoryDto);
 
-        FuncResult<TblCategoryEntity> rs = FuncResult.create(
+        FuncResult<TblCategoryDto> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.MODIFY_DATA_SUCCESS, TABLE_NAME),
-                tblCategoryEntity
+                tblCategoryDto
         );
 
         return ResponseEntity.ok(rs);
@@ -82,7 +83,7 @@ public class CategoryController {
 
     // update name of category by category id
     @PutMapping(path = "")
-    // [PUT] https:localhost:8080/categories/1
+    // [PUT] localhost:8080/categories/1
     public ResponseEntity<FuncResult<TblCategoryEntity>> update(@RequestBody TblCategoryEntity tblCategoryEntity) {
         categoryService.update(tblCategoryEntity);
 
@@ -95,11 +96,11 @@ public class CategoryController {
         return ResponseEntity.ok(rs);
     }
 
-    // delete category by category id
+    // solf delete category by category id
     @DeleteMapping(path = "{categoryID}")
-    // [DELETE] https:localhost:8080/categories/1
-    public ResponseEntity<FuncResult<Integer>> delete(@PathVariable("categoryID") int categoryID) {
-        categoryService.solfDelete(categoryID);
+    // [DELETE] localhost:8080/categories/1
+    public ResponseEntity<FuncResult<Integer>> softDelete(@PathVariable("categoryID") int categoryID) {
+        categoryService.softDelete(categoryID);
 
         FuncResult<Integer> rs = FuncResult.create(
                 HttpStatus.OK,
