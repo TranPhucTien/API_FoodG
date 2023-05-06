@@ -3,6 +3,7 @@ package com.nhom7.foodg.controllers;
 import com.nhom7.foodg.models.FuncResult;
 import com.nhom7.foodg.models.dto.TblProductDto;
 import com.nhom7.foodg.models.entities.TblProductEntity;
+import com.nhom7.foodg.models.entities.TblProductLogEntity;
 import com.nhom7.foodg.services.ProductService;
 import com.nhom7.foodg.shareds.Constants;
 import org.springframework.http.HttpStatus;
@@ -58,6 +59,18 @@ public class ProductController {
                 HttpStatus.OK,
                 MessageFormat.format(Constants.GET_DATA_SUCCESS, TABLE_NAME),
                 productService.getByID(id)
+        );
+
+        return ResponseEntity.ok(rs);
+    }
+
+    @GetMapping(path = "edit-history/{id}")
+    // [GET] localhost:8080/products/edit-history/1
+    public ResponseEntity<FuncResult<List<TblProductLogEntity>>> getEditHistoryByID(@PathVariable("id") String id) {
+        FuncResult<List<TblProductLogEntity>> rs = FuncResult.create(
+                HttpStatus.OK,
+                MessageFormat.format(Constants.GET_DATA_SUCCESS, TABLE_NAME),
+                productService.getEditHistoryByProductIdAndAction(id, "UPDATE")
         );
 
         return ResponseEntity.ok(rs);
@@ -120,5 +133,20 @@ public class ProductController {
         );
 
         return ResponseEntity.ok(rs);
+    }
+
+    @PutMapping(path = "/restore/{id}")
+    // [PUT] localhost:8080/categories/restore/1
+    public ResponseEntity<FuncResult<String>> restore(@PathVariable("id") String id) {
+        productService.restore(id);
+
+        FuncResult<String> rs = FuncResult.create(
+                HttpStatus.OK,
+                MessageFormat.format(Constants.RESTORE_SUCCESS, TABLE_NAME, id),
+                id
+        );
+
+        return ResponseEntity.ok(rs);
+
     }
 }
