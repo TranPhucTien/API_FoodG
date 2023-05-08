@@ -81,7 +81,6 @@ public class CategoryServiceImpl implements CategoryService {
             }
 
             Date currentDate = Constants.getCurrentDay();
-
             TblCategoryEntity tblCategoryEntity = TblCategoryEntity.
                     create(
                             0,

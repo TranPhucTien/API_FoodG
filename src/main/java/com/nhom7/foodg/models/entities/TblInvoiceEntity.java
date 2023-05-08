@@ -1,13 +1,19 @@
 package com.nhom7.foodg.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.Objects;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor(staticName = "create")
 @Table(name = "tbl_invoice", schema = "dbo", catalog = "foodg")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class TblInvoiceEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -49,6 +55,15 @@ public class TblInvoiceEntity {
     @Basic
     @Column(name = "due_date")
     private Date dueDate;
+    @Basic
+    @Column(name = "paid")
+    private Boolean paid;
+    @Basic
+    @Column(name = "paid_date")
+    private Date paidDate;
+
+
+
 
     public int getId() {
         return id;
@@ -152,6 +167,18 @@ public class TblInvoiceEntity {
 
     public void setDueDate(Date dueDate) {
         this.dueDate = dueDate;
+    }
+    public Boolean getPaid() {return paid;}
+
+    public void setPaid(boolean paid) {
+        this.paid = paid;
+    }
+    public Date getPaidDate() {
+        return paidDate;
+    }
+
+    public void setPaidDate(Date paidDate) {
+        this.paidDate = paidDate;
     }
 
     @Override
