@@ -6,7 +6,7 @@ import java.sql.Date;
 import java.util.Objects;
 
 @Entity
-@Table(name = "tbl_admin", schema = "dbo", catalog = "foodg")
+@Table(name = "tbl_admin", schema = "dbo", catalog = "foodgDB#2")
 public class TblAdminEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

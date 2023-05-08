@@ -10,7 +10,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "tbl_category_log", schema = "dbo", catalog = "foodg")
+@Table(name = "tbl_category_log", schema = "dbo", catalog = "foodgDB#2")
 public class TblCategoryLogEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

@@ -7,7 +7,7 @@ import java.sql.Date;
 import java.util.Objects;
 
 @Entity
-@Table(name = "tbl_invoice", schema = "dbo", catalog = "foodg")
+@Table(name = "tbl_invoice", schema = "dbo", catalog = "foodgDB#2")
 public class TblInvoiceEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
