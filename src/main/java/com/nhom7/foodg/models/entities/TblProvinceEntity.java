@@ -13,9 +13,6 @@ import java.util.Objects;
 @Entity
 @Table(name = "tbl_province", schema = "dbo", catalog = "foodgDB#2")
 @NoArgsConstructor
-@AllArgsConstructor(staticName = "create")
-@SQLDelete(sql = "UPDATE tbl_province SET deleted = 1 WHERE id = ?", check = ResultCheckStyle.COUNT)
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class TblProvinceEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

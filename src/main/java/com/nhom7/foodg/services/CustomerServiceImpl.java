@@ -40,7 +40,7 @@ public class CustomerServiceImpl implements CustomerService {
         List<TblCustomerEntity> rs = new ArrayList<>();
         List<TblCustomerEntity> customers = customerRepository.findAll();
         for (TblCustomerEntity customer : customers){
-            if (customer.getFullName().contains(keyword)){
+            if (customer.getFullName().toLowerCase().contains(keyword.toLowerCase())){
                 rs.add(customer);
             }
         }

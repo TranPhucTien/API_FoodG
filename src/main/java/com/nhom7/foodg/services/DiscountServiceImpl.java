@@ -47,7 +47,7 @@ public class DiscountServiceImpl implements DiscountService{
         List<TblDiscountEntity> rs = new ArrayList<>();
         List<TblDiscountEntity> discounts = discountRepository.findAll();
         for (TblDiscountEntity discount : discounts){
-            if (discount.getCode().contains(keyword)){
+            if (discount.getCode().toLowerCase().contains(keyword.toLowerCase())){
                 rs.add(discount);
             }
         }
@@ -58,6 +58,13 @@ public class DiscountServiceImpl implements DiscountService{
     public void insert(TblDiscountDto newDiscount){
         String discountCode = newDiscount.getCode();
         try {
+
+            Constants.validateRequiredFields(newDiscount,  "code", "percentage", "maxAmount", "minAmount", "startDate", "isActive");
+            Constants.validateDecimalFields(newDiscount, 2, 1, "percentage");
+            Constants.validateDecimalFields(newDiscount, 4, 2, "maxAmount", "minAmount");
+            Constants.validateDateFields(newDiscount, "startDate", "startDate");
+
+
             if (discountRepository.existsByCode(discountCode)){
                 throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR, TABLE_NAME, discountCode));
             }

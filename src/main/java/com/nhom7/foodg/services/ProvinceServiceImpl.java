@@ -29,7 +29,7 @@ public class ProvinceServiceImpl implements ProvinceService {
         List<TblProvinceEntity> rs = new ArrayList<>();
         List<TblProvinceEntity> provinces = provinceRepository.findAll();
         for (TblProvinceEntity province : provinces){
-            if (province.getWard().contains(keyword)){
+            if (province.getWard().toLowerCase().contains(keyword.toLowerCase())){
                 rs.add(province);
             }
         }
