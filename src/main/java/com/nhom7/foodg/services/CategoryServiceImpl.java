@@ -12,11 +12,13 @@ import com.nhom7.foodg.shareds.Constants;
 import jakarta.transaction.Transactional;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Component;
 
 import java.sql.Date;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -38,13 +40,42 @@ public class CategoryServiceImpl implements CategoryService {
 
     // Get all product of category by category name
     @Override
-    public List<TblProductEntity> getProductsByCategory(String categoryName) {
+    public List<TblProductEntity> getProductsByCategory(String categoryName, int page, int limit, String q, String sort, String order) {
         if (!categoryRepository.existsByName(categoryName)) {
             throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, categoryName));
         }
 
         TblCategoryEntity cat = categoryRepository.findFirstByName(categoryName);
-        return productRepository.findByIdCategory(cat.getId());
+        List<TblProductEntity> rs;
+
+        if (page == -1 || limit == -1) {
+            if (q.equals("")) {
+                rs = productRepository.findByIdCategory(cat.getId());
+            } else {
+                rs = productRepository.findByIdCategoryAndNameContaining(cat.getId(), q);
+            }
+        } else {
+            // start page of JPA is 0
+            int _page = page - 1;
+
+            Pageable pageable;
+
+            if (!sort.equals("") && order.equals("desc")) {
+                pageable = PageRequest.of(_page, limit, Sort.by(sort).descending());
+            } else if (!sort.equals("") && order.equals("asc")) {
+                pageable = PageRequest.of(_page, limit, Sort.by(sort).ascending());
+            } else {
+                pageable = PageRequest.of(_page, limit);
+            }
+
+            if (q.equals("")) {
+                rs = productRepository.findByIdCategory(cat.getId(), pageable).getContent();
+            } else {
+                rs = productRepository.findByIdCategoryAndNameContaining(cat.getId(), q, pageable).getContent();
+            }
+        }
+
+        return rs;
     }
 
     // Get category by category id

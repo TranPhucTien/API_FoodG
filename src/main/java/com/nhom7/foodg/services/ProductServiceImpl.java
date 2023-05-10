@@ -54,7 +54,7 @@ public class ProductServiceImpl implements ProductService {
         List<TblProductEntity> products = productRepository.findAll();
 
         for (TblProductEntity product : products) {
-            if (product.getName().toLowerCase().contains(keyword)) {
+            if (product.getName().toLowerCase().contains(keyword.toLowerCase())) {
                 rs.add(product);
             }
         }

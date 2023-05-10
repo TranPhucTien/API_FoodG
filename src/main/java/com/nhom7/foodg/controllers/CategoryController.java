@@ -7,6 +7,7 @@ import com.nhom7.foodg.models.entities.TblProductEntity;
 import com.nhom7.foodg.services.CategoryService;
 import com.nhom7.foodg.shareds.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -56,12 +57,35 @@ public class CategoryController {
     // get all product of category by category name
     @GetMapping(path = "{categoryName}")
     // [GET] localhost:8080/categories/breads
-    public ResponseEntity<FuncResult<List<TblProductEntity>>> getProductsByCategoryName(@PathVariable("categoryName") String categoryName) {
+    public ResponseEntity<FuncResult<List<TblProductEntity>>> getProductsByCategoryName(@PathVariable("categoryName") String categoryName,
+                                                                                        @RequestParam(name = "_page", required = false, defaultValue = "-1") String page,
+                                                                                        @RequestParam(name = "_limit", required = false, defaultValue = "-1") String limit,
+                                                                                        @RequestParam(name = "q", required = false, defaultValue = "") String q,
+                                                                                        @RequestParam(name = "_order", required = false, defaultValue = "") String order,
+                                                                                        @RequestParam(name = "_sort", required = false, defaultValue = "") String sort) {
+        int pageInt;
+        int limitInt;
+
         FuncResult<List<TblProductEntity>> rs = FuncResult.create(
-                HttpStatus.OK,
-                MessageFormat.format(Constants.GET_DATA_SUCCESS, TABLE_NAME),
-                categoryService.getProductsByCategory(categoryName)
+                null,
+                null,
+                null
         );
+
+        try {
+            pageInt = Integer.parseInt(page);
+            limitInt = Integer.parseInt(limit);
+        } catch (NumberFormatException e) {
+            rs.setMessage("_page và _limit phải là số");
+            rs.setStatus(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.ok(rs);
+        }
+
+        List<TblProductEntity> data = categoryService.getProductsByCategory(categoryName, pageInt, limitInt, q, sort, order);
+
+        rs.setStatus(HttpStatus.OK);
+        rs.setMessage(MessageFormat.format(Constants.GET_DATA_SUCCESS, TABLE_NAME));
+        rs.setData(data);
 
         return ResponseEntity.ok(rs);
     }
