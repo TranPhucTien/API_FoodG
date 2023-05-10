@@ -5,9 +5,9 @@ import com.nhom7.foodg.exceptions.DuplicateRecordException;
 import com.nhom7.foodg.exceptions.ModifyException;
 import com.nhom7.foodg.exceptions.NotFoundException;
 import com.nhom7.foodg.models.dto.TblProductDto;
-import com.nhom7.foodg.models.entities.TblCategoryLogEntity;
 import com.nhom7.foodg.models.entities.TblProductEntity;
-import com.nhom7.foodg.repositories.LogCategoryRepository;
+import com.nhom7.foodg.models.entities.TblProductLogEntity;
+import com.nhom7.foodg.repositories.LogProductRepository;
 import com.nhom7.foodg.repositories.ProductRepository;
 import com.nhom7.foodg.shareds.Constants;
 import jakarta.transaction.Transactional;
@@ -25,17 +25,22 @@ import java.util.Random;
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final String TABLE_NAME = "tbl_product";
-    private final LogCategoryRepository logCategoryRepository;
+    private final LogProductRepository logProductRepository;
 
     public ProductServiceImpl(ProductRepository productRepository,
-                              LogCategoryRepository logCategoryRepository) {
+                              LogProductRepository logProductRepository) {
         this.productRepository = productRepository;
-        this.logCategoryRepository = logCategoryRepository;
+        this.logProductRepository = logProductRepository;
     }
 
     @Override
     public List<TblProductEntity> getAll() {
         return productRepository.findAll();
+    }
+
+    @Override
+    public List<TblProductLogEntity> getEditHistoryByProductIdAndAction(String productId, String action) {
+        return logProductRepository.findByProductIdAndAction(productId, action);
     }
 
     @Override
@@ -49,7 +54,7 @@ public class ProductServiceImpl implements ProductService {
         List<TblProductEntity> products = productRepository.findAll();
 
         for (TblProductEntity product : products) {
-            if (product.getName().toLowerCase().contains(keyword)) {
+            if (product.getName().toLowerCase().contains(keyword.toLowerCase())) {
                 rs.add(product);
             }
         }
@@ -77,6 +82,9 @@ public class ProductServiceImpl implements ProductService {
                 throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR, TABLE_NAME, newProductName));
             }
 
+            Gson gson = new Gson();
+            String dataJson = gson.toJson((newProduct));
+
             //----------------------------------------------------------------------
             //----------------------------------------------------------------------
             // Lưu ý: Thay đổi đoạn code này khi đã thêm chức năng đăng kí đăng nhập
@@ -103,7 +111,19 @@ public class ProductServiceImpl implements ProductService {
                             defaultAdminID,
                             null
                     );
+
+            TblProductLogEntity log = TblProductLogEntity.create(
+                    0,
+                    defaultAdminID,
+                    Constants.ACTION_CREATE,
+                    randomIdByName,
+                    null,
+                    dataJson,
+                    Constants.getCurrentDay()
+            );
+
             productRepository.save(tblProductEntity);
+            logProductRepository.save(log);
 
         } catch (DataIntegrityViolationException ex) {
             throw new ModifyException(MessageFormat.format(Constants.MODIFY_DATA_FAIL_CATCH, TABLE_NAME) + ex.getMessage());
@@ -122,7 +142,7 @@ public class ProductServiceImpl implements ProductService {
 
             if (product != null) {
                 Gson gson = new Gson();
-                String oldData = gson.toJson((product));
+                String oldDataJson = gson.toJson((product));
                 //----------------------------------------------------------------------
                 //----------------------------------------------------------------------
                 // Lưu ý: Thay đổi đoạn code này khi đã thêm chức năng đăng kí đăng nhập
@@ -139,25 +159,20 @@ public class ProductServiceImpl implements ProductService {
                 product.setUpdatedAt(Constants.getCurrentDay());
                 product.setUpdatedBy(defaultAdminID);
 
-                String newData = gson.toJson((product));
+                String newDataJson = gson.toJson((product));
 
-                TblCategoryLogEntity log = new TblCategoryLogEntity(
+                TblProductLogEntity log = TblProductLogEntity.create(
                         0,
+                        defaultAdminID,
                         Constants.ACTION_UPDATE,
                         product.getId(),
-                        oldData,
-                        newData,
-                        Constants.getCurrentDay(),
-                        product.getCreatedBy(),
-                        Constants.getCurrentDay(),
-                        product.getUpdatedAt(),
-                        false,
-                        null,
-                        null
+                        oldDataJson,
+                        newDataJson,
+                        Constants.getCurrentDay()
                 );
 
-                logCategoryRepository.save(log);
                 productRepository.save(product);
+                logProductRepository.save(log);
             }
         } catch (NullPointerException ex) {
             throw new ModifyException(MessageFormat.format(Constants.MODIFY_DATA_FAIL_CATCH, TABLE_NAME) + ex.getMessage());
@@ -177,20 +192,35 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Override
     public void softDelete(String id) {
-        if (productRepository.getProductByID(id) == null) {
+        if (!productRepository.existsById(id)) {
             throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, id));
         }
 
         try {
             productRepository.deleteById(id);
-            TblProductEntity product = productRepository.findById(id).orElse(null);
+            TblProductEntity product = productRepository.getProductByID(id);
             if (product != null) {
+                Gson gson = new Gson();
+                String dataJson = gson.toJson((product));
+
                 //----------------------------------------------------------------------
                 //----------------------------------------------------------------------
                 // Lưu ý: Thay đổi đoạn code này khi đã thêm chức năng đăng kí đăng nhập
                 int defaultAdminID = 1;
                 //----------------------------------------------------------------------
                 //----------------------------------------------------------------------
+
+                TblProductLogEntity log = TblProductLogEntity.create(
+                        0,
+                        defaultAdminID,
+                        Constants.ACTION_DELETE,
+                        product.getId(),
+                        dataJson,
+                        dataJson,
+                        Constants.getCurrentDay()
+                );
+
+                logProductRepository.save(log);
 
                 product.setDeleted(true);
                 product.setDeletedAt(Constants.getCurrentDay());
@@ -211,6 +241,28 @@ public class ProductServiceImpl implements ProductService {
 
         TblProductEntity product = productRepository.findById(id).orElse(null);
         if (product != null) {
+            Gson gson = new Gson();
+            String dataJson = gson.toJson((product));
+
+            //----------------------------------------------------------------------
+            //----------------------------------------------------------------------
+            // Lưu ý: Thay đổi đoạn code này khi đã thêm chức năng đăng kí đăng nhập
+            int defaultAdminID = 1;
+            //----------------------------------------------------------------------
+            //----------------------------------------------------------------------
+
+            TblProductLogEntity log = TblProductLogEntity.create(
+                    0,
+                    defaultAdminID,
+                    Constants.ACTION_RESTORE,
+                    product.getId(),
+                    dataJson,
+                    dataJson,
+                    Constants.getCurrentDay()
+            );
+
+            logProductRepository.save(log);
+
             product.setDeleted(false);
             product.setDeletedAt(null);
             productRepository.save(product);

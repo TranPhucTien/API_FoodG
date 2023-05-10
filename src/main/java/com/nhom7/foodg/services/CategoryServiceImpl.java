@@ -1,7 +1,6 @@
 package com.nhom7.foodg.services;
 
 import com.nhom7.foodg.exceptions.DuplicateRecordException;
-import com.nhom7.foodg.exceptions.MissingFieldException;
 import com.nhom7.foodg.exceptions.ModifyException;
 import com.nhom7.foodg.exceptions.NotFoundException;
 import com.nhom7.foodg.models.dto.TblCategoryDto;
@@ -13,16 +12,14 @@ import com.nhom7.foodg.shareds.Constants;
 import jakarta.transaction.Transactional;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Field;
 import java.sql.Date;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-
-import static com.nhom7.foodg.shareds.Constants.validateRequiredFields;
 
 @Component
 public class CategoryServiceImpl implements CategoryService {
@@ -43,13 +40,42 @@ public class CategoryServiceImpl implements CategoryService {
 
     // Get all product of category by category name
     @Override
-    public List<TblProductEntity> getProductsByCategory(String categoryName) {
+    public List<TblProductEntity> getProductsByCategory(String categoryName, int page, int limit, String q, String sort, String order) {
         if (!categoryRepository.existsByName(categoryName)) {
             throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, categoryName));
         }
 
         TblCategoryEntity cat = categoryRepository.findFirstByName(categoryName);
-        return productRepository.findByIdCategory(cat.getId());
+        List<TblProductEntity> rs;
+
+        if (page == -1 || limit == -1) {
+            if (q.equals("")) {
+                rs = productRepository.findByIdCategory(cat.getId());
+            } else {
+                rs = productRepository.findByIdCategoryAndNameContaining(cat.getId(), q);
+            }
+        } else {
+            // start page of JPA is 0
+            int _page = page - 1;
+
+            Pageable pageable;
+
+            if (!sort.equals("") && order.equals("desc")) {
+                pageable = PageRequest.of(_page, limit, Sort.by(sort).descending());
+            } else if (!sort.equals("") && order.equals("asc")) {
+                pageable = PageRequest.of(_page, limit, Sort.by(sort).ascending());
+            } else {
+                pageable = PageRequest.of(_page, limit);
+            }
+
+            if (q.equals("")) {
+                rs = productRepository.findByIdCategory(cat.getId(), pageable).getContent();
+            } else {
+                rs = productRepository.findByIdCategoryAndNameContaining(cat.getId(), q, pageable).getContent();
+            }
+        }
+
+        return rs;
     }
 
     // Get category by category id
@@ -81,15 +107,6 @@ public class CategoryServiceImpl implements CategoryService {
     public void insert(TblCategoryDto newCategory) {
         String categoryName = newCategory.getName();
         try {
-            /*Validate những trường bắt buộc phải có giá trị*/
-            Constants.validateRequiredFields(newCategory,  "name");
-
-            /*Validate những trường khi truyền vào phải đúng với dữ liệu db quy định*/
-//            Constants.validateIntegerFields(newCategory, "name");
-//            Constants.validateEmailFields(newCategory, "name");
-//            Constants.validateDateFields(newCategory, "name");
-            Constants.validateDecimalFields(newCategory, 5, 3,  "name");
-//            Constants.validateStringFields(newCategory, "nvarchar(5))", 5, "icon");
             if (categoryRepository.existsByName(categoryName)) {
                 throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR, TABLE_NAME, categoryName));
             }
@@ -125,8 +142,6 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         try {
-
-
             TblCategoryEntity category = categoryRepository.findById(tblCategoryEntity.getId()).orElse(null);
 
             if (category != null) {
@@ -185,6 +200,4 @@ public class CategoryServiceImpl implements CategoryService {
             categoryRepository.save(category);
         }
     }
-
-
 }
