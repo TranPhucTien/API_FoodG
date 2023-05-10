@@ -11,12 +11,13 @@ import java.sql.Date;
 import java.util.Objects;
 
 @Entity
-@Table(name = "tbl_product", schema = "dbo", catalog = "foodg")
+@Table(name = "tbl_product", schema = "dbo", catalog = "foodgDB#2")
 @NoArgsConstructor
 @AllArgsConstructor(staticName = "create")
 @SQLDelete(sql = "UPDATE tbl_product SET deleted = 1 WHERE id = ?", check = ResultCheckStyle.COUNT)
 @Where(clause = "deleted = false")
 public class TblProductEntity {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "ID")
     private String id;

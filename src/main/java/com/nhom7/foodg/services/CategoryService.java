@@ -19,7 +19,6 @@ public interface CategoryService {
     TblCategoryEntity getByID(int id);
 
     void insert(TblCategoryDto tblCategoryDto);
-
     void update(TblCategoryEntity tblCategoryEntity);
 
     void deletePermanently(int id);
