@@ -15,6 +15,7 @@ public class Constants {
     public static final String DELETE_SUCCESS = "Xoá `{1}` thành công của bảng `{0}` rồi nhé! ";
     public static final String DELETE_FAIL_CATCH = "Thất bại khi xoá `{1}` của bảng `{0}`. ";
     public static final String DUPLICATE_ERROR = "Giá trị `{1}` đã tồn tại trong bảng `{0}` rồi. Nếu `{1}` xuất hiện trong thùng rác, hãy xoá hoặc khôi phục nó! ";
+    public static final String REQUIRE_TYPE = "`{1}` phải là dạng `{0}`";
 
     // actions
     public static final String ACTION_CREATE = "CREATE";
