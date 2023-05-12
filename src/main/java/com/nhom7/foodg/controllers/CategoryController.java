@@ -7,7 +7,6 @@ import com.nhom7.foodg.models.entities.TblProductEntity;
 import com.nhom7.foodg.services.CategoryService;
 import com.nhom7.foodg.shareds.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -76,9 +75,9 @@ public class CategoryController {
             pageInt = Integer.parseInt(page);
             limitInt = Integer.parseInt(limit);
         } catch (NumberFormatException e) {
-            rs.setMessage("_page và _limit phải là số");
             rs.setStatus(HttpStatus.BAD_REQUEST);
-            return ResponseEntity.ok(rs);
+            rs.setMessage(MessageFormat.format(Constants.REQUIRE_TYPE, "số", "_page, _limit"));
+            return ResponseEntity.badRequest().body(rs);
         }
 
         List<TblProductEntity> data = categoryService.getProductsByCategory(categoryName, pageInt, limitInt, q, sort, order);
