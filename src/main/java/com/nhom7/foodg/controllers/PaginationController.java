@@ -1,7 +1,6 @@
 package com.nhom7.foodg.controllers;
 
 import com.nhom7.foodg.models.FuncResult;
-import com.nhom7.foodg.models.entities.TblCategoryEntity;
 import com.nhom7.foodg.services.PaginationService;
 import com.nhom7.foodg.shareds.Constants;
 import org.springframework.http.HttpStatus;
@@ -9,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.MessageFormat;
-import java.util.List;
 import java.util.Map;
 
 @RestController

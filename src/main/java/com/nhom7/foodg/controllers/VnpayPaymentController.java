@@ -27,9 +27,11 @@ import com.nhom7.foodg.configs.VnpayConfig;
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(value = "/api/vnpay")
+//localhost:8080/api/vnpay
 public class VnpayPaymentController {
 
     @PostMapping("/make")
+    // [POST] localhost:8080/api/vnpay/make
     public ResponseEntity<FuncResult<Map<String, String>>> createPayment(HttpServletRequest request, @RequestParam(name = "vnp_OrderInfo") String vnp_OrderInfo,
                                                                                                 @RequestParam(name = "vnp_OrderType") String ordertype, @RequestParam(name = "vnp_Amount") Integer amount,
                                                                                                 @RequestParam(name = "vnp_Locale") String language, @RequestParam(name = "vnp_BankCode", defaultValue = "") String bankcode) {
@@ -115,6 +117,7 @@ public class VnpayPaymentController {
 
 
     @GetMapping(value = "/result")
+    // [GET] localhost:8080/api/vnpay/result
     public ResponseEntity<FuncResult<Map<String, String>>> completePayment(HttpServletRequest request,
                                                @RequestParam(name = "vnp_OrderInfo") String vnp_OrderInfo,
                                                @RequestParam(name = "vnp_Amount") Integer vnp_Amount,
