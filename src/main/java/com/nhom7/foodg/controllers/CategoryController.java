@@ -69,13 +69,13 @@ public class CategoryController {
     // create new category
     @PostMapping(path = "")
     // [POST] localhost:8080/categories
-    public ResponseEntity<FuncResult<TblCategoryDto>> create(@RequestBody TblCategoryDto tblCategoryDto) {
-        categoryService.insert(tblCategoryDto);
+    public ResponseEntity<FuncResult<TblCategoryEntity>> create(@RequestBody TblCategoryEntity tblCategoryEntity) {
+        categoryService.insert(tblCategoryEntity);
 
-        FuncResult<TblCategoryDto> rs = FuncResult.create(
+        FuncResult<TblCategoryEntity> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.MODIFY_DATA_SUCCESS, TABLE_NAME),
-                tblCategoryDto
+                tblCategoryEntity
         );
 
         return ResponseEntity.ok(rs);

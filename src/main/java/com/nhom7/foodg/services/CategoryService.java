@@ -17,7 +17,7 @@ public interface CategoryService {
 
     TblCategoryEntity getByID(int id);
 
-    void insert(TblCategoryDto tblCategoryDto);
+    void insert(TblCategoryEntity tblCategoryEntity);
 
     void update(TblCategoryEntity tblCategoryEntity);
 

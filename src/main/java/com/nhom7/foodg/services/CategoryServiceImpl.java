@@ -3,7 +3,6 @@ package com.nhom7.foodg.services;
 import com.nhom7.foodg.exceptions.DuplicateRecordException;
 import com.nhom7.foodg.exceptions.ModifyException;
 import com.nhom7.foodg.exceptions.NotFoundException;
-import com.nhom7.foodg.models.dto.TblCategoryDto;
 import com.nhom7.foodg.models.entities.TblCategoryEntity;
 import com.nhom7.foodg.models.entities.TblProductEntity;
 import com.nhom7.foodg.repositories.CategoryRepository;
@@ -73,7 +72,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void insert(TblCategoryDto newCategory) {
+    public void insert(TblCategoryEntity newCategory) {
         String categoryName = newCategory.getName();
         try {
             if (categoryRepository.existsByName(categoryName)) {
@@ -90,7 +89,10 @@ public class CategoryServiceImpl implements CategoryService {
                             currentDate,
                             currentDate,
                             newCategory.getDeletedAt(),
-                            false
+                            false,
+                            newCategory.getCreatedBy(),
+                            newCategory.getUpdatedBy(),
+                            null
                     );
             categoryRepository.save(tblCategoryEntity);
 
