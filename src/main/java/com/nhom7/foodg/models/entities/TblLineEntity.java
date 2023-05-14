@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 @Entity
-@Table(name = "tbl_line", schema = "dbo", catalog = "foodgDB#2")
+@Table(name = "tbl_line", schema = "dbo", catalog = "foodg")
 public class TblLineEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

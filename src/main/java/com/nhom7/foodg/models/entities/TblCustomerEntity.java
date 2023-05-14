@@ -13,7 +13,7 @@ import java.sql.Date;
 import java.util.Objects;
 
 @Entity
-@Table(name = "tbl_customer", schema = "dbo", catalog = "foodgDB#2")
+@Table(name = "tbl_customer", schema = "dbo", catalog = "foodg")
 @NoArgsConstructor
 @AllArgsConstructor(staticName = "create")
 @SQLDelete(sql = "UPDATE tbl_customer SET deleted = 1 WHERE id = ?", check = ResultCheckStyle.COUNT)

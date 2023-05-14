@@ -15,7 +15,7 @@ public class TestConnection {
         ds.setPassword("12");
         ds.setServerName("THINKPAD-T480S\\SQLEXPRESS01");
         ds.setPortNumber(1433);
-        ds.setDatabaseName("foodgDB#2");
+        ds.setDatabaseName("foodg");
         ds.setEncrypt(false);
 
         try(Connection conn = ds.getConnection()){

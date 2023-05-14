@@ -28,6 +28,7 @@ public class Constants {
     public static final String OUT_OF_RANGE_EXCEPTION = "Dữ liệu của trường `{0}` nằm ngoài phạm vi cho phép, bạn hãy nhập lại nhé!";
     public static final String INVALID_DATA_EXCEPTION = "Dữ liệu của trường `{0}` không phải kiểu `{1}`, bạn hãy nhập lại nhé!";
     public static final String  DATA_INTEGRITY_VIOLATION_EXCEPTION = "Dữ liệu của trường `{0}` không đúng với kiểu dữ liệu `{1}` trong DATABASE cho phép, bạn hãy kiểm tra lại nhé!";
+    public static final String REQUIRE_TYPE = "`{1}` phải là dạng `{0}`";
     // actions
     public static final String ACTION_CREATE = "CREATE";
     public static final String ACTION_UPDATE = "UPDATE";

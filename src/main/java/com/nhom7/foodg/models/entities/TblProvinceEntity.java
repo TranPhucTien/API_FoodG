@@ -11,7 +11,7 @@ import org.hibernate.annotations.Where;
 import java.util.Objects;
 
 @Entity
-@Table(name = "tbl_province", schema = "dbo", catalog = "foodgDB#2")
+@Table(name = "tbl_province", schema = "dbo", catalog = "foodg")
 @NoArgsConstructor
 public class TblProvinceEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
