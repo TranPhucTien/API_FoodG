@@ -1,6 +1,12 @@
 package com.nhom7.foodg.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ResultCheckStyle;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -8,6 +14,12 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "tbl_discount", schema = "dbo", catalog = "foodg")
+@NoArgsConstructor
+@AllArgsConstructor(staticName = "create")
+@SQLDelete(sql = "UPDATE tbl_discount SET deleted = 1 WHERE id = ?", check = ResultCheckStyle.COUNT)
+@Where(clause = "deleted = false")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+
 public class TblDiscountEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -116,12 +128,9 @@ public class TblDiscountEntity {
     }
 
     public void setActive(boolean active) {
-        isActive = active;
+        isActive =active;
     }
 
-    public void setActive(Boolean active) {
-        isActive = active;
-    }
 
     public Date getCreateAt() {
         return createAt;
