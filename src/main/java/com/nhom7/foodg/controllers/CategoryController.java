@@ -1,7 +1,6 @@
 package com.nhom7.foodg.controllers;
 
 import com.nhom7.foodg.models.FuncResult;
-import com.nhom7.foodg.models.dto.TblCategoryDto;
 import com.nhom7.foodg.models.entities.TblCategoryEntity;
 import com.nhom7.foodg.models.entities.TblProductEntity;
 import com.nhom7.foodg.services.CategoryService;
