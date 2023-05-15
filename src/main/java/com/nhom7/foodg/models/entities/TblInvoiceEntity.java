@@ -49,6 +49,12 @@ public class TblInvoiceEntity {
     @Basic
     @Column(name = "due_date")
     private Date dueDate;
+    @Basic
+    @Column(name = "paid")
+    private boolean paid;
+    @Basic
+    @Column(name = "paid_date")
+    private Date paidDate;
 
     public int getId() {
         return id;
@@ -165,5 +171,21 @@ public class TblInvoiceEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, customerId, invoiceNumber, invoiceDate, totalAmount, tax, idDiscount, grandTotal, status, idOnePayResponse, createdAt, updatedAt, dueDate);
+    }
+
+    public boolean isPaid() {
+        return paid;
+    }
+
+    public void setPaid(boolean paid) {
+        this.paid = paid;
+    }
+
+    public Date getPaidDate() {
+        return paidDate;
+    }
+
+    public void setPaidDate(Date paidDate) {
+        this.paidDate = paidDate;
     }
 }

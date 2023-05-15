@@ -36,9 +36,6 @@ public class TblCustomerEntity {
     @Column(name = "full_name")
     private String fullName;
     @Basic
-    @Column(name = "age")
-    private Integer age;
-    @Basic
     @Column(name = "gender")
     private Boolean gender;
     @Basic
@@ -59,6 +56,18 @@ public class TblCustomerEntity {
     @Basic
     @Column(name = "deleted")
     private Boolean deleted;
+    @Basic
+    @Column(name = "birthday")
+    private Date birthday;
+    @Basic
+    @Column(name = "otp")
+    private String otp;
+    @Basic
+    @Column(name = "otp_exp")
+    private Date otpExp;
+    @Basic
+    @Column(name = "role")
+    private Integer role;
 
     public boolean isDeleted() {
         return deleted;
@@ -102,14 +111,6 @@ public class TblCustomerEntity {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
     }
 
     public Boolean getGender() {
@@ -177,11 +178,43 @@ public class TblCustomerEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TblCustomerEntity that = (TblCustomerEntity) o;
-        return id == that.id && Objects.equals(username, that.username) && Objects.equals(password, that.password) && Objects.equals(email, that.email) && Objects.equals(fullName, that.fullName) && Objects.equals(age, that.age) && Objects.equals(gender, that.gender) && Objects.equals(avatar, that.avatar) && Objects.equals(idProvince, that.idProvince) && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt) && Objects.equals(deletedAt, that.deletedAt) && Objects.equals(deleted, that.deleted);
+        return id == that.id && Objects.equals(username, that.username) && Objects.equals(password, that.password) && Objects.equals(email, that.email) && Objects.equals(fullName, that.fullName) && Objects.equals(gender, that.gender) && Objects.equals(avatar, that.avatar) && Objects.equals(idProvince, that.idProvince) && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt) && Objects.equals(deletedAt, that.deletedAt) && Objects.equals(deleted, that.deleted);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, password, email, fullName, age, gender, avatar, idProvince, createdAt, updatedAt, deletedAt, deleted);
+        return Objects.hash(id, username, password, email, fullName, gender, avatar, idProvince, createdAt, updatedAt, deletedAt, deleted);
+    }
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getOtp() {
+        return otp;
+    }
+
+    public void setOtp(String otp) {
+        this.otp = otp;
+    }
+
+    public Date getOtpExp() {
+        return otpExp;
+    }
+
+    public void setOtpExp(Date otpExp) {
+        this.otpExp = otpExp;
+    }
+
+    public Integer getRole() {
+        return role;
+    }
+
+    public void setRole(Integer role) {
+        this.role = role;
     }
 }

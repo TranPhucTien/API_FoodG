@@ -1,6 +1,8 @@
 package com.nhom7.foodg.models.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.Date;
 import java.util.Objects;
@@ -25,9 +27,6 @@ public class TblAdminEntity {
     @Column(name = "full_name")
     private String fullName;
     @Basic
-    @Column(name = "age")
-    private Integer age;
-    @Basic
     @Column(name = "gender")
     private Boolean gender;
     @Basic
@@ -36,9 +35,6 @@ public class TblAdminEntity {
     @Basic
     @Column(name = "id_province")
     private Integer idProvince;
-    @Basic
-    @Column(name = "level")
-    private int level;
     @Basic
     @Column(name = "created_at")
     private Date createdAt;
@@ -51,10 +47,18 @@ public class TblAdminEntity {
     @Basic
     @Column(name = "deleted")
     private Boolean deleted;
-
-    public boolean isDeleted() {
-        return deleted;
-    }
+    @Basic
+    @Column(name = "birthday")
+    private Date birthday;
+    @Basic
+    @Column(name = "role")
+    private int role;
+    @Basic
+    @Column(name = "otp")
+    private String otp;
+    @Basic
+    @Column(name = "otp_exp")
+    private Date otpExp;
 
     public int getId() {
         return id;
@@ -96,14 +100,6 @@ public class TblAdminEntity {
         this.fullName = fullName;
     }
 
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
     public Boolean getGender() {
         return gender;
     }
@@ -126,14 +122,6 @@ public class TblAdminEntity {
 
     public void setIdProvince(Integer idProvince) {
         this.idProvince = idProvince;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
     }
 
     public Date getCreatedAt() {
@@ -160,7 +148,7 @@ public class TblAdminEntity {
         this.deletedAt = deletedAt;
     }
 
-    public Boolean getDeleted() {
+    public boolean isDeleted() {
         return deleted;
     }
 
@@ -168,8 +156,36 @@ public class TblAdminEntity {
         this.deleted = deleted;
     }
 
-    public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
+    public int getRole() {
+        return role;
+    }
+
+    public void setRole(int role) {
+        this.role = role;
+    }
+
+    public String getOtp() {
+        return otp;
+    }
+
+    public void setOtp(String otp) {
+        this.otp = otp;
+    }
+
+    public Date getOtpExp() {
+        return otpExp;
+    }
+
+    public void setOtpExp(Date otpExp) {
+        this.otpExp = otpExp;
     }
 
     @Override
@@ -177,11 +193,11 @@ public class TblAdminEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TblAdminEntity that = (TblAdminEntity) o;
-        return id == that.id && level == that.level && Objects.equals(username, that.username) && Objects.equals(password, that.password) && Objects.equals(email, that.email) && Objects.equals(fullName, that.fullName) && Objects.equals(age, that.age) && Objects.equals(gender, that.gender) && Objects.equals(avatar, that.avatar) && Objects.equals(idProvince, that.idProvince) && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt) && Objects.equals(deletedAt, that.deletedAt) && Objects.equals(deleted, that.deleted);
+        return id == that.id && role == that.role && Objects.equals(username, that.username) && Objects.equals(password, that.password) && Objects.equals(email, that.email) && Objects.equals(fullName, that.fullName) && Objects.equals(gender, that.gender) && Objects.equals(avatar, that.avatar) && Objects.equals(idProvince, that.idProvince) && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt) && Objects.equals(deletedAt, that.deletedAt) && Objects.equals(deleted, that.deleted) && Objects.equals(birthday, that.birthday) && Objects.equals(otp, that.otp) && Objects.equals(otpExp, that.otpExp);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, password, email, fullName, age, gender, avatar, idProvince, level, createdAt, updatedAt, deletedAt, deleted);
+        return Objects.hash(id, username, password, email, fullName, birthday, gender, avatar, idProvince, role, createdAt, updatedAt, deletedAt, deleted, otp, otpExp);
     }
 }

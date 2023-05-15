@@ -1,7 +1,6 @@
 package com.nhom7.foodg.controllers;
 
 import com.nhom7.foodg.models.FuncResult;
-import com.nhom7.foodg.models.dto.TblProductDto;
 import com.nhom7.foodg.models.entities.TblProductEntity;
 import com.nhom7.foodg.models.entities.TblProductLogEntity;
 import com.nhom7.foodg.services.ProductService;
@@ -92,13 +91,13 @@ public class ProductController {
     // create new product
     @PostMapping(path = "")
     // [POST] localhost:8080/products
-    public ResponseEntity<FuncResult<TblProductDto>> create(@RequestBody TblProductDto tblProductDto) {
-        productService.insert(tblProductDto);
+    public ResponseEntity<FuncResult<TblProductEntity>> create(@RequestBody TblProductEntity tblProductEntity) {
+        productService.insert(tblProductEntity);
 
-        FuncResult<TblProductDto> rs = FuncResult.create(
+        FuncResult<TblProductEntity> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.MODIFY_DATA_SUCCESS, TABLE_NAME),
-                tblProductDto
+                tblProductEntity
         );
 
         return ResponseEntity.ok(rs);

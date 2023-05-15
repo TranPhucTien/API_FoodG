@@ -55,7 +55,7 @@ public class CategoryController {
 
     // get all product of category by category name
     @GetMapping(path = "{categoryName}")
-    // [GET] localhost:8080/categories/breads
+        // [GET] localhost:8080/categories/breads?q=brea&_page=1&_limit=12&_order=asc&_sort=name
     public ResponseEntity<FuncResult<List<TblProductEntity>>> getProductsByCategoryName(@PathVariable("categoryName") String categoryName,
                                                                                         @RequestParam(name = "_page", required = false, defaultValue = "-1") String page,
                                                                                         @RequestParam(name = "_limit", required = false, defaultValue = "-1") String limit,
@@ -92,13 +92,13 @@ public class CategoryController {
     // create new category
     @PostMapping(path = "")
     // [POST] localhost:8080/categories
-    public ResponseEntity<FuncResult<TblCategoryDto>> create(@RequestBody TblCategoryDto tblCategoryDto) {
-        categoryService.insert(tblCategoryDto);
+    public ResponseEntity<FuncResult<TblCategoryEntity>> create(@RequestBody TblCategoryEntity tblCategoryEntity) {
+        categoryService.insert(tblCategoryEntity);
 
-        FuncResult<TblCategoryDto> rs = FuncResult.create(
+        FuncResult<TblCategoryEntity> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.MODIFY_DATA_SUCCESS, TABLE_NAME),
-                tblCategoryDto
+                tblCategoryEntity
         );
 
         return ResponseEntity.ok(rs);
