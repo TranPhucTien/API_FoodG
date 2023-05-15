@@ -55,7 +55,7 @@ public class CategoryController {
 
     // get all product of category by category name
     @GetMapping(path = "{categoryName}")
-    // [GET] localhost:8080/categories/breads
+        // [GET] localhost:8080/categories/breads?q=brea&_page=1&_limit=12&_order=asc&_sort=name
     public ResponseEntity<FuncResult<List<TblProductEntity>>> getProductsByCategoryName(@PathVariable("categoryName") String categoryName,
                                                                                         @RequestParam(name = "_page", required = false, defaultValue = "-1") String page,
                                                                                         @RequestParam(name = "_limit", required = false, defaultValue = "-1") String limit,

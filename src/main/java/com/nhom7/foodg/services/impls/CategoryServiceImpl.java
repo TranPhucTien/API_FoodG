@@ -1,4 +1,4 @@
-package com.nhom7.foodg.services;
+package com.nhom7.foodg.services.impls;
 
 import com.nhom7.foodg.exceptions.DuplicateRecordException;
 import com.nhom7.foodg.exceptions.ModifyException;
@@ -7,6 +7,7 @@ import com.nhom7.foodg.models.entities.TblCategoryEntity;
 import com.nhom7.foodg.models.entities.TblProductEntity;
 import com.nhom7.foodg.repositories.CategoryRepository;
 import com.nhom7.foodg.repositories.ProductRepository;
+import com.nhom7.foodg.services.CategoryService;
 import com.nhom7.foodg.shareds.Constants;
 import jakarta.transaction.Transactional;
 import org.springframework.dao.DataAccessException;

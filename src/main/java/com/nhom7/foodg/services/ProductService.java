@@ -19,7 +19,7 @@ public interface ProductService {
 
     TblProductEntity getByID(String id);
 
-    void insert(TblProductDto newProduct);
+    void insert(TblProductEntity newProduct);
 
     void update(TblProductEntity tblProductEntity);
 

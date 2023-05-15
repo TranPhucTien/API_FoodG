@@ -1,14 +1,14 @@
-package com.nhom7.foodg.services;
+package com.nhom7.foodg.services.impls;
 
 import com.google.gson.Gson;
 import com.nhom7.foodg.exceptions.DuplicateRecordException;
 import com.nhom7.foodg.exceptions.ModifyException;
 import com.nhom7.foodg.exceptions.NotFoundException;
-import com.nhom7.foodg.models.dto.TblProductDto;
 import com.nhom7.foodg.models.entities.TblProductEntity;
 import com.nhom7.foodg.models.entities.TblProductLogEntity;
 import com.nhom7.foodg.repositories.LogProductRepository;
 import com.nhom7.foodg.repositories.ProductRepository;
+import com.nhom7.foodg.services.ProductService;
 import com.nhom7.foodg.shareds.Constants;
 import jakarta.transaction.Transactional;
 import org.springframework.dao.DataAccessException;
@@ -72,7 +72,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void insert(TblProductDto newProduct) {
+    public void insert(TblProductEntity newProduct) {
         String newProductName = newProduct.getName();
         int randomNumber = new Random().nextInt(900) + 100;
         String randomIdByName = randomNumber + "-" + newProductName.toLowerCase().replace(" ", "-");
@@ -84,13 +84,6 @@ public class ProductServiceImpl implements ProductService {
 
             Gson gson = new Gson();
             String dataJson = gson.toJson((newProduct));
-
-            //----------------------------------------------------------------------
-            //----------------------------------------------------------------------
-            // Lưu ý: Thay đổi đoạn code này khi đã thêm chức năng đăng kí đăng nhập
-            int defaultAdminID = 1;
-            //----------------------------------------------------------------------
-            //----------------------------------------------------------------------
 
             Date currentDate = Constants.getCurrentDay();
 
@@ -107,14 +100,14 @@ public class ProductServiceImpl implements ProductService {
                             currentDate,
                             null,
                             false,
-                            defaultAdminID,
-                            defaultAdminID,
+                            newProduct.getCreatedBy(),
+                            newProduct.getUpdatedBy(),
                             null
                     );
 
             TblProductLogEntity log = TblProductLogEntity.create(
                     0,
-                    defaultAdminID,
+                    newProduct.getCreatedBy(),
                     Constants.ACTION_CREATE,
                     randomIdByName,
                     null,
