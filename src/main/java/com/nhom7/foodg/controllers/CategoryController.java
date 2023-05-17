@@ -42,7 +42,7 @@ public class CategoryController {
 
     // get category after searching by category name
     @GetMapping(path = "/search")
-    // [GET] localhost:8080/categories/search?keyword=brea
+    // [GET] localhost:8080/categories/search?keyword=break
     public ResponseEntity<FuncResult<List<TblCategoryEntity>>> search(@RequestParam(name = "keyword", required = false, defaultValue = "") String name) {
         FuncResult<List<TblCategoryEntity>> rs = FuncResult.create(
                 HttpStatus.OK,
