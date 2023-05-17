@@ -4,7 +4,6 @@ import com.nhom7.foodg.models.entities.TblCategoryEntity;
 import com.nhom7.foodg.models.entities.TblProductEntity;
 import com.nhom7.foodg.services.CategoryService;
 import com.nhom7.foodg.services.FuzzySearchService;
-import com.nhom7.foodg.services.FuzzySearchServiceImpl;
 import com.nhom7.foodg.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,57 +22,15 @@ import java.util.regex.Pattern;
 public class FuzzySearchController {
     private final ProductService productService;
     private final CategoryService categoryService;
+    private final FuzzySearchService fuzzySearchService;
     @Autowired
-    public FuzzySearchController(ProductService productService, CategoryService categoryService) {
+    public FuzzySearchController(ProductService productService, CategoryService categoryService, FuzzySearchService fuzzySearchService) {
         this.productService = productService;
         this.categoryService = categoryService;
+        this.fuzzySearchService = fuzzySearchService;
     }
 
-    private boolean fuzzyMatch(String strSearch, String strReference){
-        strSearch = ".*" + String.join(".*", strSearch.split("")) + ".*";
-        Pattern re = Pattern.compile(strSearch);
-        return re.matcher(strReference).find();
-    }
-
-    private String changeUnicode(String str){
-        String temp = Normalizer.normalize(str, Normalizer.Form.NFD);
-        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-        temp = pattern.matcher(temp).replaceAll("");
-        return temp.replaceAll("đ", "d").replaceAll("Đ", "D");
-    }
-
-    private boolean haveAlphabet(String str){
-        for(int i = 0; i < str.length(); i++){
-            String charAt = String.valueOf(str.charAt(i));
-            if(changeUnicode(charAt).toLowerCase().matches("[a-z]")){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private ArrayList<String> ResultFuzzySearch(ArrayList<String> arr, String strSearch){
-        ArrayList<String> result = new ArrayList<String>();
-        if(strSearch.equals("")|| !haveAlphabet(strSearch)) {
-            return null;
-        }
-        String[] splitText = strSearch.split("\\s");
-        for(String element : arr){
-            boolean all = true;
-            for(String searchText : splitText){
-                if(!fuzzyMatch(changeUnicode(searchText.toLowerCase()), changeUnicode(element.toLowerCase()))){
-                    all = false;
-                    break;
-                }
-            }
-            if(all){
-                result.add(element);
-            }
-        }
-        return result;
-    }
-
-    @GetMapping("/FuzzySearchProducts/{name}")
+    @GetMapping("/FuzzySearchProducts/name={name}")
     public ResponseEntity<ArrayList<String>> FuzzySearchProducts(@PathVariable("name") String name){
         List<TblProductEntity> arr = productService.getAll();
         ArrayList<String> r = new ArrayList<String>();
@@ -81,11 +38,11 @@ public class FuzzySearchController {
             r.add(arr.get(i).getName());
         }
         ArrayList<String> result = new ArrayList<String>();
-        result = ResultFuzzySearch(r, name);
+        result = fuzzySearchService.ResultFuzzySearch(r, name);
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/FuzzySearchCategories/{name}")
+    @GetMapping("/FuzzySearchCategories/name={name}")
     public ResponseEntity<ArrayList<String>> FuzzySearchCategories(@PathVariable("name") String name){
         List<TblCategoryEntity> arr = categoryService.getAll();
         ArrayList<String> r = new ArrayList<String>();
@@ -93,7 +50,7 @@ public class FuzzySearchController {
             r.add(arr.get(i).getName());
         }
         ArrayList<String> result = new ArrayList<String>();
-        result = ResultFuzzySearch(r, name);
+        result = fuzzySearchService.ResultFuzzySearch(r, name);
         return ResponseEntity.ok(result);
     }
 }
