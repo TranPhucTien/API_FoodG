@@ -1,12 +1,18 @@
 package com.nhom7.foodg.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor(staticName = "create")
 @Table(name = "tbl_line", schema = "dbo", catalog = "foodg")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class TblLineEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -25,6 +31,9 @@ public class TblLineEntity {
     @Column(name = "quantity")
     private int quantity;
     @Basic
+    @Column(name = "price")
+    private BigDecimal price;
+    @Basic
     @Column(name = "unit_price")
     private BigDecimal unitPrice;
     @Basic
@@ -33,9 +42,7 @@ public class TblLineEntity {
     @Basic
     @Column(name = "total")
     private BigDecimal total;
-    @Basic
-    @Column(name = "price")
-    private BigDecimal price;
+
 
     public int getId() {
         return id;
@@ -77,6 +84,13 @@ public class TblLineEntity {
         this.quantity = quantity;
     }
 
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
     public BigDecimal getUnitPrice() {
         return unitPrice;
     }
@@ -114,11 +128,5 @@ public class TblLineEntity {
         return Objects.hash(id, idInvoice, idProduct, description, quantity, unitPrice, idDiscount, total);
     }
 
-    public BigDecimal getPrice() {
-        return price;
-    }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
 }

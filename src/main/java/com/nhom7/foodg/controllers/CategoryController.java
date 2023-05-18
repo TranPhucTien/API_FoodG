@@ -41,7 +41,7 @@ public class CategoryController {
 
     // get category after searching by category name
     @GetMapping(path = "/search")
-    // [GET] localhost:8080/categories/search?keyword=brea
+    // [GET] localhost:8080/categories/search?keyword=break
     public ResponseEntity<FuncResult<List<TblCategoryEntity>>> search(@RequestParam(name = "keyword", required = false, defaultValue = "") String name) {
         FuncResult<List<TblCategoryEntity>> rs = FuncResult.create(
                 HttpStatus.OK,
@@ -105,7 +105,7 @@ public class CategoryController {
 
     // update name of category by category id
     @PutMapping(path = "")
-    // [PUT] localhost:8080/categories/1
+    // [PUT] localhost:8080/categories
     public ResponseEntity<FuncResult<TblCategoryEntity>> update(@RequestBody TblCategoryEntity tblCategoryEntity) {
         categoryService.update(tblCategoryEntity);
 
@@ -120,7 +120,7 @@ public class CategoryController {
 
     // solf delete category by category id
     @DeleteMapping(path = "{categoryID}")
-    // [DELETE] localhost:8080/categories/1
+    // [DELETE] localhost:8080/categories
     public ResponseEntity<FuncResult<Integer>> softDelete(@PathVariable("categoryID") int categoryID) {
         categoryService.softDelete(categoryID);
 
