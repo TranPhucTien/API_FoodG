@@ -55,7 +55,7 @@ public class LineController {
     }
 
     @PutMapping(path = "")
-    // [PUT] localhost:8080/lines/1
+    // [PUT] localhost:8080/lines
     public ResponseEntity<FuncResult<TblLineEntity>> update(@RequestBody TblLineEntity tblLineEntity) {
         lineService.update(tblLineEntity);
 
@@ -71,7 +71,7 @@ public class LineController {
 
     // solf delete line by line id
     @DeleteMapping(path = "{lineID}")
-    // [DELETE] localhost:8080/invoices/1
+    // [DELETE] localhost:8080/lines
     public ResponseEntity<FuncResult<Integer>> softDelete(@PathVariable("lineID") int lineId) {
         lineService.softDelete(lineId);
 

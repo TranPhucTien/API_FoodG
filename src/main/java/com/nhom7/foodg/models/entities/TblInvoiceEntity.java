@@ -36,7 +36,7 @@ public class TblInvoiceEntity {
     private BigDecimal tax;
     @Basic
     @Column(name = "id_discount")
-    private int idDiscount;
+    private Integer idDiscount;
     @Basic
     @Column(name = "grand_total")
     private BigDecimal grandTotal;
@@ -113,11 +113,11 @@ public class TblInvoiceEntity {
         this.tax = tax;
     }
 
-    public int getIdDiscount() {
+    public Integer getIdDiscount() {
         return idDiscount;
     }
 
-    public void setIdDiscount(int idDiscount) {
+    public void setIdDiscount(Integer idDiscount) {
         this.idDiscount = idDiscount;
     }
 
