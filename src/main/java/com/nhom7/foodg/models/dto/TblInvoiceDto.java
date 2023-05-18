@@ -19,7 +19,7 @@ public class TblInvoiceDto {
     private Date invoiceDate;
     private BigDecimal totalAmount;
     private BigDecimal tax;
-    private int idDiscount;
+    private Integer idDiscount;
     private BigDecimal grandTotal;
     private int status;
     private Long idOnePayResponse;

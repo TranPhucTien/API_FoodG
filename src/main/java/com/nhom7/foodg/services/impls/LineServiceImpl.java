@@ -1,4 +1,4 @@
-package com.nhom7.foodg.services;
+package com.nhom7.foodg.services.impls;
 
 import com.nhom7.foodg.exceptions.DuplicateRecordException;
 import com.nhom7.foodg.exceptions.ModifyException;
@@ -8,6 +8,7 @@ import com.nhom7.foodg.models.entities.TblCategoryEntity;
 import com.nhom7.foodg.models.entities.TblInvoiceEntity;
 import com.nhom7.foodg.models.entities.TblLineEntity;
 import com.nhom7.foodg.repositories.LineRepository;
+import com.nhom7.foodg.services.LineService;
 import com.nhom7.foodg.shareds.Constants;
 import jakarta.transaction.Transactional;
 import org.springframework.dao.DataAccessException;
@@ -44,7 +45,8 @@ public  class LineServiceImpl implements LineService {
             }
 
             Date currentDate = Constants.getCurrentDay();
-            TblLineEntity tblLineEntity = TblLineEntity.create( 0,
+            TblLineEntity tblLineEntity = TblLineEntity.create(
+                    0,
                     newLine.getIdInvoice(),
                     newLine.getIdProduct(),
                     newLine.getDescription(),
@@ -66,8 +68,8 @@ public  class LineServiceImpl implements LineService {
     @Transactional
     @Override
     public void update(TblLineEntity tblLineEntity) {
-        if (lineRepository.existsById(tblLineEntity.getId())) {
-            throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR, TABLE_NAME, tblLineEntity.getId()));
+        if (!lineRepository.existsById(tblLineEntity.getId())) {
+            throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, tblLineEntity.getId()));
         }
 
 
@@ -76,8 +78,14 @@ public  class LineServiceImpl implements LineService {
             TblLineEntity line = lineRepository.findById(tblLineEntity.getId()).orElse(null);
 
             if (line != null) {
-
-
+                line.setIdInvoice(tblLineEntity.getIdInvoice());
+                line.setIdProduct(tblLineEntity.getIdProduct());
+                line.setDescription(tblLineEntity.getDescription());
+                line.setQuantity(tblLineEntity.getQuantity());
+                line.setPrice(tblLineEntity.getPrice());
+                line.setUnitPrice(tblLineEntity.getUnitPrice());
+                line.setIdDiscount(tblLineEntity.getIdDiscount());
+                line.setTotal(tblLineEntity.getTotal());
                 lineRepository.save(line);
             }
         } catch (NullPointerException ex) {

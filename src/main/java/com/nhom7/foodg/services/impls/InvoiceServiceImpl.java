@@ -1,5 +1,5 @@
 
-package com.nhom7.foodg.services;
+package com.nhom7.foodg.services.impls;
 
         import com.nhom7.foodg.exceptions.DuplicateRecordException;
         import com.nhom7.foodg.exceptions.ModifyException;
@@ -8,6 +8,7 @@ package com.nhom7.foodg.services;
         import com.nhom7.foodg.models.entities.TblInvoiceEntity;
         import com.nhom7.foodg.repositories.InvoiceRepository;
         import com.nhom7.foodg.repositories.LineRepository;
+        import com.nhom7.foodg.services.InvoiceService;
         import com.nhom7.foodg.shareds.Constants;
         import jakarta.transaction.Transactional;
         import org.springframework.dao.DataAccessException;
@@ -45,11 +46,10 @@ public class InvoiceServiceImpl implements InvoiceService {
 
             Date currentDate = Constants.getCurrentDay();
             TblInvoiceEntity tblInvoiceEntity = TblInvoiceEntity.
-                    create(
-                            0,
+                    create(0,
                             newInvoice.getCustomerId(),
                             newInvoice.getInvoiceNumber(),
-                            newInvoice.getInvoiceDate(),
+                            Constants.getCurrentDay(),
                             newInvoice.getTotalAmount(),
                             newInvoice.getTax(),
                             newInvoice.getIdDiscount(),
@@ -71,8 +71,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Transactional
     @Override
     public void update(TblInvoiceEntity tblInvoiceEntity) {
-        if (invoiceRepository.existsById(tblInvoiceEntity.getId())) {
-            throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR, TABLE_NAME, tblInvoiceEntity.getId()));
+        if (!invoiceRepository.existsById(tblInvoiceEntity.getId())) {
+            throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, tblInvoiceEntity.getId()));
         }
 
 
@@ -81,7 +81,20 @@ public class InvoiceServiceImpl implements InvoiceService {
             TblInvoiceEntity invoice = invoiceRepository.findById(tblInvoiceEntity.getId()).orElse(null);
 
             if (invoice != null) {
+                invoice.setCustomerId(tblInvoiceEntity.getCustomerId());
+                invoice.setInvoiceNumber(tblInvoiceEntity.getInvoiceNumber());
+                invoice.setInvoiceDate(tblInvoiceEntity.getInvoiceDate());
+                invoice.setTotalAmount(tblInvoiceEntity.getTotalAmount());
+                invoice.setTax(tblInvoiceEntity.getTax());
+                invoice.setIdDiscount(tblInvoiceEntity.getIdDiscount());
+                invoice.setGrandTotal(tblInvoiceEntity.getGrandTotal());
+                invoice.setStatus(tblInvoiceEntity.getStatus());
+                invoice.setIdOnePayResponse(tblInvoiceEntity.getIdOnePayResponse());
 
+                invoice.setUpdatedAt(tblInvoiceEntity.getUpdatedAt());
+                invoice.setDueDate(tblInvoiceEntity.getDueDate());
+                invoice.setPaid(tblInvoiceEntity.getPaid());
+                invoice.setPaidDate(tblInvoiceEntity.getPaidDate());
 
                 invoiceRepository.save(invoice);
             }

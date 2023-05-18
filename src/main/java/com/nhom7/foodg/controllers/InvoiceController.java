@@ -43,7 +43,7 @@ public class InvoiceController {
     }
 
 
-    // create new category
+    // create new invoice
     @PostMapping(path = "")
     // [POST] localhost:8080/invoices
     public ResponseEntity<FuncResult<TblInvoiceDto>> create(@RequestBody TblInvoiceDto tblInvoiceDto) {
@@ -58,7 +58,7 @@ public class InvoiceController {
         return ResponseEntity.ok(rs);
     }
     @PutMapping(path = "")
-    // [PUT] localhost:8080/invoices/1
+    // [PUT] localhost:8080/invoices
     public ResponseEntity<FuncResult<TblInvoiceEntity>> update(@RequestBody TblInvoiceEntity tblInvoiceEntity) {
         invoiceService.update(tblInvoiceEntity);
 
@@ -74,7 +74,7 @@ public class InvoiceController {
 
     // solf delete invoice by invoice id
     @DeleteMapping(path = "{invoiceID}")
-    // [DELETE] localhost:8080/invoices/1
+    // [DELETE] localhost:8080/invoices
     public ResponseEntity<FuncResult<Integer>> softDelete(@PathVariable("invoiceID") int invoiceId) {
         invoiceService.softDelete(invoiceId);
 

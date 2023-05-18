@@ -42,9 +42,7 @@ public class TblLineEntity {
     @Basic
     @Column(name = "total")
     private BigDecimal total;
-    @Basic
-    @Column(name = "price")
-    private BigDecimal price;
+
 
     public int getId() {
         return id;
@@ -130,11 +128,5 @@ public class TblLineEntity {
         return Objects.hash(id, idInvoice, idProduct, description, quantity, unitPrice, idDiscount, total);
     }
 
-    public BigDecimal getPrice() {
-        return price;
-    }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
 }
