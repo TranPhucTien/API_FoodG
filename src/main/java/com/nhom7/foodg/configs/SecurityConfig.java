@@ -12,12 +12,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception{
         httpSecurity
-                .oauth2Login()
-                .defaultSuccessUrl("/userAttributes", true)
-                //.loginPage("/oauth2/authorization/google")
-                //.loginProcessingUrl("/loginGG")
-                .and()
-                .formLogin();
+                .oauth2Login().defaultSuccessUrl("/", true)
+                .and().formLogin()
+                .and().logout().permitAll()
+                .and().authorizeRequests()
+                .requestMatchers("/admins/**", "/customers/**").hasRole("ADMIN")
+                .requestMatchers("/api/vnpay/**").hasRole("USER")
+                .anyRequest().permitAll();
         return httpSecurity.build();
     }
 }
