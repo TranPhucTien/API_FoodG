@@ -1,12 +1,42 @@
-package com.nhom7.foodg.services;
+package com.nhom7.foodg.utils;
 
-import org.springframework.stereotype.Component;
-
+import java.lang.reflect.Field;
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
-@Component
-public class FuzzySearchServiceImpl implements FuzzySearchService{
+
+public class FuzzySearch<T> {
+    List<T> data;
+    public FuzzySearch(List<T> data) {
+        this.data = data;
+    }
+
+    public String getName(T data) {
+        try {
+            Field nameField = data.getClass().getDeclaredField("name");
+            nameField.setAccessible(true);
+            Object nameValue = nameField.get(data);
+            if (nameValue instanceof String) {
+                return (String) nameValue;
+            }
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            // Ignore the exception and return null
+        }
+        return null;
+
+    };
+
+    public ArrayList<T> FuzzySearchByName(String name){
+        ArrayList<T> r = new ArrayList<T>();
+        for(int i = 0; i < data.size(); i++){
+            r.add(data.get(i));
+        }
+        ArrayList<T> result = new ArrayList<T>();
+        result = ResultFuzzySearch(r, name);
+        return result;
+    }
+
     public boolean fuzzyMatch(String strSearch, String strReference){
         strSearch = ".*" + String.join(".*", strSearch.split("")) + ".*";
         Pattern re = Pattern.compile(strSearch);
@@ -27,16 +57,18 @@ public class FuzzySearchServiceImpl implements FuzzySearchService{
         }
         return false;
     }
-    public ArrayList<String> ResultFuzzySearch(ArrayList<String> arr, String strSearch){
-        ArrayList<String> result = new ArrayList<String>();
+
+    public ArrayList<T> ResultFuzzySearch(ArrayList<T> arr, String strSearch){
+        ArrayList<T> result = new ArrayList<T>();
         if(strSearch.equals("")|| !haveAlphabet(strSearch)) {
             return null;
         }
         String[] splitText = strSearch.split("\\s");
-        for(String element : arr){
+        for(T element : arr){
             boolean all = true;
             for(String searchText : splitText){
-                if(!fuzzyMatch(changeUnicode(searchText.toLowerCase()), changeUnicode(element.toLowerCase()))){
+                String elementName = getName(element);
+                if(!fuzzyMatch(changeUnicode(searchText.toLowerCase()), changeUnicode(elementName.toLowerCase()))){
                     all = false;
                     break;
                 }
