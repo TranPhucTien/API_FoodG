@@ -79,7 +79,7 @@ public class DiscountController {
     }
 
     @DeleteMapping(path = "{discountID}")
-    // [DELETE] localhost:8080/categories/1
+    // [DELETE] localhost:8080/discounts/1
     public ResponseEntity<FuncResult<Integer>> softDelete(@PathVariable("discountID") int discountID){
         discountService.softDelete(discountID);
         FuncResult<Integer> rs = FuncResult.create(

@@ -48,6 +48,20 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void insert(TblCustomerEntity newCustomer){
+
+        Constants.validateRequiredFields(newCustomer, "username", "password", "fullName");
+        Constants.validateStringFields(newCustomer, "UserName 6-20 Ký tự", 6, 20, "username");
+        Constants.validateStringFields(newCustomer, "password 8-20 ký tự", 8, 20, "password");
+        Constants.validateEmailFields(newCustomer, "email");
+        Constants.validateStringFields(newCustomer, "nchar(50)", 0, 50, "email");
+        Constants.validateStringFields(newCustomer, "nvarchar(100)", 0, 100, "fullName");
+        Constants.validateDateFields(newCustomer, "birthday", "otpExp");
+        Constants.validateBooleanFields(newCustomer, "gender", "deleted");
+        Constants.validateIntegerFields(newCustomer, "idProvince", "role");
+
+
+
+
         String customerUsername = newCustomer.getUsername();
         try {
             if (customerRepository.existsByUsername(newCustomer.getUsername())){
@@ -55,12 +69,12 @@ public class CustomerServiceImpl implements CustomerService {
             }
             Date currentDate = Constants.getCurrentDay();
 
-            String encryptedPassword = BCrypt.hashpw(newCustomer.getPassword(), BCrypt.gensalt());
+            String password = Constants.hashPassword(newCustomer.getPassword());
 
             TblCustomerEntity tblCustomerEntity = TblCustomerEntity.create(
                     0,
                     customerUsername,
-                    encryptedPassword,
+                    password,
                     newCustomer.getEmail(),
                     newCustomer.getFullName(),
                     newCustomer.getGender(),
