@@ -6,6 +6,8 @@ import com.nhom7.foodg.exceptions.MissingFieldException;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.joda.time.DateTime;
+import java.security.MessageDigest;
+
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -28,8 +30,9 @@ public class Constants {
     public static final String DELETE_FAIL_CATCH = "Thất bại khi xoá `{1}` của bảng `{0}`. ";
     public static final String DUPLICATE_ERROR = "Giá trị `{1}` đã tồn tại trong bảng `{0}` rồi. Nếu `{1}` xuất hiện trong thùng rác, hãy xoá hoặc khôi phục nó! ";
     public static final String  MISSING_FIELD_EXCEPTION = "Bạn nhập dữ liệu trường `{0}` còn thiếu, bạn hãy điền vào nhé! ";
-    public static final String OUT_OF_RANGE_EXCEPTION = "Dữ liệu của trường `{0}` nằm ngoài phạm vi cho phép, bạn hãy nhập lại nhé!";
+    public static final String OUT_OF_RANGE_EXCEPTION = "Dữ liệu của trường `{0}` nằm ngoài phạm vi cho phép của `{1}`, bạn hãy nhập lại nhé!";
     public static final String INVALID_DATA_EXCEPTION = "Dữ liệu của trường `{0}` không phải kiểu `{1}`, bạn hãy nhập lại nhé!";
+
     public static final String  DATA_INTEGRITY_VIOLATION_EXCEPTION = "Dữ liệu của trường `{0}` không đúng với kiểu dữ liệu `{1}` trong DATABASE cho phép, bạn hãy kiểm tra lại nhé!";
     public static final String REQUIRE_TYPE = "`{1}` phải là dạng `{0}`";
     // actions
@@ -45,6 +48,23 @@ public class Constants {
     public static Date getCurrentDay() {
         java.util.Date currentDate = new java.util.Date();
         return new Date(currentDate.getTime());
+    }
+
+
+    public static String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] bytes = md.digest(password.getBytes("UTF-8"));
+
+            StringBuilder sb = new StringBuilder();
+            for (byte b : bytes) {
+                sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
+            }
+
+            return sb.toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -85,9 +105,12 @@ public class Constants {
             try {
                 Field f = obj.getClass().getDeclaredField(field);
                 f.setAccessible(true);
-                String value = (String) f.get(obj);
-                if (!GenericValidator.isEmail(value)) {
-                    throw new InvalidDataException(MessageFormat.format(Constants.INVALID_DATA_EXCEPTION, field, "email"));
+                Object input = f.get(obj);
+                if (input != null) {
+                    String value = (String) f.get(obj);
+                    if (!GenericValidator.isEmail(value)) {
+                        throw new InvalidDataException(MessageFormat.format(Constants.INVALID_DATA_EXCEPTION, field, "email"));
+                    }
                 }
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 throw new RuntimeException("Invalid field: " + field, e);
@@ -125,10 +148,13 @@ public class Constants {
             try {
                 Field f = obj.getClass().getDeclaredField(field);
                 f.setAccessible(true);
-                String value = f.get(obj).toString();
-                if(value != null && !value.isEmpty()) {
-                    if(!GenericValidator.isDate(value, "yyyy-MM-dd", true)){
-                        throw new InvalidDataException(MessageFormat.format(Constants.INVALID_DATA_EXCEPTION, field, "DATE"));
+                Object input = f.get(obj);
+                if (input != null) {
+                    String value = f.get(obj).toString();
+                    if (value != null && !value.isEmpty()) {
+                        if (!GenericValidator.isDate(value, "yyyy-MM-dd", true)) {
+                            throw new InvalidDataException(MessageFormat.format(Constants.INVALID_DATA_EXCEPTION, field, "DATE"));
+                        }
                     }
                 }
             } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -145,7 +171,7 @@ public class Constants {
                 String value = (String) f.get(obj);
                 if (value != null) {
                     if (value.length() < min || value.length() > max)
-                        throw new DataIntegrityViolationException(MessageFormat.format(Constants.DATA_INTEGRITY_VIOLATION_EXCEPTION, field, dataType));
+                        throw new DataIntegrityViolationException(MessageFormat.format(Constants.OUT_OF_RANGE_EXCEPTION, field, dataType));
                 }
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 throw new RuntimeException("Invalid field: " + field, e);
@@ -158,20 +184,14 @@ public class Constants {
             try {
                 Field f = obj.getClass().getDeclaredField(field);
                 f.setAccessible(true);
-                String value;
-                try {
-                     value = (String) f.get(obj);
+                Object input = f.get(obj);
+                if (input != null) {
+                    Boolean value = (Boolean) f.get(obj);
+                    if (value != false && value != true) {
+                        throw new InvalidDataException(MessageFormat.format(Constants.INVALID_DATA_EXCEPTION, field, "Boolean"));
+                    }
                 }
-                catch (Exception ex){
-                    throw new InvalidDataException(MessageFormat.format(Constants.INVALID_DATA_EXCEPTION, field, "Boolean"));
-
-                }
-
-                if (!(value == "true" || value == "false")) {
-                    throw new InvalidDataException(MessageFormat.format(Constants.INVALID_DATA_EXCEPTION, field, "Boolean"));
-                }
-
-            } catch (NoSuchFieldException e) {
+            } catch (NoSuchFieldException | IllegalAccessException e) {
                 throw new RuntimeException("Invalid field: " + field, e);
             }
         }

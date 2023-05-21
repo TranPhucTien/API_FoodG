@@ -61,12 +61,11 @@ public class DiscountServiceImpl implements DiscountService {
         try {
 
             Constants.validateRequiredFields(newDiscount, "percentage","code", "minAmount", "startDate", "isActive", "maxDiscountPrice", "createdBy", "updatedBy");
-//            Constants.validateIntegerFields(newDiscount, "percentage", "createdBy", "updatedBy", "deletedBy");
-//            Constants.validateDecimalFields(newDiscount, 5, 2, "maxDiscountPrice");
-//            Constants.validateDecimalFields(newDiscount, 6, 2,  "minAmount");
-//            Constants.validateDateFields(newDiscount, "startDate", "endDate");
-//            Constants.validateEmailFields(newDiscount, "code");
-//            Constants.validateStringFields(newDiscount, "varchar(20)", 5, 20, "code");
+            Constants.validateIntegerFields(newDiscount, "percentage", "createdBy", "updatedBy", "deletedBy");
+            Constants.validateDecimalFields(newDiscount, 5, 2, "maxDiscountPrice");
+            Constants.validateDecimalFields(newDiscount, 6, 2,  "minAmount");
+            Constants.validateDateFields(newDiscount, "startDate", "endDate");
+            Constants.validateStringFields(newDiscount, "varchar(20)", 5, 20, "code");
             Constants.validateBooleanFields(newDiscount, "isActive");
             if (discountRepository.existsByCode(discountCode)){
                 throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR, TABLE_NAME, discountCode));
