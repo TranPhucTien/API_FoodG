@@ -49,6 +49,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void insert(TblCustomerEntity newCustomer){
 
+        //Validate input
         Constants.validateRequiredFields(newCustomer, "username", "password", "fullName");
         Constants.validateStringFields(newCustomer, "UserName 6-20 Ký tự", 6, 20, "username");
         Constants.validateStringFields(newCustomer, "password 8-20 ký tự", 8, 20, "password");
@@ -58,8 +59,6 @@ public class CustomerServiceImpl implements CustomerService {
         Constants.validateDateFields(newCustomer, "birthday", "otpExp");
         Constants.validateBooleanFields(newCustomer, "gender", "deleted");
         Constants.validateIntegerFields(newCustomer, "idProvince", "role");
-
-
 
 
         String customerUsername = newCustomer.getUsername();
