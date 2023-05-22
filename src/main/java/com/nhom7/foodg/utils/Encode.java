@@ -1,5 +1,9 @@
 package com.nhom7.foodg.utils;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 public class Encode {
     private int secret_key[] = {1,0,0,1,0,1,0,1};
     private int Call(int a, int b){
@@ -36,7 +40,17 @@ public class Encode {
             String x = String.valueOf(zzz);
             res += x;
         }
-        return res;
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] bytes = md.digest(res.getBytes("UTF-8"));
+            StringBuilder sb = new StringBuilder();
+            for (byte b : bytes) {
+                sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
+            }
+            return sb.toString();
+        } catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String Decrypt(String encrypt){
