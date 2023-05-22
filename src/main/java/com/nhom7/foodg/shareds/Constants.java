@@ -41,6 +41,15 @@ public class Constants {
     public static final String ACTION_DELETE = "DELETE";
     public static final String ACTION_RESTORE = "RESTORE";
 
+    // mail
+    public final static class SEND_MAIL_SUBJECT {
+        public final static String CLIENT_REGISTER = "XÁC NHẬN TẠO MỚI THÔNG TIN NGƯỜI DÙNG";
+    }
+
+    public final static class TEMPLATE_FILE_NAME {
+        public final static String CLIENT_REGISTER = "client";
+    }
+
     // regex
     public static final String REGEX_URL_IMAGE = "(https?:\\/\\/.*\\.(?:png|jpg))";
 
