@@ -1,9 +1,7 @@
 package com.nhom7.foodg.services;
 
-import com.nhom7.foodg.models.dto.TblCategoryDto;
 import com.nhom7.foodg.models.entities.TblCategoryEntity;
 import com.nhom7.foodg.models.entities.TblProductEntity;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,7 +16,7 @@ public interface CategoryService {
 
     TblCategoryEntity getByID(int id);
 
-    void insert(TblCategoryDto tblCategoryDto);
+    void insert(TblCategoryEntity tblCategoryEntity);
 
     void update(TblCategoryEntity tblCategoryEntity);
 

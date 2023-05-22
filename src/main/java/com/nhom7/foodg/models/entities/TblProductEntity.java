@@ -17,29 +17,30 @@ import java.util.Objects;
 @SQLDelete(sql = "UPDATE tbl_product SET deleted = 1 WHERE id = ?", check = ResultCheckStyle.COUNT)
 @Where(clause = "deleted = false")
 public class TblProductEntity {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "ID")
+    @Column(name = "id")
     private String id;
     @Basic
-    @Column(name = "Img")
+    @Column(name = "img")
     private String img;
     @Basic
-    @Column(name = "Name")
+    @Column(name = "name")
     private String name;
     @Basic
-    @Column(name = "Dsc")
+    @Column(name = "dsc")
     private String dsc;
     @Basic
-    @Column(name = "Price")
+    @Column(name = "price")
     private double price;
     @Basic
-    @Column(name = "Rate")
+    @Column(name = "rate")
     private Double rate;
     @Basic
-    @Column(name = "Country")
+    @Column(name = "country")
     private String country;
     @Basic
-    @Column(name = "IDCategory")
+    @Column(name = "id_category")
     private Integer idCategory;
     @Basic
     @Column(name = "created_at")

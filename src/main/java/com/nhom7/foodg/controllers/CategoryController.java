@@ -1,11 +1,11 @@
 package com.nhom7.foodg.controllers;
 
 import com.nhom7.foodg.models.FuncResult;
-import com.nhom7.foodg.models.dto.TblCategoryDto;
 import com.nhom7.foodg.models.entities.TblCategoryEntity;
 import com.nhom7.foodg.models.entities.TblProductEntity;
 import com.nhom7.foodg.services.CategoryService;
 import com.nhom7.foodg.shareds.Constants;
+import com.nhom7.foodg.utils.FuzzySearch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,12 +42,14 @@ public class CategoryController {
 
     // get category after searching by category name
     @GetMapping(path = "/search")
-    // [GET] localhost:8080/categories/search?keyword=brea
+    // [GET] localhost:8080/categories/search?keyword=break
     public ResponseEntity<FuncResult<List<TblCategoryEntity>>> search(@RequestParam(name = "keyword", required = false, defaultValue = "") String name) {
+        FuzzySearch<TblCategoryEntity> fuzzySearch = new FuzzySearch<>(categoryService.getAll());
+
         FuncResult<List<TblCategoryEntity>> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.SEARCH_SUCCESS, TABLE_NAME, name),
-                categoryService.search(name)
+                fuzzySearch.FuzzySearchByName(name)
         );
 
         return ResponseEntity.ok(rs);
@@ -55,7 +57,7 @@ public class CategoryController {
 
     // get all product of category by category name
     @GetMapping(path = "{categoryName}")
-    // [GET] localhost:8080/categories/breads
+        // [GET] localhost:8080/categories/breads?q=brea&_page=1&_limit=12&_order=asc&_sort=name
     public ResponseEntity<FuncResult<List<TblProductEntity>>> getProductsByCategoryName(@PathVariable("categoryName") String categoryName,
                                                                                         @RequestParam(name = "_page", required = false, defaultValue = "-1") String page,
                                                                                         @RequestParam(name = "_limit", required = false, defaultValue = "-1") String limit,
@@ -92,13 +94,13 @@ public class CategoryController {
     // create new category
     @PostMapping(path = "")
     // [POST] localhost:8080/categories
-    public ResponseEntity<FuncResult<TblCategoryDto>> create(@RequestBody TblCategoryDto tblCategoryDto) {
-        categoryService.insert(tblCategoryDto);
+    public ResponseEntity<FuncResult<TblCategoryEntity>> create(@RequestBody TblCategoryEntity tblCategoryEntity) {
+        categoryService.insert(tblCategoryEntity);
 
-        FuncResult<TblCategoryDto> rs = FuncResult.create(
+        FuncResult<TblCategoryEntity> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.MODIFY_DATA_SUCCESS, TABLE_NAME),
-                tblCategoryDto
+                tblCategoryEntity
         );
 
         return ResponseEntity.ok(rs);
@@ -106,7 +108,7 @@ public class CategoryController {
 
     // update name of category by category id
     @PutMapping(path = "")
-    // [PUT] localhost:8080/categories/1
+    // [PUT] localhost:8080/categories
     public ResponseEntity<FuncResult<TblCategoryEntity>> update(@RequestBody TblCategoryEntity tblCategoryEntity) {
         categoryService.update(tblCategoryEntity);
 
@@ -121,7 +123,7 @@ public class CategoryController {
 
     // solf delete category by category id
     @DeleteMapping(path = "{categoryID}")
-    // [DELETE] localhost:8080/categories/1
+    // [DELETE] localhost:8080/categories
     public ResponseEntity<FuncResult<Integer>> softDelete(@PathVariable("categoryID") int categoryID) {
         categoryService.softDelete(categoryID);
 

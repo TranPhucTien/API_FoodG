@@ -1,6 +1,7 @@
-package com.nhom7.foodg.services;
+package com.nhom7.foodg.services.impls;
 
 import com.nhom7.foodg.repositories.ProductRepository;
+import com.nhom7.foodg.services.PaginationService;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -8,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class PaginationServiceImpl implements PaginationService{
+public class PaginationServiceImpl implements PaginationService {
     private final ProductRepository productRepository;
     public PaginationServiceImpl(ProductRepository productRepository) {
         this.productRepository = productRepository;
