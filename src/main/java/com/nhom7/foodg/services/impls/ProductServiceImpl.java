@@ -114,7 +114,7 @@ public class ProductServiceImpl implements ProductService {
                     dataJson,
                     Constants.getCurrentDay()
             );
-
+            System.out.println(tblProductEntity);
             productRepository.save(tblProductEntity);
             logProductRepository.save(log);
 
@@ -136,12 +136,6 @@ public class ProductServiceImpl implements ProductService {
             if (product != null) {
                 Gson gson = new Gson();
                 String oldDataJson = gson.toJson((product));
-                //----------------------------------------------------------------------
-                //----------------------------------------------------------------------
-                // Lưu ý: Thay đổi đoạn code này khi đã thêm chức năng đăng kí đăng nhập
-                int defaultAdminID = 1;
-                //----------------------------------------------------------------------
-                //----------------------------------------------------------------------
 
                 product.setImg(tblProductEntity.getImg());
                 product.setName(tblProductEntity.getName());
@@ -150,13 +144,13 @@ public class ProductServiceImpl implements ProductService {
                 product.setCountry(tblProductEntity.getCountry());
                 product.setIdCategory(tblProductEntity.getIdCategory());
                 product.setUpdatedAt(Constants.getCurrentDay());
-                product.setUpdatedBy(defaultAdminID);
+                product.setUpdatedBy(tblProductEntity.getUpdatedBy());
 
                 String newDataJson = gson.toJson((product));
 
                 TblProductLogEntity log = TblProductLogEntity.create(
                         0,
-                        defaultAdminID,
+                        tblProductEntity.getUpdatedBy(),
                         Constants.ACTION_UPDATE,
                         product.getId(),
                         oldDataJson,
