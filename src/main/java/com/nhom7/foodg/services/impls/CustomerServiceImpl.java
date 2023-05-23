@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import org.mindrot.jbcrypt.BCrypt;
 
 
-import java.sql.Date;
+import java.util.Date;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
