@@ -8,6 +8,7 @@ import org.hibernate.annotations.ResultCheckStyle;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+
 import java.util.Date;
 import java.util.Objects;
 
