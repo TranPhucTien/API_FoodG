@@ -4,8 +4,6 @@ import com.nhom7.foodg.exceptions.DataIntegrityViolationException;
 import com.nhom7.foodg.exceptions.InvalidDataException;
 import com.nhom7.foodg.exceptions.MissingFieldException;
 import org.apache.commons.validator.GenericValidator;
-import org.apache.commons.validator.routines.EmailValidator;
-import org.joda.time.DateTime;
 import java.security.MessageDigest;
 
 
@@ -13,8 +11,8 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.text.MessageFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
 
 public class Constants {
     // error message
@@ -54,10 +52,12 @@ public class Constants {
     public static final String REGEX_URL_IMAGE = "(https?:\\/\\/.*\\.(?:png|jpg))";
 
     // method
-    public static Date getCurrentDay() {
+
+     public static Date getCurrentDay() {
         java.util.Date currentDate = new java.util.Date();
         return new Date(currentDate.getTime());
     }
+
 
 
     public static String hashPassword(String password) {

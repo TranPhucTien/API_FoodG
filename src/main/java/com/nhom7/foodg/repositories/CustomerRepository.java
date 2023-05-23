@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CustomerRepository extends JpaRepository<TblCustomerEntity, Integer> {
     boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
 }

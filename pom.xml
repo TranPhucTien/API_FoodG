@@ -160,6 +160,21 @@
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>net.digitalid.utility</groupId>
+			<artifactId>utility</artifactId>
+			<version>0.7.0</version>
+		</dependency>
+		<dependency>
+			<groupId>net.digitalid.utility</groupId>
+			<artifactId>utility</artifactId>
+			<version>0.7.0</version>
+		</dependency>
+		<dependency>
+			<groupId>net.bytebuddy</groupId>
+			<artifactId>byte-buddy</artifactId>
+			<version>1.10.13</version>
+		</dependency>
 
 
 	</dependencies>
