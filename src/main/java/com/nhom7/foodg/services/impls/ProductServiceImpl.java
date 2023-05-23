@@ -15,7 +15,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
-import java.sql.Date;
+import java.util.Date;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -146,7 +146,7 @@ public class ProductServiceImpl implements ProductService {
                 //----------------------------------------------------------------------
                 //----------------------------------------------------------------------
                 // Lưu ý: Thay đổi đoạn code này khi đã thêm chức năng đăng kí đăng nhập
-                int defaultAdminID = 1;
+                int defaultAdminID = 2;
                 //----------------------------------------------------------------------
                 //----------------------------------------------------------------------
 
@@ -206,7 +206,7 @@ public class ProductServiceImpl implements ProductService {
                 //----------------------------------------------------------------------
                 //----------------------------------------------------------------------
                 // Lưu ý: Thay đổi đoạn code này khi đã thêm chức năng đăng kí đăng nhập
-                int defaultAdminID = 1;
+                int defaultAdminID = 2;
                 //----------------------------------------------------------------------
                 //----------------------------------------------------------------------
 
