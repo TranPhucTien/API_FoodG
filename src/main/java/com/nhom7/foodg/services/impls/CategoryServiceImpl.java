@@ -37,6 +37,13 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findAll();
     }
 
+    public TblCategoryEntity getById(int id) {
+        if (!categoryRepository.existsById(id)) {
+            throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, id));
+        }
+        return categoryRepository.findById(id).orElse(null);
+    }
+
     // Get all product of category by category name
     @Override
     public List<TblProductEntity> getProductsByCategory(String categoryName, int page, int limit, String q, String sort, String order) {

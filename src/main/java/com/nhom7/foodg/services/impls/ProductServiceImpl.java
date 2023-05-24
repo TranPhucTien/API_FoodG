@@ -11,6 +11,7 @@ import com.nhom7.foodg.repositories.LogProductRepository;
 import com.nhom7.foodg.repositories.ProductRepository;
 import com.nhom7.foodg.services.ProductService;
 import com.nhom7.foodg.shareds.Constants;
+import com.nhom7.foodg.utils.VariableHandler;
 import jakarta.transaction.Transactional;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -142,12 +143,12 @@ public class ProductServiceImpl implements ProductService {
                 Gson gson = new Gson();
                 String oldDataJson = gson.toJson((product));
 
-                product.setImg(tblProductEntity.getImg());
-                product.setName(tblProductEntity.getName());
-                product.setDsc(tblProductEntity.getDsc());
-                product.setPrice(tblProductEntity.getPrice());
-                product.setCountry(tblProductEntity.getCountry());
-                product.setIdCategory(tblProductEntity.getIdCategory());
+                product.setImg(VariableHandler.isNullOrEmpty(tblProductEntity.getImg()) ? currentProduct.getImg() : tblProductEntity.getImg());
+                product.setName(VariableHandler.isNullOrEmpty(tblProductEntity.getName()) ? currentProduct.getName() : tblProductEntity.getName());
+                product.setDsc(VariableHandler.isNullOrEmpty(tblProductEntity.getDsc()) ? currentProduct.getDsc() : tblProductEntity.getDsc());
+                product.setPrice(VariableHandler.isNullOrEmpty(tblProductEntity.getPrice()) ? currentProduct.getPrice() : tblProductEntity.getPrice());
+                product.setCountry(VariableHandler.isNullOrEmpty(tblProductEntity.getCountry()) ? currentProduct.getCountry() : tblProductEntity.getCountry());
+                product.setIdCategory(VariableHandler.isNullOrEmpty(tblProductEntity.getIdCategory()) ? currentProduct.getIdCategory() : tblProductEntity.getIdCategory());
                 product.setUpdatedAt(Constants.getCurrentDay());
                 product.setUpdatedBy(tblProductEntity.getUpdatedBy());
 

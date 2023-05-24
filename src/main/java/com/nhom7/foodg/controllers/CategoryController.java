@@ -40,6 +40,19 @@ public class CategoryController {
         return ResponseEntity.ok(rs);
     }
 
+    // Get all category
+    @GetMapping(path = "detail/{id}")
+    // [GET] localhost:8080/categories/detail/1
+    public ResponseEntity<FuncResult<TblCategoryEntity>> getById(@PathVariable(name = "id") int id) {
+        FuncResult<TblCategoryEntity> rs = FuncResult.create(
+                HttpStatus.OK,
+                MessageFormat.format(Constants.GET_DATA_SUCCESS, TABLE_NAME),
+                categoryService.getByID(id)
+        );
+
+        return ResponseEntity.ok(rs);
+    }
+
     // get category after searching by category name
     @GetMapping(path = "/search")
     // [GET] localhost:8080/categories/search?keyword=break

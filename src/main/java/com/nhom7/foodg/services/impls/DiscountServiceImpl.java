@@ -3,9 +3,6 @@ package com.nhom7.foodg.services.impls;
 import com.nhom7.foodg.exceptions.DuplicateRecordException;
 import com.nhom7.foodg.exceptions.ModifyException;
 import com.nhom7.foodg.exceptions.NotFoundException;
-import com.nhom7.foodg.models.FuncResult;
-import com.nhom7.foodg.models.dto.TblDiscountDto;
-import com.nhom7.foodg.models.entities.TblCategoryEntity;
 import com.nhom7.foodg.models.entities.TblDiscountEntity;
 import com.nhom7.foodg.repositories.DiscountRepository;
 import com.nhom7.foodg.services.DiscountService;
@@ -13,10 +10,7 @@ import com.nhom7.foodg.shareds.Constants;
 import jakarta.transaction.Transactional;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.swing.*;
 import java.math.BigDecimal;
@@ -57,17 +51,19 @@ public class DiscountServiceImpl implements DiscountService {
 
     @Override
     public void insert(TblDiscountEntity newDiscount){
+        //Validate input
+        Constants.validateRequiredFields(newDiscount, "percentage","code", "minAmount", "startDate", "isActive", "maxDiscountPrice", "createdBy", "updatedBy");
+        Constants.validateIntegerFields(newDiscount, "percentage", "createdBy", "updatedBy", "deletedBy");
+        Constants.validateDecimalFields(newDiscount, 5, 2, "maxDiscountPrice");
+        Constants.validateDecimalFields(newDiscount, 6, 2,  "minAmount");
+        Constants.validateDateFields(newDiscount, "startDate", "endDate");
+        Constants.validateStringFields(newDiscount, "varchar(20)", 5, 20, "code");
+        Constants.validateBooleanFields(newDiscount, "isActive");
+
+
         String discountCode = newDiscount.getCode();
         try {
 
-            Constants.validateRequiredFields(newDiscount, "percentage","code", "minAmount", "startDate", "isActive", "maxDiscountPrice", "createdBy", "updatedBy");
-//            Constants.validateIntegerFields(newDiscount, "percentage", "createdBy", "updatedBy", "deletedBy");
-//            Constants.validateDecimalFields(newDiscount, 5, 2, "maxDiscountPrice");
-//            Constants.validateDecimalFields(newDiscount, 6, 2,  "minAmount");
-//            Constants.validateDateFields(newDiscount, "startDate", "endDate");
-//            Constants.validateEmailFields(newDiscount, "code");
-//            Constants.validateStringFields(newDiscount, "varchar(20)", 5, 20, "code");
-            Constants.validateBooleanFields(newDiscount, "isActive");
             if (discountRepository.existsByCode(discountCode)){
                 throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR, TABLE_NAME, discountCode));
             }
