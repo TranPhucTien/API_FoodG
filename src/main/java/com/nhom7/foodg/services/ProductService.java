@@ -12,6 +12,7 @@ import java.util.List;
 public interface ProductService {
     List<TblProductEntity> getAll();
     List<TblProductLogEntity> getEditHistoryByProductIdAndAction(String productId, String action);
+    public List<TblProductLogEntity> getAllEditAndDeleteHistory();
 
     List<TblProductEntity> getDeletedProducts();
 

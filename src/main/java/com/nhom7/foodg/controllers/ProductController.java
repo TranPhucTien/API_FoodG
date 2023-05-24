@@ -63,6 +63,18 @@ public class ProductController {
         return ResponseEntity.ok(rs);
     }
 
+    @GetMapping(path = "edit-history")
+    // [GET] localhost:8080/products/edit-history
+    public ResponseEntity<FuncResult<List<TblProductLogEntity>>> getEditHistory() {
+        FuncResult<List<TblProductLogEntity>> rs = FuncResult.create(
+                HttpStatus.OK,
+                MessageFormat.format(Constants.GET_DATA_SUCCESS, TABLE_NAME),
+                productService.getAllEditAndDeleteHistory()
+        );
+
+        return ResponseEntity.ok(rs);
+    }
+
     @GetMapping(path = "edit-history/{id}")
     // [GET] localhost:8080/products/edit-history/1
     public ResponseEntity<FuncResult<List<TblProductLogEntity>>> getEditHistoryByID(@PathVariable("id") String id) {
