@@ -15,7 +15,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Component;
 
-import java.sql.Date;
+
+import java.util.Date;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
