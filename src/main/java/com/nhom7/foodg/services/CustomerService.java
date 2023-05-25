@@ -5,6 +5,7 @@ import com.nhom7.foodg.models.entities.TblCustomerEntity;
 import com.nhom7.foodg.repositories.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,9 +28,11 @@ public interface CustomerService {
     void update(TblCustomerDto tblCustomerDto, String otp);
     //
     void softDelete(int id);
+//    @Scheduled(fixedDelay = 60 * 1000) // Xóa dữ liệu mỗi 24 giờ
+//    void cleanupExpiredData(TblCustomerEntity tblCustomerEntity);
 
+//    @Transactional
+//    public void cleanupExpiredOTP();
 
-
-    void clearOTP(TblCustomerEntity tblCustomerEntity);
 
 }

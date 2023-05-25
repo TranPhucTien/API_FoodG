@@ -12,6 +12,16 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.lang.reflect.Field;
+import java.text.MessageFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.lang.reflect.Field;
+import java.text.MessageFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 
 public class Constants {
@@ -26,6 +36,8 @@ public class Constants {
     public static final String MODIFY_DATA_FAIL_CATCH = "`{0}` không có thay đổi. Kiểm tra xem đúng type đầu vào chưa. ";
     public static final String DELETE_SUCCESS = "Xoá `{1}` thành công của bảng `{0}` rồi nhé! ";
     public static final String DELETE_FAIL_CATCH = "Thất bại khi xoá `{1}` của bảng `{0}`. ";
+    public static final String DUPLICATE_ERROR_EMAIL = "Email có địa chỉ `{1}` đã được đăng ký rồi. Vui lòng dùng Email khác để đăng ký! ";
+    public static final String NOT_FOUND_FIELDS = "không tồn tại trong CSDL đâu";
     public static final String DUPLICATE_ERROR = "Giá trị `{1}` đã tồn tại trong bảng `{0}` rồi. Nếu `{1}` xuất hiện trong thùng rác, hãy xoá hoặc khôi phục nó! ";
     public static final String  MISSING_FIELD_EXCEPTION = "Bạn nhập dữ liệu trường `{0}` còn thiếu, bạn hãy điền vào nhé! ";
     public static final String OUT_OF_RANGE_EXCEPTION = "Dữ liệu của trường `{0}` nằm ngoài phạm vi cho phép của `{1}`, bạn hãy nhập lại nhé!";
@@ -33,6 +45,17 @@ public class Constants {
 
     public static final String  DATA_INTEGRITY_VIOLATION_EXCEPTION = "Dữ liệu của trường `{0}` không đúng với kiểu dữ liệu `{1}` trong DATABASE cho phép, bạn hãy kiểm tra lại nhé!";
     public static final String REQUIRE_TYPE = "`{1}` phải là dạng `{0}`";
+    public static final String OTP_SUCCESS = "Otp đúng của {0}";
+    public static final String OTP_FAIL = "Otp sai của {0}";
+    public static final String SEND_EMAIL_SUCCESS = "Đã gửi OTP đến Email: {0}";
+    public static final long OTP_VALID_DURATION = 60 * 1000;
+    public static final String EXPIRED_OTP = "Mã OTP của bạn nhập đã hết hạn sau 60s khi OTP được gửi đi! Vui lòng gửi lại OTP mới!!";
+    public static final String  WAITING_TIME = "Bạn vui lòng chờ `60s` để gửi lại OTP nhé!!";
+
+
+
+
+
     // actions
     public static final String ACTION_CREATE = "CREATE";
     public static final String ACTION_UPDATE = "UPDATE";
@@ -56,24 +79,6 @@ public class Constants {
      public static Date getCurrentDay() {
         java.util.Date currentDate = new java.util.Date();
         return new Date(currentDate.getTime());
-    }
-
-
-
-    public static String hashPassword(String password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] bytes = md.digest(password.getBytes("UTF-8"));
-
-            StringBuilder sb = new StringBuilder();
-            for (byte b : bytes) {
-                sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
-            }
-
-            return sb.toString();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
 
@@ -151,18 +156,33 @@ public class Constants {
 //        }
 //    }
 
+
+
+
+
     public static void validateDateFields(Object obj, String... fields) throws InvalidDataException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+
         for (String field : fields) {
             try {
                 Field f = obj.getClass().getDeclaredField(field);
                 f.setAccessible(true);
                 Object input = f.get(obj);
+
                 if (input != null) {
                     String value = f.get(obj).toString();
                     if (value != null && !value.isEmpty()) {
-                        if (!GenericValidator.isDate(value, "yyyy-MM-dd", true)) {
-                            throw new InvalidDataException(MessageFormat.format(Constants.INVALID_DATA_EXCEPTION, field, "DATE"));
+                        try {
+                            // Kiểm tra định dạng ngày-giờ
+                            dateTimeFormatter.parse(value);
+                        } catch (DateTimeParseException e) {
+                            try {
+                                // Kiểm tra định dạng ngày-tháng-năm
+                                dateFormatter.parse(value);
+                            } catch (ParseException ex) {
+                                throw new InvalidDataException(MessageFormat.format(Constants.INVALID_DATA_EXCEPTION, field, "DATE"));
+                            }
                         }
                     }
                 }
@@ -171,6 +191,8 @@ public class Constants {
             }
         }
     }
+
+
 
     public static void validateStringFields(Object obj, String dataType,  int min, int max, String... fields) throws InvalidDataException {
         for (String field : fields) {

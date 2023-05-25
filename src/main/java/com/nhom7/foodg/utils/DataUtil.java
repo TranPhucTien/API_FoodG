@@ -1,5 +1,8 @@
 package com.nhom7.foodg.utils;
 
+import java.sql.Date;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Random;
 
 public class DataUtil {
@@ -15,5 +18,9 @@ public class DataUtil {
             optCode += otp[i];
         }
         return optCode;
+    }
+
+    public static java.util.Date convertLocalDateTimeToDate(LocalDateTime localDateTime) {
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 }

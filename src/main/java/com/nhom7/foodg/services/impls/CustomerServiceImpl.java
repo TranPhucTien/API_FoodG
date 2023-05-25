@@ -13,6 +13,7 @@ import com.nhom7.foodg.utils.Encode;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,7 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import net.bytebuddy.utility.RandomString;
-
+import javax.persistence.EntityManager;
 
 
 import java.util.Date;
@@ -34,9 +35,6 @@ import java.util.List;
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final String TABLE_NAME = "tbl_customer";
-
-
-
 
 
     public CustomerServiceImpl(CustomerRepository customerRepository) {
@@ -71,7 +69,7 @@ public class CustomerServiceImpl implements CustomerService {
         Constants.validateEmailFields(newCustomer, "email");
         Constants.validateStringFields(newCustomer, "nchar(50)", 0, 50, "email");
         Constants.validateStringFields(newCustomer, "nvarchar(100)", 0, 100, "fullName");
-        Constants.validateDateFields(newCustomer, "birthday", "otpExp");
+//        Constants.validateDateFields(newCustomer, "birthday", "otpExp");
         Constants.validateBooleanFields(newCustomer, "gender", "deleted");
         Constants.validateIntegerFields(newCustomer, "idProvince", "role");
 
@@ -81,11 +79,14 @@ public class CustomerServiceImpl implements CustomerService {
             if (customerRepository.existsByUsername(newCustomer.getUsername())){
                 throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR, TABLE_NAME, customerUsername));
             }
+            if (customerRepository.existsByEmail(newCustomer.getEmail())){
+                throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR_EMAIL, TABLE_NAME, newCustomer.getEmail()));
+            }
             Date currentDate = Constants.getCurrentDay();
             String OTP = DataUtil.generateTempPwd(6);
-
-            String password = Constants.hashPassword(newCustomer.getPassword());
-
+            Encode encode = new Encode();
+//            String password = Constants.hashPassword(newCustomer.getPassword());
+            String password = encode.Encrypt(newCustomer.getPassword());
             TblCustomerEntity tblCustomerEntity = TblCustomerEntity.create(
                     0,
                     customerUsername,
@@ -102,7 +103,8 @@ public class CustomerServiceImpl implements CustomerService {
                     newCustomer.getBirthday(),
                     newCustomer.getOtp(),
                     currentDate,
-                    newCustomer.getRole()
+                    newCustomer.getRole(),
+                    newCustomer.getStatus()
 
             );
             customerRepository.save(tblCustomerEntity);
@@ -122,7 +124,7 @@ public class CustomerServiceImpl implements CustomerService {
             Constants.validateEmailFields(newCustomer, "email");
             Constants.validateStringFields(newCustomer, "nchar(50)", 0, 50, "email");
             Constants.validateStringFields(newCustomer, "nvarchar(100)", 0, 100, "fullName");
-            Constants.validateDateFields(newCustomer, "birthday", "otpExp");
+//            Constants.validateDateFields(newCustomer, "birthday", "otpExp");
             Constants.validateBooleanFields(newCustomer, "gender");
             Constants.validateIntegerFields(newCustomer, "idProvince", "role");
 
@@ -132,12 +134,8 @@ public class CustomerServiceImpl implements CustomerService {
             try {
 
                 Date currentDate = Constants.getCurrentDay();
-
-//            String password = Constants.hashPassword(newCustomer.getPassword());
                 Encode encode = new Encode();
-
                 String password = encode.Encrypt(newCustomer.getPassword());
-                // Hash Otp khi nào làm xong thì dùng sau
                 String Otp = encode.Encrypt(otp);
                 TblCustomerEntity tblCustomerEntity = TblCustomerEntity.create(
                         0,
@@ -155,7 +153,8 @@ public class CustomerServiceImpl implements CustomerService {
                         newCustomer.getBirthday(),
                         otp,
                         currentDate,
-                        newCustomer.getRole()
+                        newCustomer.getRole(),
+                        newCustomer.getStatus()
                 );
                 customerRepository.save(tblCustomerEntity);
                 return true;
@@ -193,6 +192,7 @@ public class CustomerServiceImpl implements CustomerService {
                 customer.setOtp(tblCustomerEntity.getOtp());
                 customer.setOtpExp(tblCustomerEntity.getOtpExp());
                 customer.setRole(tblCustomerEntity.getRole());
+                customer.setStatus(tblCustomerEntity.getStatus());
 
                 customerRepository.save(customer);
             }
@@ -206,7 +206,7 @@ public class CustomerServiceImpl implements CustomerService {
 //            throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR, TABLE_NAME, tblCustomerDto.getUsername()));
 //        }
 //        if (!customerRepository.existsById(tblCustomerDto.getId())) {
-//            throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, tblCustomerDto.getId()));
+////            throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, tblCustomerDto.getId()));
 //        }
 
 
@@ -254,9 +254,5 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
-    public void clearOTP(TblCustomerEntity tblCustomerEntity) {
-        tblCustomerEntity.setOtp(null);
-        tblCustomerEntity.setOtpExp(null);
-        customerRepository.save(tblCustomerEntity);
-    }
+
 }
