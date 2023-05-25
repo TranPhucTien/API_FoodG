@@ -1,11 +1,11 @@
 package com.nhom7.foodg.controllers;
 
 import com.nhom7.foodg.models.FuncResult;
-import com.nhom7.foodg.models.dto.TblCategoryDto;
 import com.nhom7.foodg.models.entities.TblCategoryEntity;
 import com.nhom7.foodg.models.entities.TblProductEntity;
 import com.nhom7.foodg.services.CategoryService;
 import com.nhom7.foodg.shareds.Constants;
+import com.nhom7.foodg.utils.FuzzySearch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,14 +40,29 @@ public class CategoryController {
         return ResponseEntity.ok(rs);
     }
 
+    // Get all category
+    @GetMapping(path = "detail/{id}")
+    // [GET] localhost:8080/categories/detail/1
+    public ResponseEntity<FuncResult<TblCategoryEntity>> getById(@PathVariable(name = "id") int id) {
+        FuncResult<TblCategoryEntity> rs = FuncResult.create(
+                HttpStatus.OK,
+                MessageFormat.format(Constants.GET_DATA_SUCCESS, TABLE_NAME),
+                categoryService.getByID(id)
+        );
+
+        return ResponseEntity.ok(rs);
+    }
+
     // get category after searching by category name
     @GetMapping(path = "/search")
     // [GET] localhost:8080/categories/search?keyword=break
     public ResponseEntity<FuncResult<List<TblCategoryEntity>>> search(@RequestParam(name = "keyword", required = false, defaultValue = "") String name) {
+        FuzzySearch<TblCategoryEntity> fuzzySearch = new FuzzySearch<>(categoryService.getAll());
+
         FuncResult<List<TblCategoryEntity>> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.SEARCH_SUCCESS, TABLE_NAME, name),
-                categoryService.search(name)
+                fuzzySearch.FuzzySearchByName(name)
         );
 
         return ResponseEntity.ok(rs);

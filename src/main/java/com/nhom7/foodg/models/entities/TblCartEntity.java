@@ -1,11 +1,16 @@
 package com.nhom7.foodg.models.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.sql.Date;
+
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "tbl_cart", schema = "dbo", catalog = "foodg")
 public class TblCartEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,65 +32,4 @@ public class TblCartEntity {
     @Basic
     @Column(name = "created_at")
     private Date createdAt;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getProductId() {
-        return productId;
-    }
-
-    public void setProductId(String productId) {
-        this.productId = productId;
-    }
-
-    public Integer getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(Integer customerId) {
-        this.customerId = customerId;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TblCartEntity that = (TblCartEntity) o;
-        return id == that.id && Objects.equals(productId, that.productId) && Objects.equals(customerId, that.customerId) && Objects.equals(quantity, that.quantity) && Objects.equals(price, that.price) && Objects.equals(createdAt, that.createdAt);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, productId, customerId, quantity, price, createdAt);
-    }
 }

@@ -6,16 +6,18 @@ import com.nhom7.foodg.exceptions.ModifyException;
 import com.nhom7.foodg.exceptions.NotFoundException;
 import com.nhom7.foodg.models.entities.TblProductEntity;
 import com.nhom7.foodg.models.entities.TblProductLogEntity;
+import com.nhom7.foodg.repositories.AdminRepository;
 import com.nhom7.foodg.repositories.LogProductRepository;
 import com.nhom7.foodg.repositories.ProductRepository;
 import com.nhom7.foodg.services.ProductService;
 import com.nhom7.foodg.shareds.Constants;
+import com.nhom7.foodg.utils.VariableHandler;
 import jakarta.transaction.Transactional;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
-import java.sql.Date;
+import java.util.Date;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +28,14 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final String TABLE_NAME = "tbl_product";
     private final LogProductRepository logProductRepository;
+    private final AdminRepository adminRepository;
 
     public ProductServiceImpl(ProductRepository productRepository,
-                              LogProductRepository logProductRepository) {
+                              LogProductRepository logProductRepository,
+                              AdminRepository adminRepository) {
         this.productRepository = productRepository;
         this.logProductRepository = logProductRepository;
+        this.adminRepository = adminRepository;
     }
 
     @Override
@@ -41,6 +46,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<TblProductLogEntity> getEditHistoryByProductIdAndAction(String productId, String action) {
         return logProductRepository.findByProductIdAndAction(productId, action);
+    }
+
+    @Override
+    public List<TblProductLogEntity> getAllEditAndDeleteHistory() {
+        return logProductRepository.findAll();
     }
 
     @Override
@@ -114,7 +124,7 @@ public class ProductServiceImpl implements ProductService {
                     dataJson,
                     Constants.getCurrentDay()
             );
-
+            System.out.println(tblProductEntity);
             productRepository.save(tblProductEntity);
             logProductRepository.save(log);
 
@@ -126,7 +136,8 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Override
     public void update(TblProductEntity tblProductEntity) {
-        if (productRepository.getProductByID(tblProductEntity.getId()) == null) {
+        TblProductEntity currentProduct = productRepository.getProductByID(tblProductEntity.getId());
+        if (currentProduct == null) {
             throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, tblProductEntity.getId()));
         }
 
@@ -136,27 +147,21 @@ public class ProductServiceImpl implements ProductService {
             if (product != null) {
                 Gson gson = new Gson();
                 String oldDataJson = gson.toJson((product));
-                //----------------------------------------------------------------------
-                //----------------------------------------------------------------------
-                // Lưu ý: Thay đổi đoạn code này khi đã thêm chức năng đăng kí đăng nhập
-                int defaultAdminID = 1;
-                //----------------------------------------------------------------------
-                //----------------------------------------------------------------------
 
-                product.setImg(tblProductEntity.getImg());
-                product.setName(tblProductEntity.getName());
-                product.setDsc(tblProductEntity.getDsc());
-                product.setPrice(tblProductEntity.getPrice());
-                product.setCountry(tblProductEntity.getCountry());
-                product.setIdCategory(tblProductEntity.getIdCategory());
+                product.setImg(VariableHandler.isNullOrEmpty(tblProductEntity.getImg()) ? currentProduct.getImg() : tblProductEntity.getImg());
+                product.setName(VariableHandler.isNullOrEmpty(tblProductEntity.getName()) ? currentProduct.getName() : tblProductEntity.getName());
+                product.setDsc(VariableHandler.isNullOrEmpty(tblProductEntity.getDsc()) ? currentProduct.getDsc() : tblProductEntity.getDsc());
+                product.setPrice(VariableHandler.isNullOrEmpty(tblProductEntity.getPrice()) ? currentProduct.getPrice() : tblProductEntity.getPrice());
+                product.setCountry(VariableHandler.isNullOrEmpty(tblProductEntity.getCountry()) ? currentProduct.getCountry() : tblProductEntity.getCountry());
+                product.setIdCategory(VariableHandler.isNullOrEmpty(tblProductEntity.getIdCategory()) ? currentProduct.getIdCategory() : tblProductEntity.getIdCategory());
                 product.setUpdatedAt(Constants.getCurrentDay());
-                product.setUpdatedBy(defaultAdminID);
+                product.setUpdatedBy(tblProductEntity.getUpdatedBy());
 
                 String newDataJson = gson.toJson((product));
 
                 TblProductLogEntity log = TblProductLogEntity.create(
                         0,
-                        defaultAdminID,
+                        tblProductEntity.getUpdatedBy(),
                         Constants.ACTION_UPDATE,
                         product.getId(),
                         oldDataJson,
@@ -184,28 +189,25 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
-    public void softDelete(String id) {
-        if (!productRepository.existsById(id)) {
-            throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, id));
+    public void softDelete(String productId, int adminId) {
+        if (!productRepository.existsById(productId)) {
+            throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, productId));
+        }
+
+        if (!adminRepository.existsById(adminId)) {
+            throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, adminId));
         }
 
         try {
-            productRepository.deleteById(id);
-            TblProductEntity product = productRepository.getProductByID(id);
+            productRepository.deleteById(productId);
+            TblProductEntity product = productRepository.getProductByID(productId);
             if (product != null) {
                 Gson gson = new Gson();
                 String dataJson = gson.toJson((product));
 
-                //----------------------------------------------------------------------
-                //----------------------------------------------------------------------
-                // Lưu ý: Thay đổi đoạn code này khi đã thêm chức năng đăng kí đăng nhập
-                int defaultAdminID = 1;
-                //----------------------------------------------------------------------
-                //----------------------------------------------------------------------
-
                 TblProductLogEntity log = TblProductLogEntity.create(
                         0,
-                        defaultAdminID,
+                        adminId,
                         Constants.ACTION_DELETE,
                         product.getId(),
                         dataJson,
@@ -217,36 +219,29 @@ public class ProductServiceImpl implements ProductService {
 
                 product.setDeleted(true);
                 product.setDeletedAt(Constants.getCurrentDay());
-                product.setDeletedBy(defaultAdminID);
+                product.setDeletedBy(adminId);
                 productRepository.save(product);
             }
         } catch (DataAccessException ex) {
-            throw new ModifyException(MessageFormat.format(Constants.MODIFY_DATA_FAIL_CATCH, TABLE_NAME, id) + ex.getMessage());
+            throw new ModifyException(MessageFormat.format(Constants.MODIFY_DATA_FAIL_CATCH, TABLE_NAME, productId) + ex.getMessage());
         }
     }
 
     @Transactional
     @Override
-    public void restore(String id) {
-        if (productRepository.getProductByID(id) == null) {
-            throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, id));
+    public void restore(String productId, int adminId) {
+        if (productRepository.getProductByID(productId) == null) {
+            throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, productId));
         }
 
-        TblProductEntity product = productRepository.findById(id).orElse(null);
+        TblProductEntity product = productRepository.findById(productId).orElse(null);
         if (product != null) {
             Gson gson = new Gson();
             String dataJson = gson.toJson((product));
 
-            //----------------------------------------------------------------------
-            //----------------------------------------------------------------------
-            // Lưu ý: Thay đổi đoạn code này khi đã thêm chức năng đăng kí đăng nhập
-            int defaultAdminID = 1;
-            //----------------------------------------------------------------------
-            //----------------------------------------------------------------------
-
             TblProductLogEntity log = TblProductLogEntity.create(
                     0,
-                    defaultAdminID,
+                    adminId,
                     Constants.ACTION_RESTORE,
                     product.getId(),
                     dataJson,

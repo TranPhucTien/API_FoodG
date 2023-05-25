@@ -7,7 +7,7 @@ package com.nhom7.foodg.models.dto;
         import lombok.*;
 
         import java.math.BigDecimal;
-        import java.sql.Date;
+        import java.util.Date;
 
 @Data
 @NoArgsConstructor

@@ -1,10 +1,14 @@
 package com.nhom7.foodg.models.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "tbl_province", schema = "dbo", catalog = "foodg")
 public class TblProvinceEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,49 +24,4 @@ public class TblProvinceEntity {
     @Basic
     @Column(name = "city")
     private String city;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getWard() {
-        return ward;
-    }
-
-    public void setWard(String ward) {
-        this.ward = ward;
-    }
-
-    public String getDistrict() {
-        return district;
-    }
-
-    public void setDistrict(String district) {
-        this.district = district;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TblProvinceEntity that = (TblProvinceEntity) o;
-        return id == that.id && Objects.equals(ward, that.ward) && Objects.equals(district, that.district) && Objects.equals(city, that.city);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, ward, district, city);
-    }
 }

@@ -15,7 +15,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Component;
 
-import java.sql.Date;
+
+import java.util.Date;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,13 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<TblCategoryEntity> getAll() {
         return categoryRepository.findAll();
+    }
+
+    public TblCategoryEntity getById(int id) {
+        if (!categoryRepository.existsById(id)) {
+            throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, id));
+        }
+        return categoryRepository.findById(id).orElse(null);
     }
 
     // Get all product of category by category name
