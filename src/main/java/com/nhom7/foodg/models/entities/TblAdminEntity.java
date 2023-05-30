@@ -234,11 +234,14 @@ public class TblAdminEntity {
         }
 
         long currentTimeInMillis = System.currentTimeMillis();
-        long otpRequestedTimeInMillis = this.otpExp.getTime();
-
-        if (otpRequestedTimeInMillis + Constants.OTP_VALID_DURATION > currentTimeInMillis) {
-            return false;
+        if (this.getOtpExp() != null) {
+            long otpRequestedTimeInMillis = this.otpExp.getTime();
+            if (otpRequestedTimeInMillis + Constants.OTP_VALID_DURATION > currentTimeInMillis) {
+                return false;
+            }
         }
+
+
         return true;
     }
 }
