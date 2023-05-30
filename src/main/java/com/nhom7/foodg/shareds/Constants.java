@@ -39,7 +39,7 @@ public class Constants {
     public static final String DUPLICATE_ERROR_EMAIL = "Email có địa chỉ `{1}` đã được đăng ký rồi. Vui lòng dùng Email khác để đăng ký! ";
     public static final String NOT_FOUND_FIELDS = "không tồn tại trong CSDL đâu";
     public static final String DUPLICATE_ERROR = "Giá trị `{1}` đã tồn tại trong bảng `{0}` rồi. Nếu `{1}` xuất hiện trong thùng rác, hãy xoá hoặc khôi phục nó! ";
-    public static final String  MISSING_FIELD_EXCEPTION = "Bạn nhập dữ liệu trường `{0}` còn thiếu, bạn hãy điền vào nhé! ";
+    public static final String  MISSING_FIELD_EXCEPTION = "Trường `{0}` không được để trống, bạn hãy điền vào nhé! ";
     public static final String OUT_OF_RANGE_EXCEPTION = "Dữ liệu của trường `{0}` nằm ngoài phạm vi cho phép của `{1}`, bạn hãy nhập lại nhé!";
     public static final String INVALID_DATA_EXCEPTION = "Dữ liệu của trường `{0}` không phải kiểu `{1}`, bạn hãy nhập lại nhé!";
 
@@ -48,9 +48,9 @@ public class Constants {
     public static final String OTP_SUCCESS = "Otp đúng của {0}";
     public static final String OTP_FAIL = "Otp sai của {0}";
     public static final String SEND_EMAIL_SUCCESS = "Đã gửi OTP đến Email: {0}";
-    public static final long OTP_VALID_DURATION = 60 * 1000;
-    public static final String EXPIRED_OTP = "Mã OTP của bạn nhập đã hết hạn sau 60s khi OTP được gửi đi! Vui lòng gửi lại OTP mới!!";
-    public static final String  WAITING_TIME = "Bạn vui lòng chờ `60s` để gửi lại OTP nhé!!";
+    public static final long OTP_VALID_DURATION = 5 * 60 * 1000;
+    public static final String EXPIRED_OTP = "Mã OTP của bạn nhập đã hết hạn sau `5 phút` khi OTP được gửi đi! Vui lòng gửi lại OTP mới!!";
+    public static final String  WAITING_TIME = "Bạn vui lòng chờ `5 phút` để gửi lại OTP nhé!!";
 
 
 

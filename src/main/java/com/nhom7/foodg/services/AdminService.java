@@ -9,12 +9,13 @@ import java.util.List;
 
 @Service
 @Transactional
-public interface CustomerService {
-    List<TblCustomerEntity> getAll();
-    List<TblCustomerEntity> search(String keyword);
-    void insert(TblCustomerEntity newCustomer);
-    void update(TblCustomerEntity tblCustomerEntity);
+public interface AdminService {
+    List<TblAdminEntity> getAll();
+    List<TblAdminEntity> search(String keyword);
+    void insert(TblAdminEntity newAdmin);
+    void update(TblAdminEntity tblAdminEntity);
     void softDelete(int id);
-    Boolean create(TblCustomerEntity tblCustomerEntity);
+
+    Boolean create(TblAdminEntity tblAdminEntity);
 
 }

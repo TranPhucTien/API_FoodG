@@ -63,7 +63,7 @@ public class DiscountServiceImpl implements DiscountService {
 //        Constants.validateIntegerFields(newDiscount, "percentage", "createdBy", "updatedBy", "deletedBy");
 //        Constants.validateDecimalFields(newDiscount, 5, 2, "maxDiscountPrice");
 //        Constants.validateDecimalFields(newDiscount, 6, 2,  "minAmount");
-////        Constants.validateDateFields(newDiscount, "startDate", "endDate");
+//        Constants.validateDateFields(newDiscount, "startDate", "endDate");
 //        Constants.validateStringFields(newDiscount, "varchar(20)", 5, 20, "code");
 //        Constants.validateBooleanFields(newDiscount, "isActive");
 
