@@ -16,9 +16,5 @@ public class TblDiscountDto {
     private Date startDate;
     private Date endDate;
     private Boolean isActive;
-    private Date createdAt;
-    private Date updatedAt;
-    private Date deletedAt;
-
 
 }

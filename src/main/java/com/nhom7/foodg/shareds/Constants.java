@@ -36,7 +36,9 @@ public class Constants {
     public static final String MODIFY_DATA_FAIL_CATCH = "`{0}` không có thay đổi. Kiểm tra xem đúng type đầu vào chưa. ";
     public static final String DELETE_SUCCESS = "Xoá `{1}` thành công của bảng `{0}` rồi nhé! ";
     public static final String DELETE_FAIL_CATCH = "Thất bại khi xoá `{1}` của bảng `{0}`. ";
-    public static final String DUPLICATE_ERROR_EMAIL = "Email có địa chỉ `{1}` đã được đăng ký rồi. Vui lòng dùng Email khác để đăng ký! ";
+    public static final String DUPLICATE_ERROR_EMAIL = "Email có địa chỉ `{0}` đã được đăng ký rồi. Vui lòng dùng Email khác để đăng ký! ";
+    public static final String DUPLICATE_ERROR_USERNAME = "Username có giá trị `{0}` đã được đăng ký rồi. Vui lòng dùng Username khác để đăng ký! ";
+
     public static final String NOT_FOUND_FIELDS = "không tồn tại trong CSDL đâu";
     public static final String DUPLICATE_ERROR = "Giá trị `{1}` đã tồn tại trong bảng `{0}` rồi. Nếu `{1}` xuất hiện trong thùng rác, hãy xoá hoặc khôi phục nó! ";
     public static final String  MISSING_FIELD_EXCEPTION = "Trường `{0}` không được để trống, bạn hãy điền vào nhé! ";
@@ -133,21 +135,24 @@ public class Constants {
     }
 
 //    public static void validateDateFields(Object obj, String... fields) throws InvalidDataException {
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+//
 //        for (String field : fields) {
 //            try {
 //                Field f = obj.getClass().getDeclaredField(field);
 //                f.setAccessible(true);
-//                String value = f.get(obj).toString();
-//                if(value != null && !value.isEmpty()) {
-//                    try {
-//                        if(value.matches("\\d{4}-\\d{2}-\\d{2}")) {
-//                            Date date = new Date(sdf.parse(value).getTime());
-//                        } else {
-//                            throw new InvalidDataException(MessageFormat.format(Constants.INVALID_DATA_EXCEPTION, field, "DATE"));
-//                        }
-//                    } catch (ParseException e) {
-//                        throw new InvalidDataException(MessageFormat.format(Constants.INVALID_DATA_EXCEPTION, field, "DATE"));
+//                Object input = f.get(obj);
+//
+//                if (input != null) {
+//                    String value = f.get(obj).toString();
+//                    if (value != null && !value.isEmpty()) {
+//                            try {
+//                                // Kiểm tra định dạng ngày-tháng-năm
+//                                dateFormatter.parse(value);
+//                            } catch (ParseException ex) {
+//                                throw new InvalidDataException(MessageFormat.format(Constants.INVALID_DATA_EXCEPTION, field, "DATE"));
+//                            }
 //                    }
 //                }
 //            } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -156,14 +161,8 @@ public class Constants {
 //        }
 //    }
 
-
-
-
-
     public static void validateDateFields(Object obj, String... fields) throws InvalidDataException {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
-
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         for (String field : fields) {
             try {
                 Field f = obj.getClass().getDeclaredField(field);
@@ -171,26 +170,23 @@ public class Constants {
                 Object input = f.get(obj);
 
                 if (input != null) {
-                    String value = f.get(obj).toString();
-                    if (value != null && !value.isEmpty()) {
-                        try {
-                            // Kiểm tra định dạng ngày-giờ
-                            dateTimeFormatter.parse(value);
-                        } catch (DateTimeParseException e) {
-                            try {
-                                // Kiểm tra định dạng ngày-tháng-năm
-                                dateFormatter.parse(value);
-                            } catch (ParseException ex) {
-                                throw new InvalidDataException(MessageFormat.format(Constants.INVALID_DATA_EXCEPTION, field, "DATE"));
-                            }
+                    String value = f.get(obj).toString().trim();
+                    if(value != null  || value != "") {
+                        System.out.println("AAAAAAA");
+                        if(GenericValidator.isDate(value, "yyyy-MM-dd", true)){
+                            throw new InvalidDataException(MessageFormat.format(Constants.INVALID_DATA_EXCEPTION, field, "DATE"));
                         }
                     }
                 }
+
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 throw new RuntimeException("Invalid field: " + field, e);
             }
         }
     }
+
+
+
 
 
 
@@ -217,13 +213,13 @@ public class Constants {
                 f.setAccessible(true);
                 Object input = f.get(obj);
                 if (input != null) {
-                    Boolean value = (Boolean) f.get(obj);
-                    if (value != false && value != true) {
+                    String value = (String) f.get(obj);
+                    if (value != "false" && value != "true") {
                         throw new InvalidDataException(MessageFormat.format(Constants.INVALID_DATA_EXCEPTION, field, "Boolean"));
                     }
                 }
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                throw new RuntimeException("Invalid field: " + field, e);
+            } catch (Exception ex) {
+                throw new RuntimeException("Invalid field: " + field, ex);
             }
         }
     }

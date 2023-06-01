@@ -52,16 +52,14 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void insert(TblAdminEntity newAdmin){
 
-        //Validate input
-//        Constants.validateRequiredFields(newAdmin, "username", "password", "fullName");
-//        Constants.validateStringFields(newAdmin, "UserName 6-20 Ký tự", 6, 20, "username");
-//        Constants.validateStringFields(newAdmin, "password 8-20 ký tự", 8, 20, "password");
-//        Constants.validateEmailFields(newAdmin, "email");
-//        Constants.validateStringFields(newAdmin, "nchar(50)", 0, 50, "email");
-//        Constants.validateStringFields(newAdmin, "nvarchar(100)", 0, 100, "fullName");
-////        Constants.validateDateFields(newAdmin, "birthday", "otpExp");
-//        Constants.validateBooleanFields(newAdmin, "gender", "deleted");
-//        Constants.validateIntegerFields(newAdmin, "idProvince", "role");
+        // Validate input
+        Constants.validateRequiredFields(newAdmin, "username", "password", "fullName");
+        Constants.validateStringFields(newAdmin, "UserName 6-20 Ký tự", 6, 20, "username");
+        Constants.validateStringFields(newAdmin, "password 8-20 ký tự", 8, 20, "password");
+        Constants.validateEmailFields(newAdmin, "email");
+        Constants.validateStringFields(newAdmin, "nchar(50)", 0, 50, "email");
+        Constants.validateStringFields(newAdmin, "nvarchar(100)", 0, 100, "fullName");
+        Constants.validateIntegerFields(newAdmin, "idProvince", "role");
 
 
 

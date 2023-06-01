@@ -43,8 +43,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         Constants.validateIntegerFields(newInvoice, "customerId", "invoiceNumber", "idDiscount","status");
         Constants.validateDecimalFields(newInvoice, 5,2, "totalAmount", "grandTotal");
         Constants.validateDecimalFields(newInvoice, 2, 1, "tax");
-//        Constants.validateDateFields(newInvoice, "dueDate", "paidDate", "invoiceDate");
-        Constants.validateBooleanFields(newInvoice, "paid");
+        Constants.validateDateFields(newInvoice, "dueDate", "paidDate", "invoiceDate");
 
 
         int id = newInvoice.getId();

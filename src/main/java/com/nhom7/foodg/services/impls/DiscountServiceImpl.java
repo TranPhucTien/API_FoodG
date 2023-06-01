@@ -59,13 +59,12 @@ public class DiscountServiceImpl implements DiscountService {
     @Override
     public void insert(TblDiscountEntity newDiscount){
         //Validate input
-//        Constants.validateRequiredFields(newDiscount, "percentage","code", "minAmount", "startDate", "isActive", "maxDiscountPrice", "createdBy", "updatedBy");
-//        Constants.validateIntegerFields(newDiscount, "percentage", "createdBy", "updatedBy", "deletedBy");
-//        Constants.validateDecimalFields(newDiscount, 5, 2, "maxDiscountPrice");
-//        Constants.validateDecimalFields(newDiscount, 6, 2,  "minAmount");
-//        Constants.validateDateFields(newDiscount, "startDate", "endDate");
-//        Constants.validateStringFields(newDiscount, "varchar(20)", 5, 20, "code");
-//        Constants.validateBooleanFields(newDiscount, "isActive");
+        Constants.validateRequiredFields(newDiscount, "percentage","code", "minAmount", "startDate","isActive",  "maxDiscountPrice", "createdBy", "updatedBy");
+        Constants.validateIntegerFields(newDiscount, "percentage", "createdBy", "updatedBy", "deletedBy");
+        Constants.validateDecimalFields(newDiscount, 5, 2, "maxDiscountPrice");
+        Constants.validateDecimalFields(newDiscount, 6, 2,  "minAmount");
+        Constants.validateDateFields(newDiscount, "startDate", "endDate");
+        Constants.validateStringFields(newDiscount, "varchar(20)", 5, 20, "code");
 
 
         String discountCode = newDiscount.getCode();

@@ -94,6 +94,7 @@ public class CustomerController {
     }
 
     @PostMapping(path = "/register")
+    // http://localhost:8080/customers/register
     public ResponseEntity<FuncResult<TblCustomerDto>> create(@RequestBody TblCustomerDto tblCustomerDto){
         // check có username chưa
         String Otp = DataUtil.generateTempPwd(6);
@@ -102,20 +103,31 @@ public class CustomerController {
             /* username đã tồn tại trong DB rồi thì update Opt mới */
 
             TblCustomerEntity customer = customerRepository.findFirstByUsername(userName);
-            /* Giới hạn thời gian gửi lại OTP */
-            if (customer.isOTPRequired()){
-                customer.setOtp(Otp);
-                customer.setOtpExp(Constants.getCurrentDay());
-                customerRepository.save(customer);
-                customerService.create(customer);
-            }else {
+            /* Chỉ gửi lại otp đăng ký khi tài khoản chưa được kích hoạt  */
+            if (customer.getStatus() == false){
+                /* Giới hạn thời gian gửi lại OTP */
+                if (customer.isOTPRequired()){
+                    customer.setOtp(Otp);
+                    customer.setOtpExp(Constants.getCurrentDay());
+                    customerRepository.save(customer);
+                    customerService.create(customer);
+                }else {
+                    FuncResult<TblCustomerDto> rs = FuncResult.create(
+                            HttpStatus.BAD_REQUEST,
+                            Constants.WAITING_TIME,
+                            null
+                    );
+                    return ResponseEntity.badRequest().body(rs);
+                }
+            } else {
                 FuncResult<TblCustomerDto> rs = FuncResult.create(
                         HttpStatus.BAD_REQUEST,
-                        Constants.WAITING_TIME,
+                        MessageFormat.format(Constants.DUPLICATE_ERROR_USERNAME, customer.getUsername()),
                         null
                 );
                 return ResponseEntity.badRequest().body(rs);
             }
+
         } else {
             /*Chưa tồn tại trong DB thì tạo mới */
             TblCustomerEntity tblCustomerEntity = TblCustomerEntity.create(
@@ -127,7 +139,7 @@ public class CustomerController {
                     tblCustomerDto.getGender(),
                     tblCustomerDto.getAvatar(),
                     tblCustomerDto.getIdProvince(),
-                    null,
+                    Constants.getCurrentDay(),
                     null,
                     null,
                     false,
@@ -149,7 +161,7 @@ public class CustomerController {
     }
 
     @PutMapping(path = "/checkotp")
-    // http://localhost:8080/client/checkotp?otp=263157
+    // http://localhost:8080/customers/checkotp?otp=263157
     public ResponseEntity<FuncResult<TblCustomerDto>> check(@RequestBody TblCustomerEntity tblCustomerEntity,
                                                          @RequestParam(name = "otp", required = false, defaultValue = "") String otpInput){
         if (tblCustomerEntity.getUsername() != null) {
@@ -176,7 +188,7 @@ public class CustomerController {
                                 MessageFormat.format(Constants.OTP_FAIL, "Email bạn nhận được"),
                                 null
                         );
-                        return ResponseEntity.ok(rs);
+                        return ResponseEntity.badRequest().body(rs);
                     }
                 } else {
                     FuncResult<TblCustomerDto> rs = FuncResult.create(
@@ -194,6 +206,10 @@ public class CustomerController {
 
         }
         if (tblCustomerEntity.getEmail() != null && tblCustomerEntity.getPassword() != null){
+            // Valid input
+            Constants.validateEmailFields(tblCustomerEntity, "email");
+            Constants.validateStringFields(tblCustomerEntity, "password", 8, 20, "password");
+
             try {
                 TblCustomerEntity customer = customerRepository.findFirstByEmail(tblCustomerEntity.getEmail());
                 /* Kiểm tra xem OTP còn hạn sử dụng không */
@@ -218,7 +234,7 @@ public class CustomerController {
                                 MessageFormat.format(Constants.OTP_FAIL, "Email bạn nhận được"),
                                 null
                         );
-                        return ResponseEntity.ok(rs);
+                        return ResponseEntity.badRequest().body(rs);
                     }
                 }else {
                     FuncResult<TblCustomerDto> rs = FuncResult.create(
@@ -242,7 +258,12 @@ public class CustomerController {
     }
 
     @PatchMapping (path = "/forgetPassword")
+    // http://localhost:8080/customers/forgetPassword
     public ResponseEntity<FuncResult<TblCustomerDto>> forgetPassword(@RequestBody TblCustomerEntity tblCustomerEntity) {
+        // valid input
+        Constants.validateRequiredFields(tblCustomerEntity, "email");
+        Constants.validateEmailFields(tblCustomerEntity, "email");
+
         TblCustomerEntity customer = customerRepository.findFirstByEmail(tblCustomerEntity.getEmail());
         String Otp = DataUtil.generateTempPwd(6);
 

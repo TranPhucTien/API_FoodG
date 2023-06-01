@@ -78,6 +78,7 @@ public class ProductServiceImpl implements ProductService {
         Constants.validateIntegerFields(newProduct, "idCategory");
         Constants.validateStringFields(newProduct, "nvarchar(100)", 0, 100, "country");
         Constants.validateStringFields(newProduct, "nvarchar(200)", 0, 200, "name");
+        Constants.validateIntegerFields(newProduct, "createdBy", "updatedBy", "deletedBy");
 
 
         String newProductName = newProduct.getName();

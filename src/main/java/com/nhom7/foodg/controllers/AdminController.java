@@ -33,6 +33,7 @@ public class AdminController {
     }
 
     @PostMapping(path = "/register")
+    // http://localhost:8080/admins/register
     public ResponseEntity<FuncResult<TblAdminDto>> create(@RequestBody TblAdminDto tblAdminDto){
         // check có username chưa
         String Otp = DataUtil.generateTempPwd(6);
@@ -88,7 +89,7 @@ public class AdminController {
     }
 
     @PutMapping(path = "/checkotp")
-    // http://localhost:8080/client/checkotp?otp=263157
+    // http://localhost:8080/admins/checkotp?otp=263157
     public ResponseEntity<FuncResult<TblAdminDto>> check(@RequestBody TblAdminEntity tblAdminEntity,
                                                             @RequestParam(name = "otp", required = false, defaultValue = "") String otpInput){
         if (tblAdminEntity.getUsername() != null) {
@@ -181,6 +182,7 @@ public class AdminController {
     }
 
     @PatchMapping (path = "/forgetPassword")
+    // http://localhost:8080/admins/forgetPassword
     public ResponseEntity<FuncResult<TblAdminDto>> forgetPassword(@RequestBody TblAdminEntity tblAdminEntity) {
         TblAdminEntity admin = adminRepository.findFirstByEmail(tblAdminEntity.getEmail());
         String Otp = DataUtil.generateTempPwd(6);
