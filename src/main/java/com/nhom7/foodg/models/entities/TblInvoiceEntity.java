@@ -3,13 +3,16 @@ package com.nhom7.foodg.models.entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.sql.Date;
-import java.util.Objects;
+import java.util.Date;
 
 @Entity
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor(staticName = "create")
 @Table(name = "tbl_invoice", schema = "dbo", catalog = "foodg")
@@ -61,136 +64,4 @@ public class TblInvoiceEntity {
     @Basic
     @Column(name = "paid_date")
     private Date paidDate;
-
-
-
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
-    }
-
-    public int getInvoiceNumber() {
-        return invoiceNumber;
-    }
-
-    public void setInvoiceNumber(int invoiceNumber) {
-        this.invoiceNumber = invoiceNumber;
-    }
-
-    public Date getInvoiceDate() {
-        return invoiceDate;
-    }
-
-    public void setInvoiceDate(Date invoiceDate) {
-        this.invoiceDate = invoiceDate;
-    }
-
-    public BigDecimal getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(BigDecimal totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-
-    public BigDecimal getTax() {
-        return tax;
-    }
-
-    public void setTax(BigDecimal tax) {
-        this.tax = tax;
-    }
-
-    public Integer getIdDiscount() {
-        return idDiscount;
-    }
-
-    public void setIdDiscount(Integer idDiscount) {
-        this.idDiscount = idDiscount;
-    }
-
-    public BigDecimal getGrandTotal() {
-        return grandTotal;
-    }
-
-    public void setGrandTotal(BigDecimal grandTotal) {
-        this.grandTotal = grandTotal;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    public Long getIdOnePayResponse() {
-        return idOnePayResponse;
-    }
-
-    public void setIdOnePayResponse(Long idOnePayResponse) {
-        this.idOnePayResponse = idOnePayResponse;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Date getDueDate() {
-        return dueDate;
-    }
-
-    public void setDueDate(Date dueDate) {
-        this.dueDate = dueDate;
-    }
-    public Boolean getPaid() {return paid;}
-
-    public void setPaid(boolean paid) {
-        this.paid = paid;
-    }
-    public Date getPaidDate() {
-        return paidDate;
-    }
-
-    public void setPaidDate(Date paidDate) {
-        this.paidDate = paidDate;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TblInvoiceEntity that = (TblInvoiceEntity) o;
-        return id == that.id && customerId == that.customerId && invoiceNumber == that.invoiceNumber && idDiscount == that.idDiscount && status == that.status && Objects.equals(invoiceDate, that.invoiceDate) && Objects.equals(totalAmount, that.totalAmount) && Objects.equals(tax, that.tax) && Objects.equals(grandTotal, that.grandTotal) && Objects.equals(idOnePayResponse, that.idOnePayResponse) && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt) && Objects.equals(dueDate, that.dueDate);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, customerId, invoiceNumber, invoiceDate, totalAmount, tax, idDiscount, grandTotal, status, idOnePayResponse, createdAt, updatedAt, dueDate);
-    }
 }
