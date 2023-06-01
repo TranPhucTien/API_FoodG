@@ -15,14 +15,12 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import java.sql.Date;
 import java.text.MessageFormat;
 import java.util.List;
 
 @Component
 public  class LineServiceImpl implements LineService {
-
-
 
     private final LineRepository lineRepository;
     private final String TABLE_NAME = "tbl_line";
@@ -40,14 +38,6 @@ public  class LineServiceImpl implements LineService {
 
     @Override
     public void insert(TblLineDto newLine) {
-        //Validate input
-        Constants.validateRequiredFields(newLine, "idInvoice", "idProduct", "quantity", "price", "unitPrice", "total");
-        Constants.validateIntegerFields(newLine, "idInvoice", "quantity", "idDiscount");
-        Constants.validateDecimalFields(newLine, 4, 2, "price", "unitPrice", "total");
-        Constants.validateStringFields(newLine, "nvarchar(200)", 0, 200,"idProduct");
-
-
-
                 int lineId = newLine.getId();
         try {
             if (lineRepository.existsById(lineId)) {
@@ -88,9 +78,14 @@ public  class LineServiceImpl implements LineService {
             TblLineEntity line = lineRepository.findById(tblLineEntity.getId()).orElse(null);
 
             if (line != null) {
-
+                line.setIdInvoice(tblLineEntity.getIdInvoice());
+                line.setIdProduct(tblLineEntity.getIdProduct());
                 line.setDescription(tblLineEntity.getDescription());
-
+                line.setQuantity(tblLineEntity.getQuantity());
+                line.setPrice(tblLineEntity.getPrice());
+                line.setUnitPrice(tblLineEntity.getUnitPrice());
+                line.setIdDiscount(tblLineEntity.getIdDiscount());
+                line.setTotal(tblLineEntity.getTotal());
                 lineRepository.save(line);
             }
         } catch (NullPointerException ex) {

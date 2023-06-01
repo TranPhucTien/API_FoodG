@@ -7,10 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Objects;
+import java.sql.Date;
 
 @Entity
 @Getter
@@ -41,7 +39,7 @@ public class TblInvoiceEntity {
     private BigDecimal tax;
     @Basic
     @Column(name = "id_discount")
-    private Integer idDiscount;
+    private int idDiscount;
     @Basic
     @Column(name = "grand_total")
     private BigDecimal grandTotal;

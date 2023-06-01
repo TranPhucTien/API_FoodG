@@ -15,7 +15,7 @@ package com.nhom7.foodg.services.impls;
         import org.springframework.dao.DataIntegrityViolationException;
         import org.springframework.stereotype.Component;
 
-        import java.util.Date;
+        import java.sql.Date;
         import java.text.MessageFormat;
         import java.util.List;
 
@@ -38,15 +38,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public void insert(TblInvoiceDto newInvoice) {
-        //Validate input
-        Constants.validateRequiredFields(newInvoice, "customerId", "invoiceNumber", "invoiceDate", "totalAmount", "tax", "idDiscount", "grandTotal", "status", "paid" );
-        Constants.validateIntegerFields(newInvoice, "customerId", "invoiceNumber", "idDiscount","status");
-        Constants.validateDecimalFields(newInvoice, 5,2, "totalAmount", "grandTotal");
-        Constants.validateDecimalFields(newInvoice, 2, 1, "tax");
-//        Constants.validateDateFields(newInvoice, "dueDate", "paidDate", "invoiceDate");
-        Constants.validateBooleanFields(newInvoice, "paid");
-
-
         int id = newInvoice.getId();
         try {
             if (invoiceRepository.existsById(id)) {
@@ -90,10 +81,20 @@ public class InvoiceServiceImpl implements InvoiceService {
             TblInvoiceEntity invoice = invoiceRepository.findById(tblInvoiceEntity.getId()).orElse(null);
 
             if (invoice != null) {
-
+                invoice.setCustomerId(tblInvoiceEntity.getCustomerId());
                 invoice.setInvoiceNumber(tblInvoiceEntity.getInvoiceNumber());
+                invoice.setInvoiceDate(tblInvoiceEntity.getInvoiceDate());
+                invoice.setTotalAmount(tblInvoiceEntity.getTotalAmount());
+                invoice.setTax(tblInvoiceEntity.getTax());
+                invoice.setIdDiscount(tblInvoiceEntity.getIdDiscount());
+                invoice.setGrandTotal(tblInvoiceEntity.getGrandTotal());
+                invoice.setStatus(tblInvoiceEntity.getStatus());
+                invoice.setIdOnePayResponse(tblInvoiceEntity.getIdOnePayResponse());
 
                 invoice.setUpdatedAt(tblInvoiceEntity.getUpdatedAt());
+                invoice.setDueDate(tblInvoiceEntity.getDueDate());
+                invoice.setPaid(tblInvoiceEntity.getPaid());
+                invoice.setPaidDate(tblInvoiceEntity.getPaidDate());
 
                 invoiceRepository.save(invoice);
             }
