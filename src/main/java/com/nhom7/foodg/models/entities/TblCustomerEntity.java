@@ -1,6 +1,7 @@
 package com.nhom7.foodg.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.nhom7.foodg.shareds.Constants;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -73,4 +74,21 @@ public class TblCustomerEntity {
     @Basic
     @Column(name = "role")
     private Integer role;
+    @Basic
+    @Column(name = "status")
+    private Boolean status;
+
+    public boolean isOTPRequired() {
+        if (this.getOtp() == null) {
+            return true;
+        }
+
+        long currentTimeInMillis = System.currentTimeMillis();
+        long otpRequestedTimeInMillis = this.otpExp.getTime();
+
+        if (otpRequestedTimeInMillis + Constants.OTP_VALID_DURATION > currentTimeInMillis) {
+            return false;
+        }
+        return true;
+    }
 }

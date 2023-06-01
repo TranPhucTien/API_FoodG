@@ -83,6 +83,13 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void insert(TblProductEntity newProduct) {
+        //Validate input
+        Constants.validateRequiredFields(newProduct, "name", "dsc", "price");
+        Constants.validateIntegerFields(newProduct, "idCategory");
+        Constants.validateStringFields(newProduct, "nvarchar(100)", 0, 100, "country");
+        Constants.validateStringFields(newProduct, "nvarchar(200)", 0, 200, "name");
+
+
         String newProductName = newProduct.getName();
         int randomNumber = new Random().nextInt(900) + 100;
         String randomIdByName = randomNumber + "-" + newProductName.toLowerCase().replace(" ", "-");

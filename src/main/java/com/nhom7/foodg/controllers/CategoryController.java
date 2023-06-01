@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/categories")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 //localhost:8080/categories
 public class CategoryController {
     private final CategoryService categoryService;

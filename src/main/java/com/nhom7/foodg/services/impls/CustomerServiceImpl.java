@@ -3,16 +3,27 @@ package com.nhom7.foodg.services.impls;
 import com.nhom7.foodg.exceptions.DuplicateRecordException;
 import com.nhom7.foodg.exceptions.ModifyException;
 import com.nhom7.foodg.exceptions.NotFoundException;
+import com.nhom7.foodg.models.dto.TblCustomerDto;
 import com.nhom7.foodg.models.entities.TblCustomerEntity;
 import com.nhom7.foodg.repositories.CustomerRepository;
 import com.nhom7.foodg.services.CustomerService;
 import com.nhom7.foodg.shareds.Constants;
+import com.nhom7.foodg.utils.DataUtil;
+import com.nhom7.foodg.utils.Encode;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.mindrot.jbcrypt.BCrypt;
 
+import net.bytebuddy.utility.RandomString;
+import javax.persistence.EntityManager;
 
 
 import java.util.Date;
@@ -24,6 +35,7 @@ import java.util.List;
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final String TABLE_NAME = "tbl_customer";
+
 
     public CustomerServiceImpl(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
@@ -49,19 +61,36 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void insert(TblCustomerEntity newCustomer){
+
+        //Validate input
+        Constants.validateRequiredFields(newCustomer, "username", "password", "fullName");
+        Constants.validateStringFields(newCustomer, "UserName 6-20 Ký tự", 6, 20, "username");
+        Constants.validateStringFields(newCustomer, "password 8-20 ký tự", 8, 20, "password");
+        Constants.validateEmailFields(newCustomer, "email");
+        Constants.validateStringFields(newCustomer, "nchar(50)", 0, 50, "email");
+        Constants.validateStringFields(newCustomer, "nvarchar(100)", 0, 100, "fullName");
+//        Constants.validateDateFields(newCustomer, "birthday", "otpExp");
+        Constants.validateBooleanFields(newCustomer, "gender", "deleted");
+        Constants.validateIntegerFields(newCustomer, "idProvince", "role");
+
+
         String customerUsername = newCustomer.getUsername();
         try {
             if (customerRepository.existsByUsername(newCustomer.getUsername())){
                 throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR, TABLE_NAME, customerUsername));
             }
+//            if (customerRepository.existsByEmail(newCustomer.getEmail())){
+//                throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR_EMAIL, TABLE_NAME, newCustomer.getEmail()));
+//            }
             Date currentDate = Constants.getCurrentDay();
-
-            String encryptedPassword = BCrypt.hashpw(newCustomer.getPassword(), BCrypt.gensalt());
-
+            String OTP = DataUtil.generateTempPwd(6);
+            Encode encode = new Encode();
+//            String password = Constants.hashPassword(newCustomer.getPassword());
+            String password = encode.Encrypt(newCustomer.getPassword());
             TblCustomerEntity tblCustomerEntity = TblCustomerEntity.create(
                     0,
                     customerUsername,
-                    encryptedPassword,
+                    password,
                     newCustomer.getEmail(),
                     newCustomer.getFullName(),
                     newCustomer.getGender(),
@@ -73,14 +102,68 @@ public class CustomerServiceImpl implements CustomerService {
                     false,
                     newCustomer.getBirthday(),
                     newCustomer.getOtp(),
-                    newCustomer.getOtpExp(),
-                    newCustomer.getRole()
+                    currentDate,
+                    newCustomer.getRole(),
+                    newCustomer.getStatus()
 
             );
             customerRepository.save(tblCustomerEntity);
 
         } catch (DataIntegrityViolationException ex){
             throw new ModifyException(MessageFormat.format(Constants.MODIFY_DATA_FAIL_CATCH, TABLE_NAME) + ex.getMessage());
+        }
+    }
+
+    @Override
+    public boolean insert(TblCustomerEntity newCustomer, String otp, String userName){
+
+            //Validate input
+            Constants.validateRequiredFields(newCustomer, "username", "password", "fullName");
+            Constants.validateStringFields(newCustomer, "UserName 6-20 Ký tự", 6, 20, "username");
+            Constants.validateStringFields(newCustomer, "password 8-20 ký tự", 8, 20, "password");
+            Constants.validateEmailFields(newCustomer, "email");
+            Constants.validateStringFields(newCustomer, "nchar(50)", 0, 50, "email");
+            Constants.validateStringFields(newCustomer, "nvarchar(100)", 0, 100, "fullName");
+//            Constants.validateDateFields(newCustomer, "birthday", "otpExp");
+            Constants.validateBooleanFields(newCustomer, "gender");
+            Constants.validateIntegerFields(newCustomer, "idProvince", "role");
+
+        if (!customerRepository.existsByUsername(userName) ) {
+
+            String customerUsername = newCustomer.getUsername();
+            try {
+
+                Date currentDate = Constants.getCurrentDay();
+                Encode encode = new Encode();
+                String password = encode.Encrypt(newCustomer.getPassword());
+                String Otp = encode.Encrypt(otp);
+                TblCustomerEntity tblCustomerEntity = TblCustomerEntity.create(
+                        0,
+                        customerUsername,
+                        password,
+                        newCustomer.getEmail(),
+                        newCustomer.getFullName(),
+                        newCustomer.getGender(),
+                        newCustomer.getAvatar(),
+                        newCustomer.getIdProvince(),
+                        currentDate,
+                        currentDate,
+                        null,
+                        false,
+                        newCustomer.getBirthday(),
+                        otp,
+                        currentDate,
+                        newCustomer.getRole(),
+                        newCustomer.getStatus()
+                );
+                customerRepository.save(tblCustomerEntity);
+                return true;
+
+            } catch (DataIntegrityViolationException ex) {
+                throw new ModifyException(MessageFormat.format(Constants.MODIFY_DATA_FAIL_CATCH, TABLE_NAME) + ex.getMessage());
+            }
+        } else {
+            return false;
         }
     }
     @Transactional
@@ -109,6 +192,40 @@ public class CustomerServiceImpl implements CustomerService {
                 customer.setOtp(tblCustomerEntity.getOtp());
                 customer.setOtpExp(tblCustomerEntity.getOtpExp());
                 customer.setRole(tblCustomerEntity.getRole());
+                customer.setStatus(tblCustomerEntity.getStatus());
+
+                customerRepository.save(customer);
+            }
+        } catch (NullPointerException ex) {
+            throw new ModifyException(MessageFormat.format(Constants.MODIFY_DATA_FAIL_CATCH, TABLE_NAME) + ex.getMessage());
+        }
+    }
+
+    public void update(TblCustomerDto tblCustomerDto, String otp){
+//        if (customerRepository.existsByUsername(tblCustomerDto.getUsername())){
+//            throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR, TABLE_NAME, tblCustomerDto.getUsername()));
+//        }
+//        if (!customerRepository.existsById(tblCustomerDto.getId())) {
+////            throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, tblCustomerDto.getId()));
+//        }
+
+
+        try {
+            TblCustomerEntity customer = customerRepository.findById(tblCustomerDto.getId()).orElse(null);
+
+            if (customer != null) {
+                customer.setUsername(tblCustomerDto.getUsername());
+//                customer.setPassword(tblCustomerEntity.getPassword());
+                customer.setEmail(tblCustomerDto.getEmail());
+                customer.setFullName(tblCustomerDto.getFullName());
+                customer.setGender(tblCustomerDto.getGender());
+                customer.setAvatar(tblCustomerDto.getAvatar());
+                customer.setIdProvince(tblCustomerDto.getIdProvince());
+                customer.setUpdatedAt(Constants.getCurrentDay());
+                customer.setBirthday(tblCustomerDto.getBirthday());
+                customer.setOtp(otp);
+                customer.setOtpExp(Constants.getCurrentDay());
+                customer.setRole(tblCustomerDto.getRole());
 
                 customerRepository.save(customer);
             }
@@ -136,5 +253,6 @@ public class CustomerServiceImpl implements CustomerService {
             throw new ModifyException(MessageFormat.format(Constants.MODIFY_DATA_FAIL_CATCH, TABLE_NAME, id) + ex.getMessage());
         }
     }
+
 
 }

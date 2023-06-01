@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/lines")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 
 public class LineController {
     private final LineService lineService;

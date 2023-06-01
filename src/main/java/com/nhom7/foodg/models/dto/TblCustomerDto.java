@@ -11,6 +11,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor(staticName = "create")
 public class TblCustomerDto {
+    private int id;
     private String username;
     private String password;
     private String email;
@@ -18,12 +19,6 @@ public class TblCustomerDto {
     private Boolean gender;
     private String avatar;
     private Integer idProvince;
-    private Date createdAt;
-    private Date updatedAt;
-    private Date deletedAt;
-    private Date birthday;
-    private String otp;
-    private Date otpExp;
     private Integer role;
-
+    private Date birthday;
 }

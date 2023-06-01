@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/customers")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class CustomerController {
     private final CustomerService customerService;
     private final String TABLE_NAME = "tbl_customer";
