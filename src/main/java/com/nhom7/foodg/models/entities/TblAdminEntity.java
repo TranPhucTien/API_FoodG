@@ -1,16 +1,26 @@
 package com.nhom7.foodg.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.nhom7.foodg.shareds.Constants;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ResultCheckStyle;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 
 import java.util.Date;
 import java.util.Objects;
 
 @Entity
-@Getter
-@Setter
+@NoArgsConstructor
+@AllArgsConstructor(staticName = "create")
+@SQLDelete(sql = "UPDATE tbl_admin SET deleted = 1 WHERE id = ?", check = ResultCheckStyle.COUNT)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Where(clause = "deleted = false")
 @Table(name = "tbl_admin", schema = "dbo", catalog = "foodg")
 public class TblAdminEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,4 +72,176 @@ public class TblAdminEntity {
     @Basic
     @Column(name = "otp_exp")
     private Date otpExp;
+    @Basic
+    @Column(name = "status")
+    private Boolean status;
+
+
+
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public Boolean getGender() {
+        return gender;
+    }
+
+    public void setGender(Boolean gender) {
+        this.gender = gender;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public Integer getIdProvince() {
+        return idProvince;
+    }
+
+    public void setIdProvince(Integer idProvince) {
+        this.idProvince = idProvince;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Date getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(Date deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
+    public int getRole() {
+        return role;
+    }
+
+    public void setRole(int role) {
+        this.role = role;
+    }
+
+    public String getOtp() {
+        return otp;
+    }
+
+    public void setOtp(String otp) {
+        this.otp = otp;
+    }
+
+    public Date getOtpExp() {
+        return otpExp;
+    }
+
+    public void setOtpExp(Date otpExp) {
+        this.otpExp = otpExp;
+    }
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TblAdminEntity that = (TblAdminEntity) o;
+        return id == that.id && role == that.role && Objects.equals(username, that.username) && Objects.equals(password, that.password) && Objects.equals(email, that.email) && Objects.equals(fullName, that.fullName) && Objects.equals(gender, that.gender) && Objects.equals(avatar, that.avatar) && Objects.equals(idProvince, that.idProvince) && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt) && Objects.equals(deletedAt, that.deletedAt) && Objects.equals(deleted, that.deleted) && Objects.equals(birthday, that.birthday) && Objects.equals(otp, that.otp) && Objects.equals(otpExp, that.otpExp);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, password, email, fullName, birthday, gender, avatar, idProvince, role, createdAt, updatedAt, deletedAt, deleted, otp, otpExp);
+    }
+
+    public boolean isOTPRequired() {
+        if (this.getOtp() == null) {
+            return true;
+        }
+
+        long currentTimeInMillis = System.currentTimeMillis();
+        if (this.getOtpExp() != null) {
+            long otpRequestedTimeInMillis = this.otpExp.getTime();
+            if (otpRequestedTimeInMillis + Constants.OTP_VALID_DURATION > currentTimeInMillis) {
+                return false;
+            }
+        }
+
+
+        return true;
+    }
 }

@@ -5,6 +5,7 @@ import com.nhom7.foodg.models.dto.TblDiscountDto;
 import com.nhom7.foodg.models.entities.TblDiscountEntity;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Service
@@ -13,7 +14,7 @@ public interface DiscountService {
 
     List<TblDiscountEntity> search(String keyword);
 
-    void insert(TblDiscountEntity tblDiscountDto);
+    void insert( TblDiscountEntity tblDiscountEntity);
 
     void update(TblDiscountEntity tblDiscountEntity);
 

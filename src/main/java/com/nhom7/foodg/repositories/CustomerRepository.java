@@ -13,5 +13,4 @@ public interface CustomerRepository extends JpaRepository<TblCustomerEntity, Int
     TblCustomerEntity findFirstByEmail(String email);
     TblCustomerEntity findFirstByUsername(String userName);
 
-    void deleteByOtpExpBefore(Date OtpExp);
 }

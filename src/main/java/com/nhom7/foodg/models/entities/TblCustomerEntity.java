@@ -1,6 +1,5 @@
 package com.nhom7.foodg.models.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nhom7.foodg.shareds.Constants;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -22,7 +21,6 @@ import java.util.Objects;
 @AllArgsConstructor(staticName = "create")
 @SQLDelete(sql = "UPDATE tbl_customer SET deleted = 1 WHERE id = ?", check = ResultCheckStyle.COUNT)
 @Where(clause = "deleted = false")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(name = "tbl_customer", schema = "dbo", catalog = "foodg")
 public class TblCustomerEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)

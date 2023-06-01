@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.swing.*;
+import javax.validation.Valid;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -51,9 +52,12 @@ public class DiscountController {
     }
 
 
+
+
     @PostMapping(path = "")
     // [POST] localhost:8080/discounts
-    public ResponseEntity<FuncResult<TblDiscountEntity>> create(@RequestBody TblDiscountEntity tblDiscountEntity){
+
+    public ResponseEntity<FuncResult<TblDiscountEntity>> create( @RequestBody @Valid TblDiscountEntity tblDiscountEntity){
         discountService.insert(tblDiscountEntity);
 
         FuncResult<TblDiscountEntity> rs = FuncResult.create(
