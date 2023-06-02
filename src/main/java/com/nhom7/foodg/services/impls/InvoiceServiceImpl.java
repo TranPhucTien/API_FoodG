@@ -61,7 +61,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                             id_random,
                             tblInvoiceLineDto.getNewInvoice().getCustomerId(),
                             tblInvoiceLineDto.getNewInvoice().getInvoiceNumber(),
-                            Constants.getCurrentDay(),
+                            currentDate,
                             null,
                             tblInvoiceLineDto.getNewInvoice().getTax(),
                             tblInvoiceLineDto.getNewInvoice().getIdDiscount(),
@@ -75,15 +75,19 @@ public class InvoiceServiceImpl implements InvoiceService {
                             currentDate
 
                     );
-            BigDecimal totalAmount = BigDecimal.valueOf(0);
+            invoiceRepository.save(tblInvoiceEntity);
+            BigDecimal totalAmount = new BigDecimal("0");
+
             for (TblLineOutDto line : tblInvoiceLineDto.getTblLineOutDtos()) {
                 TblProductEntity tblProductEntity = productRepository.findById(line.getIdProduct()).orElse(null);
-//                TblDiscountEntity tblDiscountEntity = discountRepository.findById(line.getIdDiscount()).orElse(null);
-
                 BigDecimal unitPrice = BigDecimal.valueOf(line.getQuantity()*tblProductEntity.getPrice());
                 BigDecimal price = BigDecimal.valueOf(tblProductEntity.getPrice());
+                totalAmount = totalAmount.add(unitPrice);
+                BigDecimal totalMulDiscount = BigDecimal.valueOf(1);
+                if (line.getIdDiscount() == 0) {
+                    totalMulDiscount = unitPrice.multiply(BigDecimal.valueOf(1));
+                }
 
-                totalAmount.add(unitPrice);
                 TblLineEntity tblLineEntity = TblLineEntity.create(
                         0,
                         tblInvoiceEntity.getId(),
@@ -93,13 +97,13 @@ public class InvoiceServiceImpl implements InvoiceService {
                         price,
                         unitPrice ,
                         line.getIdDiscount(),
-                        unitPrice
-
+                        totalMulDiscount // check không có thì nhân với 1, tạo biến riêng ra
                 );
 
                 lineRepository.save(tblLineEntity);
             }
-            BigDecimal grandtotal = totalAmount.add(tblInvoiceEntity.getTax());
+            BigDecimal grandtotalMulTax = totalAmount.multiply(tblInvoiceEntity.getTax());
+            BigDecimal grandtotal = totalAmount.add(grandtotalMulTax);
             tblInvoiceEntity.setTotalAmount(totalAmount);
             tblInvoiceEntity.setGrandTotal(grandtotal);
             invoiceRepository.save(tblInvoiceEntity);
