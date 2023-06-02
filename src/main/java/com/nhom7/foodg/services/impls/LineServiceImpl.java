@@ -4,8 +4,6 @@ import com.nhom7.foodg.exceptions.DuplicateRecordException;
 import com.nhom7.foodg.exceptions.ModifyException;
 import com.nhom7.foodg.exceptions.NotFoundException;
 import com.nhom7.foodg.models.dto.TblLineDto;
-import com.nhom7.foodg.models.entities.TblCategoryEntity;
-import com.nhom7.foodg.models.entities.TblInvoiceEntity;
 import com.nhom7.foodg.models.entities.TblLineEntity;
 import com.nhom7.foodg.repositories.LineRepository;
 import com.nhom7.foodg.services.LineService;
@@ -32,9 +30,7 @@ public  class LineServiceImpl implements LineService {
 
     // Get all category
     @Override
-    public List<TblLineEntity> getAll() {
-        return lineRepository.findAll();
-    }
+    public List<TblLineEntity> getAll() { return lineRepository.findAll();}
 
     @Override
     public void insert(TblLineDto newLine) {
@@ -55,6 +51,7 @@ public  class LineServiceImpl implements LineService {
                     newLine.getUnitPrice(),
                     newLine.getIdDiscount(),
                     newLine.getTotal()
+
             );
 
             lineRepository.save(tblLineEntity);
@@ -86,7 +83,7 @@ public  class LineServiceImpl implements LineService {
                 line.setUnitPrice(tblLineEntity.getUnitPrice());
                 line.setIdDiscount(tblLineEntity.getIdDiscount());
                 line.setTotal(tblLineEntity.getTotal());
-                lineRepository.save(line);
+                 lineRepository.save(line);
             }
         } catch (NullPointerException ex) {
             throw new ModifyException(MessageFormat.format(Constants.MODIFY_DATA_FAIL_CATCH, TABLE_NAME) + ex.getMessage());

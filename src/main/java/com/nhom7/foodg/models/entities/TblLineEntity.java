@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor(staticName = "create")
@@ -42,6 +43,7 @@ public class TblLineEntity {
     @Basic
     @Column(name = "total")
     private BigDecimal total;
+
 
 
     public int getId() {
@@ -114,6 +116,8 @@ public class TblLineEntity {
     public void setTotal(BigDecimal total) {
         this.total = total;
     }
+
+
 
     @Override
     public boolean equals(Object o) {

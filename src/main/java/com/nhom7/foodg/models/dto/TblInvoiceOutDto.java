@@ -1,20 +1,21 @@
-
 package com.nhom7.foodg.models.dto;
 
+import com.nhom7.foodg.models.entities.TblLineEntity;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-        import jakarta.persistence.Basic;
-        import jakarta.persistence.Column;
-        import lombok.*;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
-        import java.math.BigDecimal;
-        import java.util.Date;
-
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
 @AllArgsConstructor(staticName = "create")
-public class TblInvoiceDto {
+public class TblInvoiceOutDto {
     private int id;
-    private int customerId;
+    private TblCustomerOutDto customerOutDto;
+    private List<TblLineEntity> lines;
     private int invoiceNumber;
     private Date invoiceDate;
     private BigDecimal totalAmount;
