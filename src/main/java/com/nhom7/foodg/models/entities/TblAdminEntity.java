@@ -26,7 +26,6 @@ public class TblAdminEntity {
     @Column(name = "id")
     private int id;
     @Basic
-    @Column(name = "username")
     private String username;
     @Basic
     @Column(name = "password")

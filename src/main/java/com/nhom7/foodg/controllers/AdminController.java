@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -30,6 +31,38 @@ public class AdminController {
     public AdminController(AdminService adminService, AdminRepository adminRepository) {
         this.adminService = adminService;
         this.adminRepository = adminRepository;
+    }
+
+    @PostMapping(path = "/loginAdmin")
+    // http://localhost:8080/admins/loginAdmin
+    public ResponseEntity<FuncResult<TblAdminEntity>> login(@RequestBody TblAdminEntity tblAdminEntity){
+        String username = tblAdminEntity.getUsername().trim();
+        String password = tblAdminEntity.getPassword().trim().toString();
+
+        // Valid input
+        Constants.validateRequiredFields(tblAdminEntity, "username", "password");
+        Constants.validateStringFields(tblAdminEntity, "password", 8, 20, "password");
+        Encode encode = new Encode();
+
+        TblAdminEntity admin = adminRepository.findFirstByUsername(username);
+        if (admin !=null){
+            if (admin.getPassword().equals(encode.Encrypt(password)) && admin.getStatus() == true){
+                // Đăng nhập thành công
+                FuncResult<TblAdminEntity> rs = FuncResult.create(
+                        HttpStatus.OK,
+                        Constants.LOGIN_SUCCESS,
+                        null
+                );
+                return ResponseEntity.ok(rs);
+            }
+        }
+        // Đăng nhập thất bại
+        FuncResult<TblAdminEntity> rs = FuncResult.create(
+                HttpStatus.BAD_REQUEST,
+                Constants.LOGIN_FAIL,
+                null
+        );
+        return ResponseEntity.badRequest().body(rs);
     }
 
     @PostMapping(path = "/register")
@@ -72,7 +105,7 @@ public class AdminController {
                     null,
                     false,
                     tblAdminDto.getBirthday(),
-                    2,
+                    tblAdminDto.getRole(),
                     Otp,
                     Constants.getCurrentDay(),
                     false
@@ -113,7 +146,7 @@ public class AdminController {
                     } else {
                         FuncResult<TblAdminDto> rs = FuncResult.create(
                                 HttpStatus.BAD_REQUEST,
-                                MessageFormat.format(Constants.OTP_FAIL, "Email bạn nhận được"),
+                                MessageFormat.format(Constants.OTP_FAIL, admin.getUsername()),
                                 null
                         );
                         return ResponseEntity.ok(rs);
@@ -129,11 +162,13 @@ public class AdminController {
             } catch (Exception ex){
                 throw new NotFoundException(Constants.NOT_FOUND_FIELDS);
             }
-
-
-
         }
-        if (tblAdminEntity.getEmail() != null && tblAdminEntity.getPassword() != null){
+        else {
+            // Valid input
+            Constants.validateRequiredFields(tblAdminEntity, "email", "password");
+            Constants.validateEmailFields(tblAdminEntity, "email");
+            Constants.validateStringFields(tblAdminEntity, "password", 8, 20, "password");
+
             try {
                 TblAdminEntity admin = adminRepository.findFirstByEmail(tblAdminEntity.getEmail());
                 /* Kiểm tra xem OTP còn hạn sử dụng không */
@@ -172,18 +207,15 @@ public class AdminController {
                 throw new NotFoundException(Constants.NOT_FOUND_FIELDS);
             }
         }
-        FuncResult<TblAdminDto> rs = FuncResult.create(
-                HttpStatus.BAD_REQUEST,
-                "Không nhận được dữ liệu",
-                null
-        );
-        return ResponseEntity.badRequest().body(rs);
-
     }
 
     @PatchMapping (path = "/forgetPassword")
     // http://localhost:8080/admins/forgetPassword
     public ResponseEntity<FuncResult<TblAdminDto>> forgetPassword(@RequestBody TblAdminEntity tblAdminEntity) {
+        // Valid input
+        Constants.validateRequiredFields(tblAdminEntity, "email");
+        Constants.validateEmailFields(tblAdminEntity, "email");
+
         TblAdminEntity admin = adminRepository.findFirstByEmail(tblAdminEntity.getEmail());
         String Otp = DataUtil.generateTempPwd(6);
 

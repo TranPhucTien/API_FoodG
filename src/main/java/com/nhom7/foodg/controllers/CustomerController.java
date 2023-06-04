@@ -4,6 +4,8 @@ import com.nhom7.foodg.exceptions.DuplicateRecordException;
 import com.nhom7.foodg.exceptions.NotFoundException;
 import com.nhom7.foodg.models.FuncResult;
 import com.nhom7.foodg.models.dto.TblCustomerDto;
+import com.nhom7.foodg.models.dto.TblCustomerDto;
+import com.nhom7.foodg.models.entities.TblCustomerEntity;
 import com.nhom7.foodg.models.entities.TblCustomerEntity;
 import com.nhom7.foodg.models.entities.TblCustomerEntity;
 import com.nhom7.foodg.repositories.CustomerRepository;
@@ -32,6 +34,36 @@ public class CustomerController {
         this.customerService = customerService;
         this.customerRepository = customerRepository;
     }
+
+    @PostMapping(path = "/loginCustomer")
+    // http://localhost:8080/customers/loginCustomer
+    public ResponseEntity<FuncResult<TblCustomerDto>> login(@RequestBody TblCustomerDto tblCustomerDto){
+        String username = tblCustomerDto.getUsername().trim();
+        String password = tblCustomerDto.getPassword().trim().toString();
+
+        Encode encode = new Encode();
+
+        TblCustomerEntity customer = customerRepository.findFirstByUsername(username);
+        if (customer !=null){
+            if (customer.getPassword().equals(encode.Encrypt(password)) && customer.getStatus() == true){
+                // Đăng nhập thành công
+                FuncResult<TblCustomerDto> rs = FuncResult.create(
+                        HttpStatus.OK,
+                        Constants.LOGIN_SUCCESS,
+                        null
+                );
+                return ResponseEntity.ok(rs);
+            }
+        }
+        // Đăng nhập thất bại
+        FuncResult<TblCustomerDto> rs = FuncResult.create(
+                HttpStatus.BAD_REQUEST,
+                Constants.LOGIN_FAIL,
+                null
+        );
+        return ResponseEntity.badRequest().body(rs);
+    }
+
 
     @GetMapping(path = "")
     // [GET] localhost:8080/customers

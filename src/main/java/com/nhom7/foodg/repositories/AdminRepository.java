@@ -14,4 +14,6 @@ public interface AdminRepository extends JpaRepository<TblAdminEntity, Integer> 
     TblAdminEntity findFirstByEmail(String email);
     TblAdminEntity findFirstByUsername(String userName);
 
+    TblAdminEntity findFirstByUsernameAndPassword (String username, String password);
+
 }

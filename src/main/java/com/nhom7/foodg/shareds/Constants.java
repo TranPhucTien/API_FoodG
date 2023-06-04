@@ -53,6 +53,8 @@ public class Constants {
     public static final long OTP_VALID_DURATION = 5 * 60 * 1000;
     public static final String EXPIRED_OTP = "Mã OTP của bạn nhập đã hết hạn sau `5 phút` khi OTP được gửi đi! Vui lòng gửi lại OTP mới!!";
     public static final String  WAITING_TIME = "Bạn vui lòng chờ `5 phút` để gửi lại OTP nhé!!";
+    public static final String LOGIN_SUCCESS = "Đăng nhập thành công";
+    public static final String LOGIN_FAIL = "Tên đăng nhập hoặc mật khẩu không đúng";
 
 
 
