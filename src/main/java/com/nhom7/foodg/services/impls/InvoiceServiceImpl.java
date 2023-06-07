@@ -1,14 +1,14 @@
 
 package com.nhom7.foodg.services.impls;
-
-import com.nhom7.foodg.exceptions.DuplicateRecordException;
+import java.util.Objects;
+import com.nhom7.foodg.exceptions.InactiveDiscountException;
 import com.nhom7.foodg.exceptions.ModifyException;
+import com.nhom7.foodg.exceptions.NotApplyDiscountExeption;
 import com.nhom7.foodg.exceptions.NotFoundException;
 import com.nhom7.foodg.models.dto.*;
 import com.nhom7.foodg.models.entities.*;
 import com.nhom7.foodg.repositories.*;
 import com.nhom7.foodg.services.InvoiceService;
-import com.nhom7.foodg.services.LineService;
 import com.nhom7.foodg.shareds.Constants;
 import jakarta.transaction.Transactional;
 import org.springframework.dao.DataAccessException;
@@ -18,7 +18,6 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -41,6 +40,10 @@ public class InvoiceServiceImpl implements InvoiceService {
         this.discountRepository = discountRepository;
     }
 
+//    public InvoiceServiceImpl() {
+//
+//    }
+
     // Get all invoices
     @Override
     public List<TblInvoiceEntity> getAll() {
@@ -48,8 +51,10 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
 
+
+
     @Override
-    public void insert(TblInvoiceLineDto tblInvoiceLineDto) {
+    public void insert(TblInvoiceLineDto tblInvoiceLineDto)  {
         try {
 
             Random rand = new Random();
@@ -66,7 +71,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                             tblInvoiceLineDto.getNewInvoice().getTax(),
                             tblInvoiceLineDto.getNewInvoice().getIdDiscount(),
                             null,
-                            tblInvoiceLineDto.getNewInvoice().getStatus(),
+                            Status.ACTIVE.getValue(),
                             tblInvoiceLineDto.getNewInvoice().getIdOnePayResponse(),
                             currentDate,
                             currentDate,
@@ -77,16 +82,15 @@ public class InvoiceServiceImpl implements InvoiceService {
                     );
             invoiceRepository.save(tblInvoiceEntity);
             BigDecimal totalAmount = new BigDecimal("0");
-
             for (TblLineOutDto line : tblInvoiceLineDto.getTblLineOutDtos()) {
                 TblProductEntity tblProductEntity = productRepository.findById(line.getIdProduct()).orElse(null);
-                BigDecimal unitPrice = BigDecimal.valueOf(line.getQuantity()*tblProductEntity.getPrice());
-                BigDecimal price = BigDecimal.valueOf(tblProductEntity.getPrice());
-                totalAmount = totalAmount.add(unitPrice);
-                BigDecimal totalMulDiscount = BigDecimal.valueOf(1);
-                if (line.getIdDiscount() == 0) {
-                    totalMulDiscount = unitPrice.multiply(BigDecimal.valueOf(1));
-                }
+
+                BigDecimal price = BigDecimal.valueOf(tblProductEntity.getPrice());//giá trị từng sp
+                BigDecimal unitPrice = BigDecimal.valueOf(line.getQuantity()*tblProductEntity.getPrice());// gtri sp * sluong
+
+                totalAmount = totalAmount.add(unitPrice);//tổng tiền các dòng hóa đơn
+                BigDecimal total = new BigDecimal("0");
+
 
                 TblLineEntity tblLineEntity = TblLineEntity.create(
                         0,
@@ -95,21 +99,29 @@ public class InvoiceServiceImpl implements InvoiceService {
                         line.getDescription(),
                         line.getQuantity(),
                         price,
-                        unitPrice ,
-                        line.getIdDiscount(),
-                        totalMulDiscount // check không có thì nhân với 1, tạo biến riêng ra
+                        unitPrice ,//giá* so lượng sản phẩm
+                        unitPrice// tổng tiềng dòng
                 );
 
                 lineRepository.save(tblLineEntity);
             }
-            BigDecimal grandtotalMulTax = totalAmount.multiply(tblInvoiceEntity.getTax());
-            BigDecimal grandtotal = totalAmount.add(grandtotalMulTax);
+
+
+            TblDiscountEntity tblDiscountEntity = discountRepository.findById(tblInvoiceLineDto.getNewInvoice().getIdDiscount()).orElse(null);
+            tblInvoiceLineDto.getNewInvoice().checkDiscountForInvoice(tblInvoiceLineDto.getNewInvoice().getIdDiscount(),discountRepository,totalAmount);
+            BigDecimal totalAmountMulTax = totalAmount.multiply(tblInvoiceEntity.getTax());
+            BigDecimal grandtotal = tblInvoiceLineDto.getNewInvoice().caculatorGrandTotal(totalAmount,tblDiscountEntity).add(totalAmountMulTax);
+
             tblInvoiceEntity.setTotalAmount(totalAmount);
             tblInvoiceEntity.setGrandTotal(grandtotal);
             invoiceRepository.save(tblInvoiceEntity);
 
         } catch (DataIntegrityViolationException ex) {
             throw new ModifyException(MessageFormat.format(Constants.MODIFY_DATA_FAIL_CATCH, TABLE_NAME) + ex.getMessage());
+
+        }
+        catch (NotApplyDiscountExeption e) {
+            throw new RuntimeException(e);
         }
     }
 

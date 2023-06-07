@@ -11,6 +11,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
 
@@ -36,7 +37,7 @@ public class TblDiscountEntity {
     private int percentage;
     @Basic
     @Column(name = "min_amount")
-    private float minAmount;
+    private BigDecimal minAmount;
     @Basic
     @Column(name = "start_date")
     private Date startDate;
@@ -60,7 +61,7 @@ public class TblDiscountEntity {
     private Boolean deleted;
     @Basic
     @Column(name = "max_discount_price")
-    private float maxDiscountPrice;
+    private BigDecimal maxDiscountPrice;
     @Basic
     @Column(name = "created_by")
     private int createdBy;
@@ -72,7 +73,7 @@ public class TblDiscountEntity {
     private Integer deletedBy;
     @Basic
     @Column(name = "max_amount")
-    private Float maxAmount;
+    private BigDecimal maxAmount;
 
     @Override
     public boolean equals(Object o) {

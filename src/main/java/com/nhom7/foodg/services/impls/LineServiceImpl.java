@@ -49,7 +49,7 @@ public  class LineServiceImpl implements LineService {
                     newLine.getQuantity(),
                     newLine.getPrice(),
                     newLine.getUnitPrice(),
-                    newLine.getIdDiscount(),
+
                     newLine.getTotal()
 
             );
@@ -81,7 +81,7 @@ public  class LineServiceImpl implements LineService {
                 line.setQuantity(tblLineEntity.getQuantity());
                 line.setPrice(tblLineEntity.getPrice());
                 line.setUnitPrice(tblLineEntity.getUnitPrice());
-                line.setIdDiscount(tblLineEntity.getIdDiscount());
+
                 line.setTotal(tblLineEntity.getTotal());
                  lineRepository.save(line);
             }

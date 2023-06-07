@@ -38,9 +38,6 @@ public class TblLineEntity {
     @Column(name = "unit_price")
     private BigDecimal unitPrice;
     @Basic
-    @Column(name = "id_discount")
-    private Integer idDiscount;
-    @Basic
     @Column(name = "total")
     private BigDecimal total;
 
@@ -101,13 +98,6 @@ public class TblLineEntity {
         this.unitPrice = unitPrice;
     }
 
-    public Integer getIdDiscount() {
-        return idDiscount;
-    }
-
-    public void setIdDiscount(Integer idDiscount) {
-        this.idDiscount = idDiscount;
-    }
 
     public BigDecimal getTotal() {
         return total;
@@ -124,12 +114,12 @@ public class TblLineEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TblLineEntity that = (TblLineEntity) o;
-        return id == that.id && idInvoice == that.idInvoice && quantity == that.quantity && Objects.equals(idProduct, that.idProduct) && Objects.equals(description, that.description) && Objects.equals(unitPrice, that.unitPrice) && Objects.equals(idDiscount, that.idDiscount) && Objects.equals(total, that.total);
+        return id == that.id && idInvoice == that.idInvoice && quantity == that.quantity && Objects.equals(idProduct, that.idProduct) && Objects.equals(description, that.description) && Objects.equals(unitPrice, that.unitPrice) && Objects.equals(total, that.total);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, idInvoice, idProduct, description, quantity, unitPrice, idDiscount, total);
+        return Objects.hash(id, idInvoice, idProduct, description, quantity, unitPrice, total);
     }
 
 

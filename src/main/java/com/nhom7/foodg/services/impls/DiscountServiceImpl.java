@@ -1,8 +1,6 @@
 package com.nhom7.foodg.services.impls;
 
-import com.nhom7.foodg.exceptions.DuplicateRecordException;
-import com.nhom7.foodg.exceptions.ModifyException;
-import com.nhom7.foodg.exceptions.NotFoundException;
+import com.nhom7.foodg.exceptions.*;
 import com.nhom7.foodg.models.entities.TblDiscountEntity;
 import com.nhom7.foodg.repositories.DiscountRepository;
 import com.nhom7.foodg.services.DiscountService;
@@ -13,8 +11,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
 
-import javax.swing.*;
-import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -145,4 +141,7 @@ public class DiscountServiceImpl implements DiscountService {
             throw new ModifyException(MessageFormat.format(Constants.MODIFY_DATA_FAIL_CATCH, TABLE_NAME, id) + ex.getMessage());
         }
     }
+
+
+
 }
