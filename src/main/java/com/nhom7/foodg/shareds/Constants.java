@@ -50,6 +50,8 @@ public class Constants {
     public static final String OTP_SUCCESS = "Otp đúng của {0}";
     public static final String OTP_FAIL = "Otp sai của {0}";
     public static final String SEND_EMAIL_SUCCESS = "Đã gửi OTP đến Email: {0}";
+    public static final String RESEND_EMAIL_SUCCESS = "Đã gửi lại OTP đến Email: {0}";
+
     public static final long OTP_VALID_DURATION = 5 * 60 * 1000;
     public static final String EXPIRED_OTP = "Mã OTP của bạn nhập đã hết hạn sau `5 phút` khi OTP được gửi đi! Vui lòng gửi lại OTP mới!!";
     public static final String  WAITING_TIME = "Bạn vui lòng chờ `5 phút` để gửi lại OTP nhé!!";

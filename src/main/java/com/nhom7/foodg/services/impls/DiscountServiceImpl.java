@@ -85,12 +85,12 @@ public class DiscountServiceImpl implements DiscountService {
                     newDiscount.getIsActive(),
                     currentDate,
                     currentDate,
-                    newDiscount.getDeletedAt(),
+                    null,
                     false,
                     newDiscount.getMaxDiscountPrice(),
                     newDiscount.getCreatedBy(),
                     newDiscount.getUpdatedBy(),
-                    newDiscount.getDeletedBy(),
+                    null,
                     newDiscount.getMaxAmount()
             );
             discountRepository.save(tblDiscountEntity);

@@ -70,25 +70,23 @@ public class AdminController {
     public ResponseEntity<FuncResult<TblAdminDto>> create(@RequestBody TblAdminDto tblAdminDto){
         // check có username chưa
         String Otp = DataUtil.generateTempPwd(6);
-        String userName = tblAdminDto.getUsername();
+        String userName = tblAdminDto.getUsername().trim();
         if (adminRepository.existsByUsername(userName)){
             /* username đã tồn tại trong DB rồi thì update Opt mới */
 
             TblAdminEntity admin = adminRepository.findFirstByUsername(userName);
             /* Giới hạn thời gian gửi lại OTP */
-            if (admin.isOTPRequired()){
                 admin.setOtp(Otp);
                 admin.setOtpExp(Constants.getCurrentDay());
                 adminRepository.save(admin);
                 adminService.create(admin);
-            }else {
+
                 FuncResult<TblAdminDto> rs = FuncResult.create(
-                        HttpStatus.BAD_REQUEST,
-                        Constants.WAITING_TIME,
-                        null
+                        HttpStatus.OK,
+                        MessageFormat.format(Constants.RESEND_EMAIL_SUCCESS, admin.getEmail()),
+                        tblAdminDto
                 );
-                return ResponseEntity.badRequest().body(rs);
-            }
+                return ResponseEntity.ok(rs);
         } else {
             /*Chưa tồn tại trong DB thì tạo mới */
             TblAdminEntity tblAdminEntity = TblAdminEntity.create(

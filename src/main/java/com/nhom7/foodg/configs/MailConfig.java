@@ -19,7 +19,7 @@ public class MailConfig {
     @Value("hoangtuananh1772003@gmail.com")
     private String email;
 
-    @Value("qwscxnpzrefjogwm")
+    @Value("vligdsqcyeaqlcex")
     private String password;
 
     @Value("false")
