@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor(staticName = "create")
-public class FuncResult<T> {
+public class    FuncResult<T> {
     private HttpStatus status;
     private String message;
     public T data;

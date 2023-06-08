@@ -1,34 +1,48 @@
 
 package com.nhom7.foodg.services.impls;
+import java.util.Objects;
+import com.nhom7.foodg.exceptions.InactiveDiscountException;
+import com.nhom7.foodg.exceptions.ModifyException;
+import com.nhom7.foodg.exceptions.NotApplyDiscountExeption;
+import com.nhom7.foodg.exceptions.NotFoundException;
+import com.nhom7.foodg.models.dto.*;
+import com.nhom7.foodg.models.entities.*;
+import com.nhom7.foodg.repositories.*;
+import com.nhom7.foodg.services.InvoiceService;
+import com.nhom7.foodg.shareds.Constants;
+import jakarta.transaction.Transactional;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Component;
 
-        import com.nhom7.foodg.exceptions.DuplicateRecordException;
-        import com.nhom7.foodg.exceptions.ModifyException;
-        import com.nhom7.foodg.exceptions.NotFoundException;
-        import com.nhom7.foodg.models.dto.TblInvoiceDto;
-        import com.nhom7.foodg.models.entities.TblInvoiceEntity;
-        import com.nhom7.foodg.repositories.InvoiceRepository;
-        import com.nhom7.foodg.repositories.LineRepository;
-        import com.nhom7.foodg.services.InvoiceService;
-        import com.nhom7.foodg.shareds.Constants;
-        import jakarta.transaction.Transactional;
-        import org.springframework.dao.DataAccessException;
-        import org.springframework.dao.DataIntegrityViolationException;
-        import org.springframework.stereotype.Component;
-
-        import java.sql.Date;
-        import java.text.MessageFormat;
-        import java.util.List;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.Random;
 
 @Component
 public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceRepository invoiceRepository;
+    private final CustomerRepository customerRepository;
+    private final ProductRepository productRepository;
+    private final DiscountRepository discountRepository;
+
     private final LineRepository lineRepository;
     private final String TABLE_NAME = "tbl_Invoice";
 
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, LineRepository lineRepository) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, LineRepository lineRepository,CustomerRepository customerRepository
+            ,ProductRepository productRepository,DiscountRepository discountRepository) {
         this.invoiceRepository = invoiceRepository;
         this.lineRepository = lineRepository;
+        this.customerRepository = customerRepository;
+        this.productRepository = productRepository;
+        this.discountRepository = discountRepository;
     }
+
+//    public InvoiceServiceImpl() {
+//
+//    }
 
     // Get all invoices
     @Override
@@ -36,45 +50,87 @@ public class InvoiceServiceImpl implements InvoiceService {
         return invoiceRepository.findAll();
     }
 
+
+
+
     @Override
-    public void insert(TblInvoiceDto newInvoice) {
-        int id = newInvoice.getId();
+    public void insert(TblInvoiceLineDto tblInvoiceLineDto)  {
         try {
-            if (invoiceRepository.existsById(id)) {
-                throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR, TABLE_NAME, id));
+
+            Random rand = new Random();
+            int upperbound = 123456789;
+            int id_random = rand.nextInt(upperbound);
+            Date currentDate = Constants.getCurrentDay();
+
+            TblInvoiceEntity tblInvoiceEntity = TblInvoiceEntity.create(
+                            id_random,
+                            tblInvoiceLineDto.getNewInvoice().getCustomerId(),
+                            tblInvoiceLineDto.getNewInvoice().getInvoiceNumber(),
+                            currentDate,
+                            null,
+                            tblInvoiceLineDto.getNewInvoice().getTax(),
+                            tblInvoiceLineDto.getNewInvoice().getIdDiscount(),
+                            null,
+                            Status.ACTIVE.getValue(),
+                            tblInvoiceLineDto.getNewInvoice().getIdOnePayResponse(),
+                            currentDate,
+                            currentDate,
+                            tblInvoiceLineDto.getNewInvoice().getDueDate(),
+                            tblInvoiceLineDto.getNewInvoice().getPaid(),
+                            currentDate
+
+                    );
+            invoiceRepository.save(tblInvoiceEntity);
+            BigDecimal totalAmount = new BigDecimal("0");
+            for (TblLineOutDto line : tblInvoiceLineDto.getTblLineOutDtos()) {
+                TblProductEntity tblProductEntity = productRepository.findById(line.getIdProduct()).orElse(null);
+
+                BigDecimal price = BigDecimal.valueOf(tblProductEntity.getPrice());//giá trị từng sp
+                BigDecimal unitPrice = BigDecimal.valueOf(line.getQuantity()*tblProductEntity.getPrice());// gtri sp * sluong
+
+                totalAmount = totalAmount.add(unitPrice);//tổng tiền các dòng hóa đơn
+                BigDecimal total = new BigDecimal("0");
+
+
+                TblLineEntity tblLineEntity = TblLineEntity.create(
+                        0,
+                        tblInvoiceEntity.getId(),
+                        line.getIdProduct(),
+                        line.getDescription(),
+                        line.getQuantity(),
+                        price,
+                        unitPrice ,//giá* so lượng sản phẩm
+                        unitPrice// tổng tiềng dòng
+                );
+
+                lineRepository.save(tblLineEntity);
             }
 
-            Date currentDate = Constants.getCurrentDay();
-            TblInvoiceEntity tblInvoiceEntity = TblInvoiceEntity.
-                    create(0,
-                            newInvoice.getCustomerId(),
-                            newInvoice.getInvoiceNumber(),
-                            Constants.getCurrentDay(),
-                            newInvoice.getTotalAmount(),
-                            newInvoice.getTax(),
-                            newInvoice.getIdDiscount(),
-                            newInvoice.getGrandTotal(),
-                            newInvoice.getStatus(),
-                            newInvoice.getIdOnePayResponse(),
-                            currentDate,
-                            currentDate,
-                            newInvoice.getDueDate(),
-                            newInvoice.getPaid(),
-                            currentDate
-                    );
+
+            TblDiscountEntity tblDiscountEntity = discountRepository.findById(tblInvoiceLineDto.getNewInvoice().getIdDiscount()).orElse(null);
+            tblInvoiceLineDto.getNewInvoice().checkDiscountForInvoice(tblInvoiceLineDto.getNewInvoice().getIdDiscount(),discountRepository,totalAmount);
+            BigDecimal totalAmountMulTax = totalAmount.multiply(tblInvoiceEntity.getTax());
+            BigDecimal grandtotal = tblInvoiceLineDto.getNewInvoice().caculatorGrandTotal(totalAmount,tblDiscountEntity).add(totalAmountMulTax);
+
+            tblInvoiceEntity.setTotalAmount(totalAmount);
+            tblInvoiceEntity.setGrandTotal(grandtotal);
             invoiceRepository.save(tblInvoiceEntity);
 
         } catch (DataIntegrityViolationException ex) {
             throw new ModifyException(MessageFormat.format(Constants.MODIFY_DATA_FAIL_CATCH, TABLE_NAME) + ex.getMessage());
+
+        }
+        catch (NotApplyDiscountExeption e) {
+            throw new RuntimeException(e);
         }
     }
+
     @Transactional
     @Override
     public void update(TblInvoiceEntity tblInvoiceEntity) {
         if (!invoiceRepository.existsById(tblInvoiceEntity.getId())) {
             throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, tblInvoiceEntity.getId()));
         }
-
 
 
         try {
@@ -104,7 +160,6 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
 
-
     @Transactional
     @Override
     public void softDelete(int id) {
@@ -121,6 +176,48 @@ public class InvoiceServiceImpl implements InvoiceService {
             }
         } catch (DataAccessException ex) {
             throw new ModifyException(MessageFormat.format(Constants.MODIFY_DATA_FAIL_CATCH, TABLE_NAME, id) + ex.getMessage());
+        }
+    }
+
+    //     lay thong tin hoa don bang invoice_id
+    @Override
+    public TblInvoiceOutDto getById(int invoiceId) {
+
+        try {
+
+            if (!invoiceRepository.existsById(invoiceId)) {
+                throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, invoiceId));
+            }
+
+            TblInvoiceEntity tblInvoiceEntity = invoiceRepository.findFirstById(invoiceId);
+            TblCustomerEntity customer = customerRepository.findById(tblInvoiceEntity.getCustomerId()).orElse(null);
+            TblCustomerOutDto tblCustomerOutDto = TblCustomerOutDto.create(
+                    customer.getUsername(),
+                    customer.getFullName(),
+                    customer.getEmail()
+
+            );
+            TblInvoiceOutDto tblInvoiceOutDto = TblInvoiceOutDto.create(
+                    invoiceId,
+                    tblCustomerOutDto,
+                    lineRepository.findByIdInvoice(invoiceId),
+                    tblInvoiceEntity.getInvoiceNumber(),
+                    tblInvoiceEntity.getInvoiceDate(),
+                    tblInvoiceEntity.getTotalAmount(),
+                    tblInvoiceEntity.getTax(),
+                    tblInvoiceEntity.getIdDiscount(),
+                    tblInvoiceEntity.getGrandTotal(),
+                    tblInvoiceEntity.getStatus(),
+                    tblInvoiceEntity.getIdOnePayResponse(),
+                    tblInvoiceEntity.getCreatedAt(),
+                    tblInvoiceEntity.getUpdatedAt(),
+                    tblInvoiceEntity.getDueDate(),
+                    tblInvoiceEntity.getPaid(),
+                    tblInvoiceEntity.getPaidDate()
+            );
+            return tblInvoiceOutDto;
+        } catch (DataAccessException ex) {
+            throw new ModifyException(MessageFormat.format(Constants.MODIFY_DATA_FAIL_CATCH, TABLE_NAME) + ex.getMessage());
         }
     }
 
@@ -160,7 +257,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 //
 //        return rs;
 //    }
-
 
 
 }

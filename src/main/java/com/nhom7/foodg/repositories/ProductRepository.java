@@ -13,6 +13,7 @@ import java.util.Map;
 
 @Repository
 public interface ProductRepository extends JpaRepository<TblProductEntity, String> {
+
     List<TblProductEntity> findByIdCategory(int categoryID);
     Page<TblProductEntity> findByIdCategory(int categoryID, Pageable pageable);
     Page<TblProductEntity> findByIdCategoryAndNameContaining(int categoryID, String name, Pageable pageable);

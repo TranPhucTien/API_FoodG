@@ -1,7 +1,6 @@
 package com.nhom7.foodg.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.nhom7.foodg.shareds.Constants;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,10 +9,9 @@ import lombok.Setter;
 import org.hibernate.annotations.ResultCheckStyle;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-import org.springframework.validation.annotation.Validated;
 
 
-import javax.validation.constraints.*;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
 
@@ -39,7 +37,7 @@ public class TblDiscountEntity {
     private int percentage;
     @Basic
     @Column(name = "min_amount")
-    private float minAmount;
+    private BigDecimal minAmount;
     @Basic
     @Column(name = "start_date")
     private Date startDate;
@@ -63,7 +61,7 @@ public class TblDiscountEntity {
     private Boolean deleted;
     @Basic
     @Column(name = "max_discount_price")
-    private float maxDiscountPrice;
+    private BigDecimal maxDiscountPrice;
     @Basic
     @Column(name = "created_by")
     private int createdBy;
@@ -75,7 +73,7 @@ public class TblDiscountEntity {
     private Integer deletedBy;
     @Basic
     @Column(name = "max_amount")
-    private Float maxAmount;
+    private BigDecimal maxAmount;
 
     @Override
     public boolean equals(Object o) {

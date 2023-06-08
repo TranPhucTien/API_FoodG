@@ -9,4 +9,5 @@ public interface DiscountRepository extends JpaRepository<TblDiscountEntity, Int
     //    TblDiscountEntity findFirstByName(String categoryName);
     boolean existsByCode(String code);
 
+
 }

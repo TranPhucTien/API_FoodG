@@ -1,10 +1,9 @@
 package com.nhom7.foodg.controllers;
 
 import com.nhom7.foodg.models.FuncResult;
-import com.nhom7.foodg.models.dto.TblCategoryDto;
-import com.nhom7.foodg.models.dto.TblInvoiceDto;
-import com.nhom7.foodg.models.entities.TblCategoryEntity;
+import com.nhom7.foodg.models.dto.*;
 import com.nhom7.foodg.models.entities.TblInvoiceEntity;
+import com.nhom7.foodg.models.entities.TblLineEntity;
 import com.nhom7.foodg.services.InvoiceService;
 import com.nhom7.foodg.shareds.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +29,21 @@ public class InvoiceController {
     }
 
     // Get all category
+//create(
+//            HttpStatus.OK,
+//            MessageFormat.format(Constants.GET_DATA_SUCCESS,TABLE_NAME),
+//            invoiceService.getById(customerId, invoiceId)
+//    );
+    @GetMapping(path = "invDto/{Id}")
+
+    public ResponseEntity<FuncResult<TblInvoiceOutDto>> getByID(@PathVariable(name = "Id") int Id) {
+        FuncResult<TblInvoiceOutDto> rs = FuncResult.create(
+                HttpStatus.OK,
+                MessageFormat.format(Constants.GET_DATA_SUCCESS,TABLE_NAME),
+                invoiceService.getById(Id)
+                );
+        return ResponseEntity.ok(rs);
+    }
     @GetMapping(path = "")
     // [GET] localhost:8080/invoices
     public ResponseEntity<FuncResult<List<TblInvoiceEntity>>> getAll() {
@@ -42,17 +56,16 @@ public class InvoiceController {
         return ResponseEntity.ok(rs);
     }
 
-
     // create new invoice
     @PostMapping(path = "")
     // [POST] localhost:8080/invoices
-    public ResponseEntity<FuncResult<TblInvoiceDto>> create(@RequestBody TblInvoiceDto tblInvoiceDto) {
-        invoiceService.insert(tblInvoiceDto);
+    public ResponseEntity<FuncResult<TblInvoiceLineDto>> create(@RequestBody TblInvoiceLineDto tblInvoiceLineDto) {
+        invoiceService.insert(tblInvoiceLineDto);
 
-        FuncResult<TblInvoiceDto> rs = FuncResult.create(
+        FuncResult<TblInvoiceLineDto> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.MODIFY_DATA_SUCCESS, TABLE_NAME),
-                tblInvoiceDto
+                tblInvoiceLineDto
         );
 
         return ResponseEntity.ok(rs);
@@ -86,4 +99,7 @@ public class InvoiceController {
 
         return ResponseEntity.ok(rs);
     }
+
+    // Chu trình
+
 }

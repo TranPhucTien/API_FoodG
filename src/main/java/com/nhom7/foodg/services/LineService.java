@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 public interface LineService {
     List<TblLineEntity> getAll();
-    void insert(TblLineDto newLine);
+    void insert(TblLineDto tblLineDto);
     @Transactional
     void update(TblLineEntity tblLineEntity);
     @Transactional
