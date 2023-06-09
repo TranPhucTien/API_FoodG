@@ -1,8 +1,15 @@
 package com.nhom7.foodg.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.nhom7.foodg.shareds.Constants;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ResultCheckStyle;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 
 import java.util.Date;
@@ -11,6 +18,11 @@ import java.util.Objects;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor(staticName = "create")
+@SQLDelete(sql = "UPDATE tbl_admin SET deleted = 1 WHERE id = ?", check = ResultCheckStyle.COUNT)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Where(clause = "deleted = false")
 @Table(name = "tbl_admin", schema = "dbo", catalog = "foodg")
 public class TblAdminEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,4 +74,24 @@ public class TblAdminEntity {
     @Basic
     @Column(name = "otp_exp")
     private Date otpExp;
+    @Basic
+    @Column(name = "status")
+    private Boolean status;
+
+    public boolean isOTPRequired() {
+        if (this.getOtp() == null) {
+            return true;
+        }
+
+        long currentTimeInMillis = System.currentTimeMillis();
+        if (this.getOtpExp() != null) {
+            long otpRequestedTimeInMillis = this.otpExp.getTime();
+            if (otpRequestedTimeInMillis + Constants.OTP_VALID_DURATION > currentTimeInMillis) {
+                return false;
+            }
+        }
+
+
+        return true;
+    }
 }

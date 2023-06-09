@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .and().formLogin()
                 .and().logout().permitAll()
                 .and().authorizeRequests()
-                .requestMatchers("/admins/**", "/customers/**").hasRole("ADMIN")
+//                .requestMatchers("/admins/**", "/customers/**").hasRole("ADMIN")
                 .requestMatchers("/api/vnpay/**").hasRole("USER")
                 .anyRequest().permitAll();
         httpSecurity.cors().and().csrf().disable();
@@ -41,7 +41,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("*"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true);
+        configuration.setAllowCredentials(false);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

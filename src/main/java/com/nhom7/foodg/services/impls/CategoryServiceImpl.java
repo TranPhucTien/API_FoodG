@@ -112,6 +112,14 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void insert(TblCategoryEntity newCategory) {
+        // Validate input
+        Constants.validateRequiredFields(newCategory, "name");
+        Constants.validateIntegerFields(newCategory, "createdBy", "updatedBy", "deletedBy");
+        Constants.validateStringFields(newCategory, "nvarchar(50)", 0, 50, "name");
+//        Constants.validateDateFields(newCategory, "createdAt", "updatedAt", "deletedAt");
+        Constants.validateBooleanFields(newCategory, "deleted");
+
+
         String categoryName = newCategory.getName();
         try {
             if (categoryRepository.existsByName(categoryName)) {
