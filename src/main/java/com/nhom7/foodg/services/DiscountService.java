@@ -5,6 +5,7 @@ import com.nhom7.foodg.exceptions.InactiveDiscountException;
 import com.nhom7.foodg.exceptions.NotApplyDiscountExeption;
 import com.nhom7.foodg.models.dto.TblDiscountDto;
 import com.nhom7.foodg.models.entities.TblDiscountEntity;
+import com.nhom7.foodg.models.entities.TblProductEntity;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
@@ -21,5 +22,6 @@ public interface DiscountService {
     void update(TblDiscountEntity tblDiscountEntity);
 
     void softDelete(int id);
+    TblDiscountEntity getByID(int id);
 
 }

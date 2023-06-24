@@ -4,6 +4,7 @@ package com.nhom7.foodg.controllers;
 import com.nhom7.foodg.models.FuncResult;
 import com.nhom7.foodg.models.dto.TblDiscountDto;
 import com.nhom7.foodg.models.entities.TblDiscountEntity;
+import com.nhom7.foodg.models.entities.TblProductEntity;
 import com.nhom7.foodg.services.DiscountService;
 import com.nhom7.foodg.shareds.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,18 @@ public class DiscountController {
                 discountService.search(code)
         );
         return  ResponseEntity.ok(rs);
+    }
+
+    @GetMapping(path = "{id}")
+    // [GET] localhost:8080/discount/1
+    public ResponseEntity<FuncResult<TblDiscountEntity>> getDiscountByID(@PathVariable("id") int id) {
+        FuncResult<TblDiscountEntity> rs = FuncResult.create(
+                HttpStatus.OK,
+                MessageFormat.format(Constants.GET_DATA_SUCCESS, TABLE_NAME),
+                discountService.getByID(id)
+        );
+
+        return ResponseEntity.ok(rs);
     }
 
 

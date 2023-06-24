@@ -2,6 +2,7 @@ package com.nhom7.foodg.services.impls;
 
 import com.nhom7.foodg.exceptions.*;
 import com.nhom7.foodg.models.entities.TblDiscountEntity;
+import com.nhom7.foodg.models.entities.TblProductEntity;
 import com.nhom7.foodg.repositories.DiscountRepository;
 import com.nhom7.foodg.services.DiscountService;
 import com.nhom7.foodg.shareds.Constants;
@@ -44,6 +45,14 @@ public class DiscountServiceImpl implements DiscountService {
             }
         }
         return rs;
+    }
+    @Override
+    public TblDiscountEntity getByID(int id) {
+        if (discountRepository.getDiscountByID(id) == null) {
+            throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, id));
+        }
+
+        return discountRepository.findById(id).orElse(null);
     }
 
     @Override
@@ -141,6 +150,7 @@ public class DiscountServiceImpl implements DiscountService {
             throw new ModifyException(MessageFormat.format(Constants.MODIFY_DATA_FAIL_CATCH, TABLE_NAME, id) + ex.getMessage());
         }
     }
+
 
 
 
