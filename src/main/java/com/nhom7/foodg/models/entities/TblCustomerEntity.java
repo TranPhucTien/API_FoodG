@@ -1,6 +1,6 @@
 package com.nhom7.foodg.models.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.nhom7.foodg.shareds.Constants;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -8,7 +8,8 @@ import org.hibernate.annotations.ResultCheckStyle;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import java.sql.Date;
+
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -16,7 +17,6 @@ import java.util.Objects;
 @AllArgsConstructor(staticName = "create")
 @SQLDelete(sql = "UPDATE tbl_customer SET deleted = 1 WHERE id = ?", check = ResultCheckStyle.COUNT)
 @Where(clause = "deleted = false")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(name = "tbl_customer", schema = "dbo", catalog = "foodg")
 public class TblCustomerEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -68,6 +68,24 @@ public class TblCustomerEntity {
     @Basic
     @Column(name = "role")
     private Integer role;
+    @Basic
+    @Column(name = "status")
+    private Boolean status;
+
+    public boolean isOTPRequired() {
+        if (this.getOtp() == null) {
+            return true;
+        }
+
+        long currentTimeInMillis = System.currentTimeMillis();
+        long otpRequestedTimeInMillis = this.otpExp.getTime();
+
+        if (otpRequestedTimeInMillis + Constants.OTP_VALID_DURATION > currentTimeInMillis) {
+            return false;
+        }
+        return true;
+    }
+
 
     public boolean isDeleted() {
         return deleted;
@@ -171,6 +189,14 @@ public class TblCustomerEntity {
 
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
     }
 
     @Override

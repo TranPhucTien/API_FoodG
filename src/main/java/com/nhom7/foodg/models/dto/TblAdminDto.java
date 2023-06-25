@@ -1,6 +1,5 @@
 package com.nhom7.foodg.models.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +9,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor(staticName = "create")
-public class TblCustomerDto {
+public class TblAdminDto {
     private String username;
     private String password;
     private String email;

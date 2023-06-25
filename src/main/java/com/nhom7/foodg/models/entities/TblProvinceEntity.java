@@ -1,11 +1,23 @@
 package com.nhom7.foodg.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.ResultCheckStyle;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.util.Objects;
 
 @Entity
 @Table(name = "tbl_province", schema = "dbo", catalog = "foodg")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor(staticName = "create")
 public class TblProvinceEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

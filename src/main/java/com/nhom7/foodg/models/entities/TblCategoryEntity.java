@@ -8,8 +8,10 @@ import org.hibernate.annotations.ResultCheckStyle;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+
 import javax.validation.constraints.Pattern;
-import java.sql.Date;
+import java.util.Date;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity

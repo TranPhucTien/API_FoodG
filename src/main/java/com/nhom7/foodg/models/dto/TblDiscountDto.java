@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor(staticName = "create")
@@ -16,9 +16,5 @@ public class TblDiscountDto {
     private Date startDate;
     private Date endDate;
     private Boolean isActive;
-    private Date createdAt;
-    private Date updatedAt;
-    private Date deletedAt;
-
 
 }

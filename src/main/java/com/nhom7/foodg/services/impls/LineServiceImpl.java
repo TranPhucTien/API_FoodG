@@ -15,12 +15,14 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
-import java.sql.Date;
+import java.util.Date;
 import java.text.MessageFormat;
 import java.util.List;
 
 @Component
 public  class LineServiceImpl implements LineService {
+
+
 
     private final LineRepository lineRepository;
     private final String TABLE_NAME = "tbl_line";
@@ -38,6 +40,14 @@ public  class LineServiceImpl implements LineService {
 
     @Override
     public void insert(TblLineDto newLine) {
+        //Validate input
+        Constants.validateRequiredFields(newLine, "idInvoice", "idProduct", "quantity", "price", "unitPrice", "total");
+        Constants.validateIntegerFields(newLine, "idInvoice", "quantity", "idDiscount");
+        Constants.validateDecimalFields(newLine, 4, 2, "price", "unitPrice", "total");
+        Constants.validateStringFields(newLine, "nvarchar(200)", 0, 200,"idProduct");
+
+
+
                 int lineId = newLine.getId();
         try {
             if (lineRepository.existsById(lineId)) {

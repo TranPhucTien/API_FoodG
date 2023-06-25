@@ -2,7 +2,8 @@ package com.nhom7.foodg.models.entities;
 
 import jakarta.persistence.*;
 
-import java.sql.Date;
+
+import java.util.Date;
 import java.util.Objects;
 
 @Entity

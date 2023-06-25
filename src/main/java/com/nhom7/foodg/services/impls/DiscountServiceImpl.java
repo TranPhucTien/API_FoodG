@@ -18,12 +18,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+
 import javax.swing.*;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.Date;
+import java.util.Date;
 
 
 @Component
@@ -57,16 +58,18 @@ public class DiscountServiceImpl implements DiscountService {
 
     @Override
     public void insert(TblDiscountEntity newDiscount){
+        //Validate input
+        Constants.validateRequiredFields(newDiscount, "percentage","code", "minAmount", "startDate","isActive",  "maxDiscountPrice", "createdBy", "updatedBy");
+        Constants.validateIntegerFields(newDiscount, "percentage", "createdBy", "updatedBy", "deletedBy");
+        Constants.validateDecimalFields(newDiscount, 5, 2, "maxDiscountPrice");
+        Constants.validateDecimalFields(newDiscount, 6, 2,  "minAmount");
+        Constants.validateDateFields(newDiscount, "startDate", "endDate");
+        Constants.validateStringFields(newDiscount, "varchar(20)", 5, 20, "code");
+
+
         String discountCode = newDiscount.getCode();
         try {
 
-            Constants.validateRequiredFields(newDiscount, "percentage","code", "minAmount", "startDate", "isActive", "maxDiscountPrice", "createdBy", "updatedBy");
-            Constants.validateIntegerFields(newDiscount, "percentage", "createdBy", "updatedBy", "deletedBy");
-            Constants.validateDecimalFields(newDiscount, 5, 2, "maxDiscountPrice");
-            Constants.validateDecimalFields(newDiscount, 6, 2,  "minAmount");
-            Constants.validateDateFields(newDiscount, "startDate", "endDate");
-            Constants.validateStringFields(newDiscount, "varchar(20)", 5, 20, "code");
-            Constants.validateBooleanFields(newDiscount, "isActive");
             if (discountRepository.existsByCode(discountCode)){
                 throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR, TABLE_NAME, discountCode));
             }
@@ -82,12 +85,12 @@ public class DiscountServiceImpl implements DiscountService {
                     newDiscount.getIsActive(),
                     currentDate,
                     currentDate,
-                    newDiscount.getDeletedAt(),
+                    null,
                     false,
                     newDiscount.getMaxDiscountPrice(),
                     newDiscount.getCreatedBy(),
                     newDiscount.getUpdatedBy(),
-                    newDiscount.getDeletedBy(),
+                    null,
                     newDiscount.getMaxAmount()
             );
             discountRepository.save(tblDiscountEntity);

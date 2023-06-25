@@ -3,29 +3,33 @@ package com.nhom7.foodg.services.impls;
 import com.nhom7.foodg.exceptions.DuplicateRecordException;
 import com.nhom7.foodg.exceptions.ModifyException;
 import com.nhom7.foodg.exceptions.NotFoundException;
+import com.nhom7.foodg.models.dto.DataMailDto;
 import com.nhom7.foodg.models.entities.TblCustomerEntity;
 import com.nhom7.foodg.repositories.CustomerRepository;
 import com.nhom7.foodg.services.CustomerService;
+import com.nhom7.foodg.services.MailService;
 import com.nhom7.foodg.shareds.Constants;
+import com.nhom7.foodg.utils.Encode;
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
-import org.mindrot.jbcrypt.BCrypt;
 
 
-import java.sql.Date;
+import java.util.*;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
+    private final MailService mailService;
     private final String TABLE_NAME = "tbl_customer";
 
-    public CustomerServiceImpl(CustomerRepository customerRepository) {
+
+    public CustomerServiceImpl(CustomerRepository customerRepository, MailService mailService) {
         this.customerRepository = customerRepository;
+        this.mailService = mailService;
     }
 
     @Override
@@ -49,16 +53,14 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void insert(TblCustomerEntity newCustomer){
 
-        Constants.validateRequiredFields(newCustomer, "username", "password", "fullName");
+        //Validate input
+        Constants.validateRequiredFields(newCustomer, "username", "password", "fullName", "email");
         Constants.validateStringFields(newCustomer, "UserName 6-20 Ký tự", 6, 20, "username");
         Constants.validateStringFields(newCustomer, "password 8-20 ký tự", 8, 20, "password");
         Constants.validateEmailFields(newCustomer, "email");
         Constants.validateStringFields(newCustomer, "nchar(50)", 0, 50, "email");
         Constants.validateStringFields(newCustomer, "nvarchar(100)", 0, 100, "fullName");
-        Constants.validateDateFields(newCustomer, "birthday", "otpExp");
-        Constants.validateBooleanFields(newCustomer, "gender", "deleted");
         Constants.validateIntegerFields(newCustomer, "idProvince", "role");
-
 
 
 
@@ -67,11 +69,13 @@ public class CustomerServiceImpl implements CustomerService {
             if (customerRepository.existsByUsername(newCustomer.getUsername())){
                 throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR, TABLE_NAME, customerUsername));
             }
+            if (customerRepository.existsByEmail(newCustomer.getEmail())){
+                throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR_EMAIL, TABLE_NAME, newCustomer.getEmail()));
+            }
             Date currentDate = Constants.getCurrentDay();
-
-            String password = Constants.hashPassword(newCustomer.getPassword());
-
-            TblCustomerEntity tblCustomerEntity = TblCustomerEntity.create(
+            Encode encode = new Encode();
+            String password = encode.Encrypt(newCustomer.getPassword());
+            TblCustomerEntity tblAdminEntity = TblCustomerEntity.create(
                     0,
                     customerUsername,
                     password,
@@ -86,42 +90,47 @@ public class CustomerServiceImpl implements CustomerService {
                     false,
                     newCustomer.getBirthday(),
                     newCustomer.getOtp(),
-                    newCustomer.getOtpExp(),
-                    newCustomer.getRole()
-
+                    currentDate,
+                    newCustomer.getRole(),
+                    newCustomer.getStatus()
             );
-            customerRepository.save(tblCustomerEntity);
+            customerRepository.save(tblAdminEntity);
 
         } catch (DataIntegrityViolationException ex){
             throw new ModifyException(MessageFormat.format(Constants.MODIFY_DATA_FAIL_CATCH, TABLE_NAME) + ex.getMessage());
         }
     }
+
+
     @Transactional
     @Override
-    public void update(TblCustomerEntity tblCustomerEntity){
-        if (customerRepository.existsByUsername(tblCustomerEntity.getUsername())){
-            throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR, TABLE_NAME, tblCustomerEntity.getUsername()));
-        }
-        if (!customerRepository.existsById(tblCustomerEntity.getId())) {
-            throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, tblCustomerEntity.getId()));
+    public void update(TblCustomerEntity tblAdminEntity){
+        if (!customerRepository.existsById(tblAdminEntity.getId())) {
+            throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, tblAdminEntity.getId()));
         }
 
+        TblCustomerEntity customer = customerRepository.findById(tblAdminEntity.getId()).orElse(null);
+        if (customerRepository.existsByUsername(tblAdminEntity.getUsername())){
+            if (customer.getUsername().trim() == tblAdminEntity.getUsername().trim()){
+                throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR, TABLE_NAME, tblAdminEntity.getUsername()));
+            }
+        }
         try {
-            TblCustomerEntity customer = customerRepository.findById(tblCustomerEntity.getId()).orElse(null);
 
             if (customer != null) {
-                customer.setUsername(tblCustomerEntity.getUsername());
-//                customer.setPassword(tblCustomerEntity.getPassword());
-                customer.setEmail(tblCustomerEntity.getEmail());
-                customer.setFullName(tblCustomerEntity.getFullName());
-                customer.setGender(tblCustomerEntity.getGender());
-                customer.setAvatar(tblCustomerEntity.getAvatar());
-                customer.setIdProvince(tblCustomerEntity.getIdProvince());
+                customer.setUsername(tblAdminEntity.getUsername());
+//                customer.setPassword(tblAdminEntity.getPassword());
+                customer.setEmail(tblAdminEntity.getEmail());
+                customer.setFullName(tblAdminEntity.getFullName());
+                customer.setGender(tblAdminEntity.getGender());
+                customer.setAvatar(tblAdminEntity.getAvatar());
+                customer.setIdProvince(tblAdminEntity.getIdProvince());
                 customer.setUpdatedAt(Constants.getCurrentDay());
-                customer.setBirthday(tblCustomerEntity.getBirthday());
-                customer.setOtp(tblCustomerEntity.getOtp());
-                customer.setOtpExp(tblCustomerEntity.getOtpExp());
-                customer.setRole(tblCustomerEntity.getRole());
+                customer.setBirthday(tblAdminEntity.getBirthday());
+                customer.setOtp(tblAdminEntity.getOtp());
+                customer.setOtpExp(tblAdminEntity.getOtpExp());
+                customer.setRole(tblAdminEntity.getRole());
+                customer.setStatus(tblAdminEntity.getStatus());
 
                 customerRepository.save(customer);
             }
@@ -129,6 +138,8 @@ public class CustomerServiceImpl implements CustomerService {
             throw new ModifyException(MessageFormat.format(Constants.MODIFY_DATA_FAIL_CATCH, TABLE_NAME) + ex.getMessage());
         }
     }
+
+
 
 
     @Override
@@ -149,5 +160,32 @@ public class CustomerServiceImpl implements CustomerService {
             throw new ModifyException(MessageFormat.format(Constants.MODIFY_DATA_FAIL_CATCH, TABLE_NAME, id) + ex.getMessage());
         }
     }
+
+    @Override
+    public Boolean create(TblCustomerEntity tblCustomerEntity) {
+        try {
+            DataMailDto dataMail = new DataMailDto();
+
+            dataMail.setTo(tblCustomerEntity.getEmail());
+            dataMail.setSubject(Constants.SEND_MAIL_SUBJECT.CLIENT_REGISTER);
+
+            Map<String, Object> props = new HashMap<>();
+            props.put("name", tblCustomerEntity.getFullName());
+            props.put("username", tblCustomerEntity.getUsername());
+            props.put("password", tblCustomerEntity.getPassword());
+            props.put("OTP", tblCustomerEntity.getOtp());
+            dataMail.setProps(props);
+
+            mailService.sendHtmlMail(dataMail, Constants.TEMPLATE_FILE_NAME.CLIENT_REGISTER);
+            return true;
+        } catch (MessagingException exp){
+            exp.printStackTrace();
+        }
+        return false;
+    }
+
+
+
+
 
 }

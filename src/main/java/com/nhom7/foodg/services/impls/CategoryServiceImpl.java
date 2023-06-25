@@ -15,7 +15,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Component;
 
-import java.sql.Date;
+
+import java.util.Date;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -104,6 +105,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void insert(TblCategoryEntity newCategory) {
+        // Validate input
+        Constants.validateRequiredFields(newCategory, "name");
+        Constants.validateIntegerFields(newCategory, "createdBy", "updatedBy", "deletedBy");
+        Constants.validateStringFields(newCategory, "nvarchar(50)", 0, 50, "name");
+
+
         String categoryName = newCategory.getName();
         try {
             if (categoryRepository.existsByName(categoryName)) {

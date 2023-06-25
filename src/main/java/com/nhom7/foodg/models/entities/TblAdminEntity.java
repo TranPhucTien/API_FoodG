@@ -1,13 +1,24 @@
 package com.nhom7.foodg.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.nhom7.foodg.shareds.Constants;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ResultCheckStyle;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
-import java.sql.Date;
+
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor(staticName = "create")
+@SQLDelete(sql = "UPDATE tbl_admin SET deleted = 1 WHERE id = ?", check = ResultCheckStyle.COUNT)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Where(clause = "deleted = false")
 @Table(name = "tbl_admin", schema = "dbo", catalog = "foodg")
 public class TblAdminEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,7 +26,6 @@ public class TblAdminEntity {
     @Column(name = "id")
     private int id;
     @Basic
-    @Column(name = "username")
     private String username;
     @Basic
     @Column(name = "password")
@@ -59,6 +69,13 @@ public class TblAdminEntity {
     @Basic
     @Column(name = "otp_exp")
     private Date otpExp;
+    @Basic
+    @Column(name = "status")
+    private Boolean status;
+
+
+
+
 
     public int getId() {
         return id;
@@ -187,6 +204,13 @@ public class TblAdminEntity {
     public void setOtpExp(Date otpExp) {
         this.otpExp = otpExp;
     }
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -199,5 +223,20 @@ public class TblAdminEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, username, password, email, fullName, birthday, gender, avatar, idProvince, role, createdAt, updatedAt, deletedAt, deleted, otp, otpExp);
+    }
+
+    public boolean isOTPRequired() {
+        if (this.getOtp() == null) {
+            return true;
+        }
+
+        long currentTimeInMillis = System.currentTimeMillis();
+        if (this.getOtpExp() != null) {
+            long otpRequestedTimeInMillis = this.otpExp.getTime();
+            if (otpRequestedTimeInMillis + Constants.OTP_VALID_DURATION > currentTimeInMillis) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -1,6 +1,7 @@
 package com.nhom7.foodg.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.nhom7.foodg.shareds.Constants;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +10,11 @@ import lombok.Setter;
 import org.hibernate.annotations.ResultCheckStyle;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.springframework.validation.annotation.Validated;
 
-import java.sql.Date;
+
+import javax.validation.constraints.*;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity

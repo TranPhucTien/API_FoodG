@@ -15,7 +15,7 @@ package com.nhom7.foodg.services.impls;
         import org.springframework.dao.DataIntegrityViolationException;
         import org.springframework.stereotype.Component;
 
-        import java.sql.Date;
+        import java.util.Date;
         import java.text.MessageFormat;
         import java.util.List;
 
@@ -38,6 +38,14 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public void insert(TblInvoiceDto newInvoice) {
+        //Validate input
+        Constants.validateRequiredFields(newInvoice, "customerId", "invoiceNumber", "invoiceDate", "totalAmount", "tax", "idDiscount", "grandTotal", "status", "paid" );
+        Constants.validateIntegerFields(newInvoice, "customerId", "invoiceNumber", "idDiscount","status");
+        Constants.validateDecimalFields(newInvoice, 5,2, "totalAmount", "grandTotal");
+        Constants.validateDecimalFields(newInvoice, 2, 1, "tax");
+        Constants.validateDateFields(newInvoice, "dueDate", "paidDate", "invoiceDate");
+
+
         int id = newInvoice.getId();
         try {
             if (invoiceRepository.existsById(id)) {

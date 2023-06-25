@@ -7,7 +7,8 @@ import org.hibernate.annotations.ResultCheckStyle;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import java.sql.Date;
+
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -17,7 +18,6 @@ import java.util.Objects;
 @SQLDelete(sql = "UPDATE tbl_product SET deleted = 1 WHERE id = ?", check = ResultCheckStyle.COUNT)
 @Where(clause = "deleted = false")
 public class TblProductEntity {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
     private String id;

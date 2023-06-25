@@ -1,7 +1,7 @@
 package com.nhom7.foodg.controllers;
 
 import com.nhom7.foodg.models.FuncResult;
-import com.nhom7.foodg.models.entities.TblDiscountEntity;
+import com.nhom7.foodg.models.entities.TblProvinceEntity;
 import com.nhom7.foodg.models.entities.TblProvinceEntity;
 import com.nhom7.foodg.services.ProvinceService;
 import com.nhom7.foodg.shareds.Constants;
@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -50,4 +51,34 @@ public class ProvinceController {
 
         return ResponseEntity.ok(rs);
     }
+
+    @PostMapping(path = "")
+    // [POST] localhost:8080/provinces
+
+    public ResponseEntity<FuncResult<TblProvinceEntity>> create( @RequestBody @Valid TblProvinceEntity tblProvinceEntity){
+        provinceService.insert(tblProvinceEntity);
+
+        FuncResult<TblProvinceEntity> rs = FuncResult.create(
+                HttpStatus.OK,
+                MessageFormat.format(Constants.MODIFY_DATA_SUCCESS, TABLE_NAME),
+                tblProvinceEntity
+        );
+        return ResponseEntity.ok(rs);
+    }
+
+
+    @PutMapping(path = "")
+    // [PUT] localhost:8080/provinces/1
+    public ResponseEntity<FuncResult<TblProvinceEntity>> update(@RequestBody TblProvinceEntity tblProvinceEntity){
+        provinceService.update(tblProvinceEntity);
+
+        FuncResult<TblProvinceEntity> rs = FuncResult.create(
+                HttpStatus.OK,
+                MessageFormat.format(Constants.MODIFY_DATA_SUCCESS, TABLE_NAME),
+                tblProvinceEntity
+        );
+        return ResponseEntity.ok(rs);
+    }
+
+
 }

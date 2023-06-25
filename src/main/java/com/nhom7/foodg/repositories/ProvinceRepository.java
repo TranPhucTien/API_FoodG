@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProvinceRepository extends JpaRepository<TblProvinceEntity, Integer> {
     boolean existsByWard(String name);
+    boolean existsByCity(String name);
+    boolean existsByDistrict(String name);
 }
