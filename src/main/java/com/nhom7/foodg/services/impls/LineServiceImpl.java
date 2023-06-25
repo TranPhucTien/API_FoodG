@@ -4,8 +4,6 @@ import com.nhom7.foodg.exceptions.DuplicateRecordException;
 import com.nhom7.foodg.exceptions.ModifyException;
 import com.nhom7.foodg.exceptions.NotFoundException;
 import com.nhom7.foodg.models.dto.TblLineDto;
-import com.nhom7.foodg.models.entities.TblCategoryEntity;
-import com.nhom7.foodg.models.entities.TblInvoiceEntity;
 import com.nhom7.foodg.models.entities.TblLineEntity;
 import com.nhom7.foodg.repositories.LineRepository;
 import com.nhom7.foodg.services.LineService;
@@ -15,14 +13,12 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import java.sql.Date;
 import java.text.MessageFormat;
 import java.util.List;
 
 @Component
 public  class LineServiceImpl implements LineService {
-
-
 
     private final LineRepository lineRepository;
     private final String TABLE_NAME = "tbl_line";
@@ -34,20 +30,10 @@ public  class LineServiceImpl implements LineService {
 
     // Get all category
     @Override
-    public List<TblLineEntity> getAll() {
-        return lineRepository.findAll();
-    }
+    public List<TblLineEntity> getAll() { return lineRepository.findAll();}
 
     @Override
     public void insert(TblLineDto newLine) {
-        //Validate input
-        Constants.validateRequiredFields(newLine, "idInvoice", "idProduct", "quantity", "price", "unitPrice", "total");
-        Constants.validateIntegerFields(newLine, "idInvoice", "quantity", "idDiscount");
-        Constants.validateDecimalFields(newLine, 4, 2, "price", "unitPrice", "total");
-        Constants.validateStringFields(newLine, "nvarchar(200)", 0, 200,"idProduct");
-
-
-
                 int lineId = newLine.getId();
         try {
             if (lineRepository.existsById(lineId)) {
@@ -63,8 +49,9 @@ public  class LineServiceImpl implements LineService {
                     newLine.getQuantity(),
                     newLine.getPrice(),
                     newLine.getUnitPrice(),
-                    newLine.getIdDiscount(),
+
                     newLine.getTotal()
+
             );
 
             lineRepository.save(tblLineEntity);
@@ -88,10 +75,15 @@ public  class LineServiceImpl implements LineService {
             TblLineEntity line = lineRepository.findById(tblLineEntity.getId()).orElse(null);
 
             if (line != null) {
-
+                line.setIdInvoice(tblLineEntity.getIdInvoice());
+                line.setIdProduct(tblLineEntity.getIdProduct());
                 line.setDescription(tblLineEntity.getDescription());
+                line.setQuantity(tblLineEntity.getQuantity());
+                line.setPrice(tblLineEntity.getPrice());
+                line.setUnitPrice(tblLineEntity.getUnitPrice());
 
-                lineRepository.save(line);
+                line.setTotal(tblLineEntity.getTotal());
+                 lineRepository.save(line);
             }
         } catch (NullPointerException ex) {
             throw new ModifyException(MessageFormat.format(Constants.MODIFY_DATA_FAIL_CATCH, TABLE_NAME) + ex.getMessage());

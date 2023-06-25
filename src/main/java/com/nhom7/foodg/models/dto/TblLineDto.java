@@ -20,7 +20,6 @@ public class TblLineDto {
     private int quantity;
     private BigDecimal price;
     private BigDecimal unitPrice;
-    private Integer idDiscount;
     private BigDecimal total;
 
 }

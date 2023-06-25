@@ -69,9 +69,9 @@ public class CustomerServiceImpl implements CustomerService {
             if (customerRepository.existsByUsername(newCustomer.getUsername())){
                 throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR, TABLE_NAME, customerUsername));
             }
-            if (customerRepository.existsByEmail(newCustomer.getEmail())){
-                throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR_EMAIL, TABLE_NAME, newCustomer.getEmail()));
-            }
+//            if (customerRepository.existsByEmail(newCustomer.getEmail())){
+//                throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR_EMAIL, TABLE_NAME, newCustomer.getEmail()));
+//            }
             Date currentDate = Constants.getCurrentDay();
             Encode encode = new Encode();
             String password = encode.Encrypt(newCustomer.getPassword());

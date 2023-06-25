@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/categories")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 //localhost:8080/categories
 public class CategoryController {
     private final CategoryService categoryService;
@@ -35,6 +35,19 @@ public class CategoryController {
                 HttpStatus.OK,
                 MessageFormat.format(Constants.GET_DATA_SUCCESS, TABLE_NAME),
                 categoryService.getAll()
+        );
+
+        return ResponseEntity.ok(rs);
+    }
+
+    // Get all category
+    @GetMapping(path = "detail/{id}")
+    // [GET] localhost:8080/categories/detail/1
+    public ResponseEntity<FuncResult<TblCategoryEntity>> getById(@PathVariable(name = "id") int id) {
+        FuncResult<TblCategoryEntity> rs = FuncResult.create(
+                HttpStatus.OK,
+                MessageFormat.format(Constants.GET_DATA_SUCCESS, TABLE_NAME),
+                categoryService.getByID(id)
         );
 
         return ResponseEntity.ok(rs);

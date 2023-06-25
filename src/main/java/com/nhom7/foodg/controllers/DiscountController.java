@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/discounts")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class DiscountController {
     private final DiscountService discountService;
     private final String TABLE_NAME = "tbl_discount";

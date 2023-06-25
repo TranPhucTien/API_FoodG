@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/provinces")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 //localhost:8080/provinces
 public class ProvinceController {
     private final ProvinceService provinceService;
