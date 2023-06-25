@@ -3,6 +3,7 @@ package com.nhom7.foodg.controllers;
 import com.nhom7.foodg.exceptions.DuplicateRecordException;
 import com.nhom7.foodg.exceptions.NotFoundException;
 import com.nhom7.foodg.models.FuncResult;
+import com.nhom7.foodg.models.dto.TblAdminDto;
 import com.nhom7.foodg.models.dto.TblCustomerDto;
 import com.nhom7.foodg.models.dto.TblCustomerDto;
 import com.nhom7.foodg.models.entities.TblCustomerEntity;
@@ -143,6 +144,12 @@ public class CustomerController {
                     customer.setOtpExp(Constants.getCurrentDay());
                     customerRepository.save(customer);
                     customerService.create(customer);
+                    FuncResult<TblCustomerDto> rs = FuncResult.create(
+                            HttpStatus.OK,
+                            MessageFormat.format(Constants.RESEND_EMAIL_SUCCESS, customer.getEmail()),
+                            null
+                    );
+                    return ResponseEntity.ok(rs);
                 }else {
                     FuncResult<TblCustomerDto> rs = FuncResult.create(
                             HttpStatus.BAD_REQUEST,
