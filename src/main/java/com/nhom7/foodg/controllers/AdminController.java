@@ -4,6 +4,8 @@ import com.nhom7.foodg.exceptions.DuplicateRecordException;
 import com.nhom7.foodg.exceptions.NotFoundException;
 import com.nhom7.foodg.models.FuncResult;
 import com.nhom7.foodg.models.dto.TblAdminDto;
+import com.nhom7.foodg.models.dto.TblAdminDto;
+import com.nhom7.foodg.models.entities.TblAdminEntity;
 import com.nhom7.foodg.models.entities.TblAdminEntity;
 import com.nhom7.foodg.repositories.AdminRepository;
 import com.nhom7.foodg.services.AdminService;
@@ -75,18 +77,37 @@ public class AdminController {
             /* username đã tồn tại trong DB rồi thì update Opt mới */
 
             TblAdminEntity admin = adminRepository.findFirstByUsername(userName);
-            /* Giới hạn thời gian gửi lại OTP */
-                admin.setOtp(Otp);
-                admin.setOtpExp(Constants.getCurrentDay());
-                adminRepository.save(admin);
-                adminService.create(admin);
+            /* Chỉ gửi lại otp đăng ký khi tài khoản chưa được kích hoạt  */
+            if (admin.getStatus() == false){
+                /* Giới hạn thời gian gửi lại OTP */
+                if (admin.isOTPRequired()){
+                    admin.setOtp(Otp);
+                    admin.setOtpExp(Constants.getCurrentDay());
+                    adminRepository.save(admin);
+                    adminService.create(admin);
+                    FuncResult<TblAdminDto> rs = FuncResult.create(
+                            HttpStatus.OK,
+                            MessageFormat.format(Constants.RESEND_EMAIL_SUCCESS, admin.getEmail()),
+                            null
+                    );
+                    return ResponseEntity.ok(rs);
 
+                }else {
+                    FuncResult<TblAdminDto> rs = FuncResult.create(
+                            HttpStatus.BAD_REQUEST,
+                            Constants.WAITING_TIME,
+                            null
+                    );
+                    return ResponseEntity.badRequest().body(rs);
+                }
+            } else {
                 FuncResult<TblAdminDto> rs = FuncResult.create(
-                        HttpStatus.OK,
-                        MessageFormat.format(Constants.RESEND_EMAIL_SUCCESS, admin.getEmail()),
-                        tblAdminDto
+                        HttpStatus.BAD_REQUEST,
+                        MessageFormat.format(Constants.DUPLICATE_ERROR_USERNAME, admin.getUsername()),
+                        null
                 );
-                return ResponseEntity.ok(rs);
+                return ResponseEntity.badRequest().body(rs);
+            }
         } else {
             /*Chưa tồn tại trong DB thì tạo mới */
             TblAdminEntity tblAdminEntity = TblAdminEntity.create(
