@@ -55,6 +55,14 @@ public class DiscountServiceImpl implements DiscountService {
         }
         return rs;
     }
+    @Override
+    public TblDiscountEntity getByID(int id) {
+        if (discountRepository.getDiscountByID(id) == null) {
+            throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, id));
+        }
+
+        return discountRepository.findById(id).orElse(null);
+    }
 
     @Override
     public void insert(TblDiscountEntity newDiscount){

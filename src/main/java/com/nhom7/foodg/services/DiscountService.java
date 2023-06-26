@@ -22,4 +22,6 @@ public interface DiscountService {
 
     void softDelete(int id);
 
+    TblDiscountEntity getByID(int id);
+
 }

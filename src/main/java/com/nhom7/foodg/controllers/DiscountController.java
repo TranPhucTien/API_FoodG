@@ -51,6 +51,17 @@ public class DiscountController {
         return  ResponseEntity.ok(rs);
     }
 
+    @GetMapping(path = "{id}")
+    // [GET] localhost:8080/discount/1
+    public ResponseEntity<FuncResult<TblDiscountEntity>> getDiscountByID(@PathVariable("id") int id) {
+        FuncResult<TblDiscountEntity> rs = FuncResult.create(
+                HttpStatus.OK,
+                MessageFormat.format(Constants.GET_DATA_SUCCESS, TABLE_NAME),
+                discountService.getByID(id)
+        );
+
+        return ResponseEntity.ok(rs);
+    }
 
 
 
