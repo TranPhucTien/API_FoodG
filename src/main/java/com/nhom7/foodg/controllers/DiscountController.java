@@ -3,9 +3,11 @@ package com.nhom7.foodg.controllers;
 
 import com.nhom7.foodg.models.FuncResult;
 import com.nhom7.foodg.models.dto.TblDiscountDto;
+import com.nhom7.foodg.models.entities.TblCustomerEntity;
 import com.nhom7.foodg.models.entities.TblDiscountEntity;
 import com.nhom7.foodg.services.DiscountService;
 import com.nhom7.foodg.shareds.Constants;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,9 +70,17 @@ public class DiscountController {
     @PostMapping(path = "")
     // [POST] localhost:8080/discounts
 
-    public ResponseEntity<FuncResult<TblDiscountEntity>> create( @RequestBody @Valid TblDiscountEntity tblDiscountEntity){
-        discountService.insert(tblDiscountEntity);
+    public ResponseEntity<FuncResult<TblDiscountEntity>> create(HttpSession httpSession, @RequestBody @Valid TblDiscountEntity tblDiscountEntity){
 
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<TblDiscountEntity> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
+        discountService.insert(tblDiscountEntity);
         FuncResult<TblDiscountEntity> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.MODIFY_DATA_SUCCESS, TABLE_NAME),
@@ -82,9 +92,16 @@ public class DiscountController {
 
     @PutMapping(path = "")
     // [PUT] localhost:8080/discounts/1
-    public ResponseEntity<FuncResult<TblDiscountEntity>> update(@RequestBody TblDiscountEntity tblDiscountEntity){
+    public ResponseEntity<FuncResult<TblDiscountEntity>> update(HttpSession httpSession, @RequestBody TblDiscountEntity tblDiscountEntity){
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<TblDiscountEntity> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
         discountService.update(tblDiscountEntity);
-
         FuncResult<TblDiscountEntity> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.MODIFY_DATA_SUCCESS, TABLE_NAME),
@@ -95,7 +112,15 @@ public class DiscountController {
 
     @DeleteMapping(path = "{discountID}")
     // [DELETE] localhost:8080/discounts/1
-    public ResponseEntity<FuncResult<Integer>> softDelete(@PathVariable("discountID") int discountID){
+    public ResponseEntity<FuncResult<Integer>> softDelete(HttpSession httpSession, @PathVariable("discountID") int discountID){
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<Integer> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
         discountService.softDelete(discountID);
         FuncResult<Integer> rs = FuncResult.create(
                 HttpStatus.OK,

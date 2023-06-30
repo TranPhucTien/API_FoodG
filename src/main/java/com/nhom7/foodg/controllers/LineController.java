@@ -8,6 +8,7 @@ import com.nhom7.foodg.models.entities.TblLineEntity;
 import com.nhom7.foodg.models.entities.TblProductEntity;
 import com.nhom7.foodg.services.LineService;
 import com.nhom7.foodg.shareds.Constants;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,15 @@ public class LineController {
     // Get all lines
     @GetMapping(path = "")
     // [GET] localhost:8080/lines
-    public ResponseEntity<FuncResult<List<TblLineEntity>>> getAll() {
+    public ResponseEntity<FuncResult<List<TblLineEntity>>> getAll(HttpSession httpSession) {
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<List<TblLineEntity>> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
         FuncResult<List<TblLineEntity>> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.GET_DATA_SUCCESS, TABLE_NAME),
@@ -45,7 +54,15 @@ public class LineController {
     // create new line
     @PostMapping(path = "")
     // [POST] localhost:8080/lines
-    public ResponseEntity<FuncResult<TblLineDto>> create(@RequestBody TblLineDto tblLineDto) {
+    public ResponseEntity<FuncResult<TblLineDto>> create(HttpSession httpSession, @RequestBody TblLineDto tblLineDto) {
+        if(httpSession.getAttribute("role") == null){
+            FuncResult<TblLineDto> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
         lineService.insert(tblLineDto);
 
         FuncResult<TblLineDto> rs = FuncResult.create(
@@ -59,7 +76,15 @@ public class LineController {
 
     @PutMapping(path = "")
     // [PUT] localhost:8080/lines
-    public ResponseEntity<FuncResult<TblLineEntity>> update(@RequestBody TblLineEntity tblLineEntity) {
+    public ResponseEntity<FuncResult<TblLineEntity>> update(HttpSession httpSession, @RequestBody TblLineEntity tblLineEntity) {
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<TblLineEntity> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
         lineService.update(tblLineEntity);
 
         FuncResult<TblLineEntity> rs = FuncResult.create(
@@ -75,7 +100,15 @@ public class LineController {
     // solf delete line by line id
     @DeleteMapping(path = "{lineID}")
     // [DELETE] localhost:8080/lines
-    public ResponseEntity<FuncResult<Integer>> softDelete(@PathVariable("lineID") int lineId) {
+    public ResponseEntity<FuncResult<Integer>> softDelete(HttpSession httpSession, @PathVariable("lineID") int lineId) {
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<Integer> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
         lineService.softDelete(lineId);
 
         FuncResult<Integer> rs = FuncResult.create(

@@ -16,7 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import jakarta.servlet.http.HttpSession;
+//import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.List;
@@ -266,24 +267,44 @@ public class AdminController {
 
     @GetMapping(path = "")
     // [GET] localhost:8080/admins
-    public ResponseEntity<FuncResult<List<TblAdminEntity>>> getAll() {
-        FuncResult<List<TblAdminEntity>> rs = FuncResult.create(
-                HttpStatus.OK,
-                MessageFormat.format(Constants.GET_DATA_SUCCESS, TABLE_NAME),
-                adminService.getAll()
-        );
-        return ResponseEntity.ok(rs);
+    public ResponseEntity<FuncResult<List<TblAdminEntity>>> getAll(HttpSession httpSession) {
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<List<TblAdminEntity>> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
+        else{
+            FuncResult<List<TblAdminEntity>> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    MessageFormat.format(Constants.GET_DATA_SUCCESS, TABLE_NAME),
+                    adminService.getAll()
+            );
+            return ResponseEntity.ok(rs);
+        }
     }
 
     @GetMapping(path = "/search")
     // [GET] localhost:8080/admins/search?keyword=Nguyen
-    public ResponseEntity<FuncResult<List<TblAdminEntity>>> search(@RequestParam(name = "keyword", required = false, defaultValue = "") String fullName){
-        FuncResult<List<TblAdminEntity>> rs = FuncResult.create(
-                HttpStatus.OK,
-                MessageFormat.format(Constants.SEARCH_SUCCESS, TABLE_NAME, fullName),
-                adminService.search(fullName)
-        );
-        return  ResponseEntity.ok(rs);
+    public ResponseEntity<FuncResult<List<TblAdminEntity>>> search(HttpSession httpSession, @RequestParam(name = "keyword", required = false, defaultValue = "") String fullName){
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<List<TblAdminEntity>> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
+        else{
+            FuncResult<List<TblAdminEntity>> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    MessageFormat.format(Constants.SEARCH_SUCCESS, TABLE_NAME, fullName),
+                    adminService.search(fullName)
+            );
+            return  ResponseEntity.ok(rs);
+        }
     }
 
 
@@ -291,16 +312,15 @@ public class AdminController {
     // [POST] localhost:8080/admins
     public ResponseEntity<FuncResult<TblAdminEntity>> create(@RequestBody TblAdminEntity tblAdminEntity){
         adminService.insert(tblAdminEntity);
-
-        FuncResult<TblAdminEntity> rs = FuncResult.create(
-                HttpStatus.OK,
-                MessageFormat.format(Constants.MODIFY_DATA_SUCCESS, TABLE_NAME),
-                tblAdminEntity
-        );
-        return ResponseEntity.ok(rs);
+        //else{
+            FuncResult<TblAdminEntity> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    MessageFormat.format(Constants.MODIFY_DATA_SUCCESS, TABLE_NAME),
+                    tblAdminEntity
+            );
+            return ResponseEntity.ok(rs);
+    //    }
     }
-
-
     @PutMapping(path = "")
     // [PUT] localhost:8080/admins
     public ResponseEntity<FuncResult<TblAdminEntity>> update(@RequestBody TblAdminEntity tblAdminEntity){
@@ -313,7 +333,6 @@ public class AdminController {
         );
         return ResponseEntity.ok(rs);
     }
-
     @DeleteMapping(path = "{adminID}")
     // [DELETE] localhost:8080/admins/1
     public ResponseEntity<FuncResult<Integer>> softDelete(@PathVariable("adminID") int adminID){
@@ -325,6 +344,4 @@ public class AdminController {
         );
         return ResponseEntity.ok(rs);
     }
-
-
 }

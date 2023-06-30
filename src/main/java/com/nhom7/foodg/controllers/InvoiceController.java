@@ -6,6 +6,7 @@ import com.nhom7.foodg.models.entities.TblInvoiceEntity;
 import com.nhom7.foodg.models.entities.TblLineEntity;
 import com.nhom7.foodg.services.InvoiceService;
 import com.nhom7.foodg.shareds.Constants;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +37,15 @@ public class InvoiceController {
 //    );
     @GetMapping(path = "invDto/{Id}")
 
-    public ResponseEntity<FuncResult<TblInvoiceOutDto>> getByID(@PathVariable(name = "Id") int Id) {
+    public ResponseEntity<FuncResult<TblInvoiceOutDto>> getByID(HttpSession httpSession, @PathVariable(name = "Id") int Id) {
+        if(httpSession.getAttribute("role") == null || (!httpSession.getAttribute("role").equals("admin") && !httpSession.getAttribute("role").equals("customer"))){
+            FuncResult<TblInvoiceOutDto> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Chua Dang Nhap",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
         FuncResult<TblInvoiceOutDto> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.GET_DATA_SUCCESS,TABLE_NAME),
@@ -46,7 +55,15 @@ public class InvoiceController {
     }
     @GetMapping(path = "")
     // [GET] localhost:8080/invoices
-    public ResponseEntity<FuncResult<List<TblInvoiceEntity>>> getAll() {
+    public ResponseEntity<FuncResult<List<TblInvoiceEntity>>> getAll(HttpSession httpSession) {
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<List<TblInvoiceEntity>> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
         FuncResult<List<TblInvoiceEntity>> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.GET_DATA_SUCCESS, TABLE_NAME),
@@ -59,7 +76,15 @@ public class InvoiceController {
     // create new invoice
     @PostMapping(path = "")
     // [POST] localhost:8080/invoices
-    public ResponseEntity<FuncResult<TblInvoiceLineDto>> create(@RequestBody TblInvoiceLineDto tblInvoiceLineDto) {
+    public ResponseEntity<FuncResult<TblInvoiceLineDto>> create(HttpSession httpSession, @RequestBody TblInvoiceLineDto tblInvoiceLineDto) {
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<TblInvoiceLineDto> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
         invoiceService.insert(tblInvoiceLineDto);
 
         FuncResult<TblInvoiceLineDto> rs = FuncResult.create(
@@ -72,7 +97,15 @@ public class InvoiceController {
     }
     @PutMapping(path = "")
     // [PUT] localhost:8080/invoices
-    public ResponseEntity<FuncResult<TblInvoiceEntity>> update(@RequestBody TblInvoiceEntity tblInvoiceEntity) {
+    public ResponseEntity<FuncResult<TblInvoiceEntity>> update(HttpSession httpSession, @RequestBody TblInvoiceEntity tblInvoiceEntity) {
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<TblInvoiceEntity> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
         invoiceService.update(tblInvoiceEntity);
 
         FuncResult<TblInvoiceEntity> rs = FuncResult.create(
@@ -88,7 +121,15 @@ public class InvoiceController {
     // solf delete invoice by invoice id
     @DeleteMapping(path = "{invoiceID}")
     // [DELETE] localhost:8080/invoices
-    public ResponseEntity<FuncResult<Integer>> softDelete(@PathVariable("invoiceID") int invoiceId) {
+    public ResponseEntity<FuncResult<Integer>> softDelete(HttpSession httpSession, @PathVariable("invoiceID") int invoiceId) {
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<Integer> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
         invoiceService.softDelete(invoiceId);
 
         FuncResult<Integer> rs = FuncResult.create(

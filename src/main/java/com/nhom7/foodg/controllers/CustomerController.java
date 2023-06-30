@@ -14,6 +14,7 @@ import com.nhom7.foodg.services.CustomerService;
 import com.nhom7.foodg.shareds.Constants;
 import com.nhom7.foodg.utils.DataUtil;
 import com.nhom7.foodg.utils.Encode;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,7 +69,15 @@ public class CustomerController {
 
     @GetMapping(path = "")
     // [GET] localhost:8080/customers
-    public ResponseEntity<FuncResult<List<TblCustomerEntity>>> getAll() {
+    public ResponseEntity<FuncResult<List<TblCustomerEntity>>> getAll(HttpSession httpSession) {
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<List<TblCustomerEntity>> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
         FuncResult<List<TblCustomerEntity>> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.GET_DATA_SUCCESS, TABLE_NAME),
@@ -79,7 +88,15 @@ public class CustomerController {
 
     @GetMapping(path = "/search")
     // [GET] localhost:8080/customers/search?keyword=Nguyen
-    public ResponseEntity<FuncResult<List<TblCustomerEntity>>> search(@RequestParam(name = "keyword", required = false, defaultValue = "") String fullName){
+    public ResponseEntity<FuncResult<List<TblCustomerEntity>>> search(HttpSession httpSession, @RequestParam(name = "keyword", required = false, defaultValue = "") String fullName){
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<List<TblCustomerEntity>> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
         FuncResult<List<TblCustomerEntity>> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.SEARCH_SUCCESS, TABLE_NAME, fullName),
@@ -90,9 +107,16 @@ public class CustomerController {
 
     @PostMapping(path = "")
     // [POST] localhost:8080/customers
-    public ResponseEntity<FuncResult<TblCustomerEntity>> create(@RequestBody TblCustomerEntity tblCustomerEntity){
+    public ResponseEntity<FuncResult<TblCustomerEntity>> create(HttpSession httpSession, @RequestBody TblCustomerEntity tblCustomerEntity){
         customerService.insert(tblCustomerEntity);
-
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<TblCustomerEntity> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
         FuncResult<TblCustomerEntity> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.MODIFY_DATA_SUCCESS, TABLE_NAME),
@@ -103,9 +127,16 @@ public class CustomerController {
 
     @PutMapping(path = "")
     // [PUT] localhost:8080/customers
-    public ResponseEntity<FuncResult<TblCustomerEntity>> update(@RequestBody TblCustomerEntity tblCustomerEntity){
+    public ResponseEntity<FuncResult<TblCustomerEntity>> update(HttpSession httpSession, @RequestBody TblCustomerEntity tblCustomerEntity){
         customerService.update(tblCustomerEntity);
-
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<TblCustomerEntity> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
         FuncResult<TblCustomerEntity> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.MODIFY_DATA_SUCCESS, TABLE_NAME),
@@ -116,8 +147,16 @@ public class CustomerController {
 
     @DeleteMapping(path = "{customerID}")
     // [DELETE] localhost:8080/customers/1
-    public ResponseEntity<FuncResult<Integer>> softDelete(@PathVariable("customerID") int customerID){
+    public ResponseEntity<FuncResult<Integer>> softDelete(HttpSession httpSession, @PathVariable("customerID") int customerID){
         customerService.softDelete(customerID);
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<Integer> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
         FuncResult<Integer> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.DELETE_SUCCESS, TABLE_NAME, customerID),

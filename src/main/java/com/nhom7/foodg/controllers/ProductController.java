@@ -5,6 +5,7 @@ import com.nhom7.foodg.models.entities.TblProductEntity;
 import com.nhom7.foodg.models.entities.TblProductLogEntity;
 import com.nhom7.foodg.services.ProductService;
 import com.nhom7.foodg.shareds.Constants;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +41,15 @@ public class ProductController {
     // Get all deleted product
     @GetMapping(path = "/deleted")
     // [GET] localhost:8080/products
-    public ResponseEntity<FuncResult<List<TblProductEntity>>> getDeletedProducts() {
+    public ResponseEntity<FuncResult<List<TblProductEntity>>> getDeletedProducts(HttpSession httpSession) {
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<List<TblProductEntity>> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
         FuncResult<List<TblProductEntity>> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.GET_DATA_SUCCESS, TABLE_NAME),
@@ -65,7 +74,15 @@ public class ProductController {
 
     @GetMapping(path = "edit-history")
     // [GET] localhost:8080/products/edit-history
-    public ResponseEntity<FuncResult<List<TblProductLogEntity>>> getEditHistory() {
+    public ResponseEntity<FuncResult<List<TblProductLogEntity>>> getEditHistory(HttpSession httpSession) {
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<List<TblProductLogEntity>> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
         FuncResult<List<TblProductLogEntity>> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.GET_DATA_SUCCESS, TABLE_NAME),
@@ -77,7 +94,15 @@ public class ProductController {
 
     @GetMapping(path = "edit-history/{id}")
     // [GET] localhost:8080/products/edit-history/1
-    public ResponseEntity<FuncResult<List<TblProductLogEntity>>> getEditHistoryByID(@PathVariable("id") String id) {
+    public ResponseEntity<FuncResult<List<TblProductLogEntity>>> getEditHistoryByID(HttpSession httpSession, @PathVariable("id") String id) {
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<List<TblProductLogEntity>> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
         FuncResult<List<TblProductLogEntity>> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.GET_DATA_SUCCESS, TABLE_NAME),
@@ -103,7 +128,15 @@ public class ProductController {
     // create new product
     @PostMapping(path = "")
     // [POST] localhost:8080/products
-    public ResponseEntity<FuncResult<TblProductEntity>> create(@RequestBody TblProductEntity tblProductEntity) {
+    public ResponseEntity<FuncResult<TblProductEntity>> create(HttpSession httpSession, @RequestBody TblProductEntity tblProductEntity) {
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<TblProductEntity> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
         productService.insert(tblProductEntity);
 
         FuncResult<TblProductEntity> rs = FuncResult.create(
@@ -118,7 +151,15 @@ public class ProductController {
     // update name of product by product id
     @PutMapping(path = "")
     // [PUT] localhost:8080/products
-    public ResponseEntity<FuncResult<TblProductEntity>> update(@RequestBody TblProductEntity tblProductEntity) {
+    public ResponseEntity<FuncResult<TblProductEntity>> update(HttpSession httpSession, @RequestBody TblProductEntity tblProductEntity) {
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<TblProductEntity> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
         productService.update(tblProductEntity);
 
         FuncResult<TblProductEntity> rs = FuncResult.create(
@@ -134,7 +175,15 @@ public class ProductController {
     // soft delete product by product id
     @DeleteMapping(path = "{productId}/{adminId}")
     // [DELETE] localhost:8080/products/1
-    public ResponseEntity<FuncResult<String>> softDelete(@PathVariable("productId") String productId, @PathVariable("adminId") int adminId) {
+    public ResponseEntity<FuncResult<String>> softDelete(HttpSession httpSession, @PathVariable("productId") String productId, @PathVariable("adminId") int adminId) {
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<String> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
         productService.softDelete(productId, adminId);
 
         FuncResult<String> rs = FuncResult.create(
@@ -148,7 +197,15 @@ public class ProductController {
 
     @PutMapping(path = "/restore/{productId}/{adminId}")
     // [PUT] localhost:8080/categories/restore/1
-    public ResponseEntity<FuncResult<String>> restore(@PathVariable("productId") String productId, @PathVariable("adminId") int adminId) {
+    public ResponseEntity<FuncResult<String>> restore(HttpSession httpSession, @PathVariable("productId") String productId, @PathVariable("adminId") int adminId) {
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<String> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
         productService.restore(productId, adminId);
 
         FuncResult<String> rs = FuncResult.create(

@@ -6,6 +6,7 @@ import com.nhom7.foodg.models.entities.TblProductEntity;
 import com.nhom7.foodg.services.CategoryService;
 import com.nhom7.foodg.shareds.Constants;
 import com.nhom7.foodg.utils.FuzzySearch;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,35 +37,31 @@ public class CategoryController {
                 MessageFormat.format(Constants.GET_DATA_SUCCESS, TABLE_NAME),
                 categoryService.getAll()
         );
-
         return ResponseEntity.ok(rs);
     }
 
     // Get all category
     @GetMapping(path = "detail/{id}")
     // [GET] localhost:8080/categories/detail/1
-    public ResponseEntity<FuncResult<TblCategoryEntity>> getById(@PathVariable(name = "id") int id) {
-        FuncResult<TblCategoryEntity> rs = FuncResult.create(
-                HttpStatus.OK,
-                MessageFormat.format(Constants.GET_DATA_SUCCESS, TABLE_NAME),
-                categoryService.getByID(id)
-        );
-
-        return ResponseEntity.ok(rs);
+    public ResponseEntity<FuncResult<TblCategoryEntity>> getById(HttpSession httpSession, @PathVariable(name = "id") int id) {
+            FuncResult<TblCategoryEntity> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    MessageFormat.format(Constants.GET_DATA_SUCCESS, TABLE_NAME),
+                    categoryService.getByID(id)
+            );
+            return ResponseEntity.ok(rs);
     }
-
     // get category after searching by category name
     @GetMapping(path = "/search")
     // [GET] localhost:8080/categories/search?keyword=break
-    public ResponseEntity<FuncResult<List<TblCategoryEntity>>> search(@RequestParam(name = "keyword", required = false, defaultValue = "") String name) {
-        FuzzySearch<TblCategoryEntity> fuzzySearch = new FuzzySearch<>(categoryService.getAll());
+    public ResponseEntity<FuncResult<List<TblCategoryEntity>>> search(HttpSession httpSession, @RequestParam(name = "keyword", required = false, defaultValue = "") String name) {
 
+        FuzzySearch<TblCategoryEntity> fuzzySearch = new FuzzySearch<>(categoryService.getAll());
         FuncResult<List<TblCategoryEntity>> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.SEARCH_SUCCESS, TABLE_NAME, name),
                 fuzzySearch.FuzzySearchByName(name)
         );
-
         return ResponseEntity.ok(rs);
     }
 
@@ -107,9 +104,16 @@ public class CategoryController {
     // create new category
     @PostMapping(path = "")
     // [POST] localhost:8080/categories
-    public ResponseEntity<FuncResult<TblCategoryEntity>> create(@RequestBody TblCategoryEntity tblCategoryEntity) {
+    public ResponseEntity<FuncResult<TblCategoryEntity>> create(HttpSession httpSession, @RequestBody TblCategoryEntity tblCategoryEntity) {
         categoryService.insert(tblCategoryEntity);
-
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<TblCategoryEntity> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
         FuncResult<TblCategoryEntity> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.MODIFY_DATA_SUCCESS, TABLE_NAME),
@@ -122,9 +126,16 @@ public class CategoryController {
     // update name of category by category id
     @PutMapping(path = "")
     // [PUT] localhost:8080/categories
-    public ResponseEntity<FuncResult<TblCategoryEntity>> update(@RequestBody TblCategoryEntity tblCategoryEntity) {
+    public ResponseEntity<FuncResult<TblCategoryEntity>> update(HttpSession httpSession, @RequestBody TblCategoryEntity tblCategoryEntity) {
         categoryService.update(tblCategoryEntity);
-
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<TblCategoryEntity> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return  ResponseEntity.ok(rs);
+        }
         FuncResult<TblCategoryEntity> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.MODIFY_DATA_SUCCESS, TABLE_NAME),
@@ -137,9 +148,16 @@ public class CategoryController {
     // solf delete category by category id
     @DeleteMapping(path = "{categoryID}")
     // [DELETE] localhost:8080/categories
-    public ResponseEntity<FuncResult<Integer>> softDelete(@PathVariable("categoryID") int categoryID) {
+    public ResponseEntity<FuncResult<Integer>> softDelete(HttpSession httpSession, @PathVariable("categoryID") int categoryID) {
         categoryService.softDelete(categoryID);
-
+        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+            FuncResult<Integer> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Khong Phai ADMIN!!!",
+                    null
+            );
+            return ResponseEntity.ok(rs);
+        }
         FuncResult<Integer> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.DELETE_SUCCESS, TABLE_NAME, categoryID),
