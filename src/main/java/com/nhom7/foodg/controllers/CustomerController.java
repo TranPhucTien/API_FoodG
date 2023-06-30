@@ -39,12 +39,12 @@ public class CustomerController {
     @PostMapping(path = "/loginCustomer")
     // http://localhost:8080/customers/loginCustomer
     public ResponseEntity<FuncResult<TblCustomerDto>> login(@RequestBody TblCustomerDto tblCustomerDto){
-        String username = tblCustomerDto.getUsername().trim();
+        String email = tblCustomerDto.getEmail().trim();
         String password = tblCustomerDto.getPassword().trim().toString();
 
         Encode encode = new Encode();
 
-        TblCustomerEntity customer = customerRepository.findFirstByUsername(username);
+        TblCustomerEntity customer = customerRepository.findFirstByEmail(email);
         if (customer !=null){
             if (customer.getPassword().equals(encode.Encrypt(password)) && customer.getStatus() == true){
                 // Đăng nhập thành công
