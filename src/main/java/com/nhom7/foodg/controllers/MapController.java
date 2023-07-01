@@ -57,6 +57,7 @@ public class MapController {
             else{ // trả về m
                 splitDistance = distance.substring(0, distance.length() - 2);
                 km = Double.parseDouble(splitDistance)/1000;
+
             }
             System.out.println(splitDistance);
 
