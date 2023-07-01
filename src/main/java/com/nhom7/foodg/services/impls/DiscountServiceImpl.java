@@ -129,7 +129,7 @@ public class DiscountServiceImpl implements DiscountService {
                 discount.setIsActive(tblDiscountEntity.getIsActive());
                 discount.setUpdatedAt(Constants.getCurrentDay());
                 discount.setMaxAmount(tblDiscountEntity.getMaxAmount());
-
+                discount.setMaxDiscountPrice(tblDiscountEntity.getMaxDiscountPrice());
 
                 discountRepository.save(discount);
             }

@@ -40,12 +40,12 @@ public class CustomerController {
     @PostMapping(path = "/loginCustomer")
     // http://localhost:8080/customers/loginCustomer
     public ResponseEntity<FuncResult<TblCustomerDto>> login(@RequestBody TblCustomerDto tblCustomerDto){
-        String username = tblCustomerDto.getUsername().trim();
+        String email = tblCustomerDto.getEmail().trim();
         String password = tblCustomerDto.getPassword().trim().toString();
 
         Encode encode = new Encode();
 
-        TblCustomerEntity customer = customerRepository.findFirstByUsername(username);
+        TblCustomerEntity customer = customerRepository.findFirstByEmail(email);
         if (customer !=null){
             if (customer.getPassword().equals(encode.Encrypt(password)) && customer.getStatus() == true){
                 // Đăng nhập thành công
@@ -55,15 +55,24 @@ public class CustomerController {
                         null
                 );
                 return ResponseEntity.ok(rs);
+            } else {
+                // Đăng nhập thất bại
+                FuncResult<TblCustomerDto> rs = FuncResult.create(
+                        HttpStatus.OK,
+                        Constants.LOGIN_FAIL,
+                        null
+                );
+                return ResponseEntity.ok(rs);
             }
+        } else {
+            // Khong có tài khoản này
+            FuncResult<TblCustomerDto> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    Constants.NOT_FOUND_ACCOUNT,
+                    null
+            );
+            return ResponseEntity.ok(rs);
         }
-        // Đăng nhập thất bại
-        FuncResult<TblCustomerDto> rs = FuncResult.create(
-                HttpStatus.BAD_REQUEST,
-                Constants.LOGIN_FAIL,
-                null
-        );
-        return ResponseEntity.badRequest().body(rs);
     }
 
 
@@ -178,7 +187,7 @@ public class CustomerController {
             /* Chỉ gửi lại otp đăng ký khi tài khoản chưa được kích hoạt  */
             if (customer.getStatus() == false){
                 /* Giới hạn thời gian gửi lại OTP */
-                if (customer.isOTPRequired()){
+//                if (customer.isOTPRequired()){
                     customer.setOtp(Otp);
                     customer.setOtpExp(Constants.getCurrentDay());
                     customerRepository.save(customer);
@@ -189,21 +198,21 @@ public class CustomerController {
                             null
                     );
                     return ResponseEntity.ok(rs);
-                }else {
-                    FuncResult<TblCustomerDto> rs = FuncResult.create(
-                            HttpStatus.BAD_REQUEST,
-                            Constants.WAITING_TIME,
-                            null
-                    );
-                    return ResponseEntity.badRequest().body(rs);
-                }
+//                }else {
+//                    FuncResult<TblCustomerDto> rs = FuncResult.create(
+//                            HttpStatus.BAD_REQUEST,
+//                            Constants.WAITING_TIME,
+//                            null
+//                    );
+//                    return ResponseEntity.badRequest().body(rs);
+//                }
             } else {
                 FuncResult<TblCustomerDto> rs = FuncResult.create(
-                        HttpStatus.BAD_REQUEST,
+                        HttpStatus.OK,
                         MessageFormat.format(Constants.DUPLICATE_ERROR_USERNAME, customer.getUsername()),
                         null
                 );
-                return ResponseEntity.badRequest().body(rs);
+                return ResponseEntity.ok(rs);
             }
 
         } else {
@@ -347,19 +356,19 @@ public class CustomerController {
 
         if (customerRepository.existsByEmail(customer.getEmail())){
             /* Giới hạn việc gửi lại OTP */
-            if (customer.isOTPRequired()) {
+//            if (customer.isOTPRequired()) {
                 customer.setOtp(Otp);
                 customer.setOtpExp(Constants.getCurrentDay());
                 customerService.create(customer);
                 customerRepository.save(customer);
-            } else {
-                FuncResult<TblCustomerDto> rs = FuncResult.create(
-                        HttpStatus.BAD_REQUEST,
-                        Constants.WAITING_TIME,
-                        null
-                );
-                return ResponseEntity.badRequest().body(rs);
-            }
+//            } else {
+//                FuncResult<TblCustomerDto> rs = FuncResult.create(
+//                        HttpStatus.BAD_REQUEST,
+//                        Constants.WAITING_TIME,
+//                        null
+//                );
+//                return ResponseEntity.badRequest().body(rs);
+//            }
             FuncResult<TblCustomerDto> rs = FuncResult.create(
                     HttpStatus.OK,
                     MessageFormat.format(Constants.SEND_EMAIL_SUCCESS, customer.getEmail()),
@@ -367,7 +376,7 @@ public class CustomerController {
             );
             return ResponseEntity.ok(rs);
         } else {
-            throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR_EMAIL, TABLE_NAME, customer.getEmail()));
+            throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR_EMAIL, customer.getEmail()));
         }
     }
 

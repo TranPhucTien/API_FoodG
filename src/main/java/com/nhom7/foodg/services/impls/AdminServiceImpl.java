@@ -69,7 +69,7 @@ public class AdminServiceImpl implements AdminService {
                 throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR, TABLE_NAME, adminUserName));
             }
             if (adminRepository.existsByEmail(newAdmin.getEmail())){
-                throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR_EMAIL, TABLE_NAME, newAdmin.getEmail()));
+                throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR_EMAIL,  newAdmin.getEmail()));
             }
             Date currentDate = Constants.getCurrentDay();
             Encode encode = new Encode();
