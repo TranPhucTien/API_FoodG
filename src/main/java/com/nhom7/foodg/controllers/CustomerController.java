@@ -46,13 +46,20 @@ public class CustomerController {
         Encode encode = new Encode();
 
         TblCustomerEntity customer = customerRepository.findFirstByEmail(email);
+
         if (customer !=null){
-            if (customer.getPassword().equals(encode.Encrypt(password)) && customer.getStatus() == true){
+            tblCustomerDto.setUsername(customer.getUsername());
+            tblCustomerDto.setFullName(customer.getFullName());
+            tblCustomerDto.setGender(customer.getGender());
+            tblCustomerDto.setAvatar(customer.getAvatar());
+            tblCustomerDto.setBirthday(customer.getBirthday());
+
+            if (customer.getPassword().equals(encode.Encrypt(password)) && customer.getStatus()){
                 // Đăng nhập thành công
                 FuncResult<TblCustomerDto> rs = FuncResult.create(
                         HttpStatus.OK,
                         Constants.LOGIN_SUCCESS,
-                        null
+                        tblCustomerDto
                 );
                 return ResponseEntity.ok(rs);
             } else {
