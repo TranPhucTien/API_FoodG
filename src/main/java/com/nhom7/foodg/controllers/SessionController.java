@@ -21,10 +21,10 @@ public class SessionController {
         this.customerRepository = customerRepository;
     }
 
-    @GetMapping("/loginsucess")
-    //........./loginsucess/?_username=......&_password=.............
-    public String loginsucess(HttpSession session, @RequestParam(name = "_username") String username,
-                              @RequestParam(name = "_password") String password) {
+    @GetMapping("admin/loginsuccess")
+    //.........admin/loginsuccess?_usernameAd=......&_passwordAd=.............
+    public String adminLoginSuccess(HttpSession session, @RequestParam(name = "_usernameAd") String username,
+                              @RequestParam(name = "_passwordAd") String password) {
         Encode encode = new Encode();
         Boolean exitAdmin = adminRepository.existsByUsername(username);
         if(exitAdmin){
@@ -37,10 +37,19 @@ public class SessionController {
                 return "login_thanh_cong";
             }
         }
+        return "Sai password or username";
+    }
+    @GetMapping("customer/loginsuccess")
+    //.........customer/loginsucess?_usernameUser=......&_passwordUser=.............
+    public String customerLoginSuccess(HttpSession session, @RequestParam(name = "_usernameUser") String username,
+                              @RequestParam(name = "_passwordUser") String password) {
+        Encode encode = new Encode();
         Boolean exitCus = customerRepository.existsByUsername(username);
         if(exitCus){
             TblCustomerEntity customer = customerRepository.findFirstByUsername(username);
-            if(encode.Encrypt(password) == customer.getPassword()){
+            String passwordEn = (String) encode.Encrypt(password);
+            String passwordCus = (String) customer.getPassword();
+            if(passwordEn.equals(passwordCus)){
                 session.setAttribute("username", username);
                 session.setAttribute("role", "customer");
                 return "login_thanh_cong";
