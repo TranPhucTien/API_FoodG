@@ -32,7 +32,7 @@ public class MapController {
     public ResponseEntity<FuncResult<MapEntity>> getDistance(@RequestParam(value = "address", required = false) String address) throws UnsupportedEncodingException {
         if(address == null || address == ""){
             String img = "<iframe src='https://mapfoodg.glitch.me/'></iframe>";
-            MapEntity mapInformation = new MapEntity("0 phút", "0 km", img);
+            MapEntity mapInformation = new MapEntity("0 phút", "0 km", img, "0 $");
             FuncResult<MapEntity> rs = FuncResult.create(
                     HttpStatus.OK,
                     "Thanh Cong",
@@ -46,7 +46,13 @@ public class MapController {
             ArrayList<String> res = mapUtil.getDistance(origin, desti);
             address = URLEncoder.encode(address, "UTF-8");
             String img = "<iframe src='https://mapfoodg.glitch.me/?destination=" + address + "'></iframe>";
-            MapEntity mapInformation = new MapEntity( res.get(1), res.get(0), img);
+            String distance = res.get(0);
+            String splitDistance = distance.substring(0, distance.length() - 3);
+            System.out.println(splitDistance);
+            Double km = Double.parseDouble(splitDistance);
+            String price = mapUtil.getPrice(km);
+
+            MapEntity mapInformation = new MapEntity( res.get(1), res.get(0), img, price);
             FuncResult<MapEntity> rs = FuncResult.create(
                     HttpStatus.OK,
                     "Thanh Cong",

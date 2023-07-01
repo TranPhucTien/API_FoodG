@@ -5,10 +5,12 @@ public class MapEntity {
     String distance; // KC
     String img; //<iframe>
 
-    public MapEntity(String duration, String distance, String img) {
+    String price;
+    public MapEntity(String duration, String distance, String img, String price) {
         this.duration = duration;
         this.distance = distance;
         this.img = img;
+        this.price = price;
     }
 
     public MapEntity() {
@@ -36,5 +38,13 @@ public class MapEntity {
 
     public void setImg(String img) {
         this.img = img;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
     }
 }
