@@ -87,7 +87,7 @@ public class MapUtil {
         }
         return null;
     }
-    public String getPrice(double km){
+    public double getPrice(double km){
         double price;
         if(km <= 2){
             price = 1;
@@ -95,6 +95,6 @@ public class MapUtil {
         else{
             price = (double) Math.ceil(((km - 2)*0.7 + 1)*10)/10;
         }
-        return price + " $";
+        return price;
     }
 }
