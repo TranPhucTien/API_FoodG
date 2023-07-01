@@ -14,6 +14,7 @@ import java.util.Map;
 
 import com.nhom7.foodg.models.FuncResult;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -32,9 +33,17 @@ public class VnpayPaymentController {
 
     @PostMapping("/make")
     // [POST] localhost:8080/api/vnpay/make
-    public ResponseEntity<FuncResult<Map<String, String>>> createPayment(HttpServletRequest request, @RequestParam(name = "vnp_OrderInfo") String vnp_OrderInfo,
+    public ResponseEntity<FuncResult<Map<String, String>>> createPayment(HttpSession httpSession,HttpServletRequest request, @RequestParam(name = "vnp_OrderInfo") String vnp_OrderInfo,
                                                                                                 @RequestParam(name = "vnp_OrderType") String ordertype, @RequestParam(name = "vnp_Amount") Integer amount,
                                                                                                 @RequestParam(name = "vnp_Locale") String language, @RequestParam(name = "vnp_BankCode", defaultValue = "") String bankcode) {
+        if(httpSession.getAttribute("role") == null){
+            FuncResult<Map<String, String>> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Phai Dang Nhap De Su Dung!!!",
+                    null
+            );
+            return ResponseEntity.ok(rs);
+        }
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String vnp_TxnRef = VnpayConfig.getRandomNumber(18);
@@ -118,17 +127,25 @@ public class VnpayPaymentController {
 
     @GetMapping(value = "/result")
     // [GET] localhost:8080/api/vnpay/result
-    public ResponseEntity<FuncResult<Map<String, String>>> completePayment(HttpServletRequest request,
-                                               @RequestParam(name = "vnp_OrderInfo") String vnp_OrderInfo,
-                                               @RequestParam(name = "vnp_Amount") Integer vnp_Amount,
-                                               @RequestParam(name = "vnp_BankCode", defaultValue = "") String vnp_BankCode,
-                                               @RequestParam(name = "vnp_BankTranNo") String vnp_BankTranNo,
-                                               @RequestParam(name = "vnp_CardType") String vnp_CardType,
-                                               @RequestParam(name = "vnp_PayDate") String vnp_PayDate,
-                                               @RequestParam(name = "vnp_ResponseCode") String vnp_ResponseCode,
-                                               @RequestParam(name = "vnp_TransactionNo") String vnp_TransactionNo,
-                                               @RequestParam(name = "vnp_TxnRef") String vnp_TxnRef
+    public ResponseEntity<FuncResult<Map<String, String>>> completePayment(HttpSession httpSession, HttpServletRequest request,
+                                                                           @RequestParam(name = "vnp_OrderInfo") String vnp_OrderInfo,
+                                                                           @RequestParam(name = "vnp_Amount") Integer vnp_Amount,
+                                                                           @RequestParam(name = "vnp_BankCode", defaultValue = "") String vnp_BankCode,
+                                                                           @RequestParam(name = "vnp_BankTranNo") String vnp_BankTranNo,
+                                                                           @RequestParam(name = "vnp_CardType") String vnp_CardType,
+                                                                           @RequestParam(name = "vnp_PayDate") String vnp_PayDate,
+                                                                           @RequestParam(name = "vnp_ResponseCode") String vnp_ResponseCode,
+                                                                           @RequestParam(name = "vnp_TransactionNo") String vnp_TransactionNo,
+                                                                           @RequestParam(name = "vnp_TxnRef") String vnp_TxnRef
     ) {
+        if(httpSession.getAttribute("role") == null){
+            FuncResult<Map<String, String>> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    "Ban Phai Dang Nhap De Su Dung!!!",
+                    null
+            );
+            return ResponseEntity.ok(rs);
+        }
         Map<String, String> response = new HashMap<>();
 
         String year = vnp_PayDate.substring(0, 4);

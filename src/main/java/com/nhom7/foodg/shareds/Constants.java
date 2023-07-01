@@ -44,6 +44,8 @@ public class Constants {
     public static final String DUPLICATE_ERROR_USERNAME = "Username có giá trị `{0}` đã được đăng ký rồi. Vui lòng dùng Username khác để đăng ký! ";
 
     public static final String NOT_FOUND_FIELDS = "không tồn tại trong CSDL đâu";
+    public static final String NOT_FOUND_ACCOUNT = "Tài khoản không tồn tại!!";
+
     public static final String DUPLICATE_ERROR = "Giá trị `{1}` đã tồn tại trong bảng `{0}` rồi. Nếu `{1}` xuất hiện trong thùng rác, hãy xoá hoặc khôi phục nó! ";
     public static final String  MISSING_FIELD_EXCEPTION = "Trường `{0}` không được để trống, bạn hãy điền vào nhé! ";
     public static final String OUT_OF_RANGE_EXCEPTION = "Dữ liệu của trường `{0}` nằm ngoài phạm vi cho phép của `{1}`, bạn hãy nhập lại nhé!";
@@ -56,9 +58,9 @@ public class Constants {
     public static final String SEND_EMAIL_SUCCESS = "Đã gửi OTP đến Email: {0}";
     public static final String RESEND_EMAIL_SUCCESS = "Đã gửi lại OTP đến Email: {0}";
 
-    public static final long OTP_VALID_DURATION = 5 * 60 * 1000;
-    public static final String EXPIRED_OTP = "Mã OTP của bạn nhập đã hết hạn sau `5 phút` khi OTP được gửi đi! Vui lòng gửi lại OTP mới!!";
-    public static final String  WAITING_TIME = "Bạn vui lòng chờ `5 phút` để gửi lại OTP nhé!!";
+    public static final long OTP_VALID_DURATION = 1 * 60 * 1000;
+    public static final String EXPIRED_OTP = "Mã OTP của bạn nhập đã hết hạn sau `1 phút` khi OTP được gửi đi! Vui lòng gửi lại OTP mới!!";
+    public static final String  WAITING_TIME = "Bạn vui lòng chờ `1 phút` để gửi lại OTP nhé!!";
     public static final String LOGIN_SUCCESS = "Đăng nhập thành công";
     public static final String LOGIN_FAIL = "Tên đăng nhập hoặc mật khẩu không đúng";
 

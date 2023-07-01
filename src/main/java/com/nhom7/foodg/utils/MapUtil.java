@@ -87,4 +87,14 @@ public class MapUtil {
         }
         return null;
     }
+    public double getPrice(double km){
+        double price;
+        if(km <= 2){
+            price = 1;
+        }
+        else{
+            price = (double) Math.ceil(((km - 2)*0.7 + 1)*10)/10;
+        }
+        return price;
+    }
 }

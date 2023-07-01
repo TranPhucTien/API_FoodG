@@ -31,8 +31,8 @@ public class MapController {
     //http://localhost:8080/map
     public ResponseEntity<FuncResult<MapEntity>> getDistance(@RequestParam(value = "address", required = false) String address) throws UnsupportedEncodingException {
         if(address == null || address == ""){
-            String img = "<iframe src='https://mapfoodg.glitch.me/'></iframe>";
-            MapEntity mapInformation = new MapEntity("0 phút", "0 km", img);
+            String img = "  <iframe src='https://mapfoodg.glitch.me/'></iframe>";
+            MapEntity mapInformation = new MapEntity("0 phút", "0 km", img, 0);
             FuncResult<MapEntity> rs = FuncResult.create(
                     HttpStatus.OK,
                     "Thanh Cong",
@@ -46,7 +46,24 @@ public class MapController {
             ArrayList<String> res = mapUtil.getDistance(origin, desti);
             address = URLEncoder.encode(address, "UTF-8");
             String img = "<iframe src='https://mapfoodg.glitch.me/?destination=" + address + "'></iframe>";
-            MapEntity mapInformation = new MapEntity( res.get(1), res.get(0), img);
+            String distance = res.get(0);
+            System.out.println(distance);
+            String splitDistance;
+            Double km;
+            if(distance.indexOf(" km") != -1){ //kq trả về km
+                splitDistance = distance.substring(0, distance.length() - 3);
+                km = Double.parseDouble(splitDistance);
+            }
+            else{ // trả về m
+                splitDistance = distance.substring(0, distance.length() - 2);
+                km = Double.parseDouble(splitDistance)/1000;
+
+            }
+            System.out.println(splitDistance);
+
+            double price = mapUtil.getPrice(km);
+
+            MapEntity mapInformation = new MapEntity( res.get(1), res.get(0), img, price);
             FuncResult<MapEntity> rs = FuncResult.create(
                     HttpStatus.OK,
                     "Thanh Cong",
