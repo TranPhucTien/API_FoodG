@@ -5,6 +5,7 @@ import com.nhom7.foodg.models.FuncResult;
 import com.nhom7.foodg.models.dto.TblDiscountDto;
 import com.nhom7.foodg.models.entities.TblCustomerEntity;
 import com.nhom7.foodg.models.entities.TblDiscountEntity;
+import com.nhom7.foodg.models.entities.TblProductEntity;
 import com.nhom7.foodg.services.DiscountService;
 import com.nhom7.foodg.shareds.Constants;
 import jakarta.servlet.http.HttpSession;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.swing.*;
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -52,7 +54,20 @@ public class DiscountController {
         );
         return  ResponseEntity.ok(rs);
     }
+//check discount
+@GetMapping("/checkDiscounts")
+// [GET] http://localhost:8080/discounts/checkDiscounts?code=15&price=100.00
+public ResponseEntity<FuncResult<BigDecimal>> checkDiscount(@RequestParam("code") String code,
+                                                         @RequestParam("price") BigDecimal price ) {
+    FuncResult<BigDecimal> rs = FuncResult.create(
+            HttpStatus.OK,
+            MessageFormat.format(Constants.ACCEPT_DISCOUNT, code),
+            discountService.checkDiscount(code,price)
 
+    );
+
+    return ResponseEntity.ok(rs);
+}
     @GetMapping(path = "{id}")
     // [GET] localhost:8080/discount/1
     public ResponseEntity<FuncResult<TblDiscountEntity>> getDiscountByID(@PathVariable("id") int id) {

@@ -2,6 +2,7 @@ package com.nhom7.foodg.services.impls;
 
 import com.nhom7.foodg.exceptions.DuplicateRecordException;
 import com.nhom7.foodg.exceptions.ModifyException;
+import com.nhom7.foodg.exceptions.NotApplyDiscountExeption;
 import com.nhom7.foodg.exceptions.NotFoundException;
 import com.nhom7.foodg.models.FuncResult;
 import com.nhom7.foodg.models.dto.TblDiscountDto;
@@ -43,6 +44,44 @@ public class DiscountServiceImpl implements DiscountService {
         return discountRepository.findAll();
     }
 
+//    @Override
+//    public Boolean checkCode(String code){
+//        if (!discountRepository.existsByCode(code)){
+//           return false;
+//        }
+//        else return true;
+//    }
+    @Override
+    public BigDecimal checkDiscount(String code,BigDecimal price)  {
+
+
+
+        // Kiểm tra end_date của hóa đơn còn hạn hay không
+        if (!discountRepository.existsByCode(code)) {
+            throw new NotFoundException(MessageFormat.format(Constants.NOT_EXIT_DISCOUNT,  code));
+        }
+
+        TblDiscountEntity tblDiscountEntity  = discountRepository.getByCode(code);
+        // Kiểm tra end_date của hóa đơn còn hạn hay không
+        Date startDate = tblDiscountEntity.getStartDate();
+        Date endDate = tblDiscountEntity.getEndDate();
+        Date currentDate = Constants.getCurrentDay();
+        if (currentDate.before(startDate) || currentDate.after(endDate)) {
+            // Nếu hóa đơn đã hết hạn, xử lý ngoại lệ ở đây
+            throw new NotFoundException(MessageFormat.format(Constants.NOT_VALID_DATE,  code));
+        }
+        //Kiểm tra trạng thái active của discount
+        else if (tblDiscountEntity.getIsActive() == false) {
+            throw new NotFoundException(MessageFormat.format(Constants.NOT_VALID_STATUS,  code));
+        }
+
+
+
+            BigDecimal priceAfterDiscount = price.multiply(BigDecimal.valueOf(tblDiscountEntity.getPercentage()).divide(BigDecimal.valueOf(100)));
+
+
+            return priceAfterDiscount;
+    }
 
     @Override
     public List<TblDiscountEntity> search(String keyword){

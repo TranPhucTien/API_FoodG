@@ -56,11 +56,11 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public void insert(TblInvoiceLineDto tblInvoiceLineDto)  {
         try {
-            Constants.validateRequiredFields(tblInvoiceLineDto, "customerId", "invoiceNumber", "invoiceDate", "totalAmount", "tax", "idDiscount", "grandTotal", "status", "paid" );
-            Constants.validateIntegerFields(tblInvoiceLineDto, "customerId", "invoiceNumber", "idDiscount","status");
-            Constants.validateDecimalFields(tblInvoiceLineDto, 5,2, "totalAmount", "grandTotal");
-            Constants.validateDecimalFields(tblInvoiceLineDto, 2, 1, "tax");
-            Constants.validateDateFields(tblInvoiceLineDto, "dueDate", "paidDate", "invoiceDate");
+//            Constants.validateRequiredFields(tblInvoiceLineDto, "customerId", "invoiceNumber", "invoiceDate", "totalAmount", "tax", "idDiscount", "grandTotal", "status", "paid" );
+//            Constants.validateIntegerFields(tblInvoiceLineDto, "customerId", "invoiceNumber", "idDiscount","status");
+//            Constants.validateDecimalFields(tblInvoiceLineDto, 5,2, "totalAmount", "grandTotal");
+//            Constants.validateDecimalFields(tblInvoiceLineDto, 2, 1, "tax");
+//            Constants.validateDateFields(tblInvoiceLineDto, "dueDate", "paidDate", "invoiceDate");
 
             Random rand = new Random();
             int upperbound = 123456789;
@@ -73,7 +73,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                     tblInvoiceLineDto.getNewInvoice().getInvoiceNumber(),
                     currentDate,
                     null,
-                    tblInvoiceLineDto.getNewInvoice().getTax(),
+                    BigDecimal.valueOf(0),
                     tblInvoiceLineDto.getNewInvoice().getIdDiscount(),
                     null,
                     Status.ACTIVE.getValue(),
@@ -86,6 +86,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
             );
             invoiceRepository.save(tblInvoiceEntity);
+            int a =id_random;
             BigDecimal totalAmount = new BigDecimal("0");
             for (TblLineOutDto line : tblInvoiceLineDto.getTblLineOutDtos()) {
                 TblProductEntity tblProductEntity = productRepository.findById(line.getIdProduct()).orElse(null);
@@ -110,24 +111,32 @@ public class InvoiceServiceImpl implements InvoiceService {
 
                 lineRepository.save(tblLineEntity);
             }
-
-
             TblDiscountEntity tblDiscountEntity = discountRepository.findById(tblInvoiceLineDto.getNewInvoice().getIdDiscount()).orElse(null);
-            tblInvoiceLineDto.getNewInvoice().checkDiscountForInvoice(tblInvoiceLineDto.getNewInvoice().getIdDiscount(),discountRepository,totalAmount);
-            BigDecimal totalAmountMulTax = totalAmount.multiply(tblInvoiceEntity.getTax());
-            BigDecimal grandtotal = tblInvoiceLineDto.getNewInvoice().caculatorGrandTotal(totalAmount,tblDiscountEntity).add(totalAmountMulTax);
+            if(tblInvoiceLineDto.getNewInvoice().getIdDiscount() != null) {
 
-            tblInvoiceEntity.setTotalAmount(totalAmount);
-            tblInvoiceEntity.setGrandTotal(grandtotal);
-            invoiceRepository.save(tblInvoiceEntity);
+                BigDecimal totalAmountMulTax = totalAmount.multiply(tblInvoiceEntity.getTax());
+                BigDecimal grandtotal = tblInvoiceLineDto.getNewInvoice().caculatorGrandTotal(totalAmount,tblDiscountEntity).add(totalAmountMulTax);
+
+                tblInvoiceEntity.setTotalAmount(totalAmount);
+                tblInvoiceEntity.setGrandTotal(grandtotal);
+            }
+
+            else if(tblInvoiceLineDto.getNewInvoice().getIdDiscount() == null){
+                BigDecimal totalAmountMulTax = totalAmount.multiply(tblInvoiceEntity.getTax());
+                BigDecimal grandtotal = totalAmount.add(totalAmountMulTax);
+                tblInvoiceEntity.setTotalAmount(totalAmount);
+                tblInvoiceEntity.setGrandTotal(grandtotal);
+                invoiceRepository.save(tblInvoiceEntity);
+            }
+
 
         } catch (DataIntegrityViolationException ex) {
             throw new ModifyException(MessageFormat.format(Constants.MODIFY_DATA_FAIL_CATCH, TABLE_NAME) + ex.getMessage());
 
         }
-        catch (NotApplyDiscountExeption e) {
-            throw new RuntimeException(e);
-        }
+//        catch (NotApplyDiscountExeption e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     @Transactional
