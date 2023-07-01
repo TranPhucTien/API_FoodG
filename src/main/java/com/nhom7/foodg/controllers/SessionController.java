@@ -41,18 +41,16 @@ public class SessionController {
     }
     @GetMapping("customer/loginsuccess")
     //.........customer/loginsucess?_usernameUser=......&_passwordUser=.............
-    public String customerLoginSuccess(HttpSession session, @RequestParam(name = "_usernameUser") String username,
+    public String customerLoginSuccess(HttpSession session, @RequestParam(name = "_emailUser") String email,
                               @RequestParam(name = "_passwordUser") String password) {
         Encode encode = new Encode();
-        Boolean exitCus = customerRepository.existsByUsername(username);
+        Boolean exitCus = customerRepository.existsByEmail(email);
         if(exitCus){
-            TblCustomerEntity customer = customerRepository.findFirstByUsername(username);
+            TblCustomerEntity customer = customerRepository.findFirstByEmail(email);
             String passwordEn = (String) encode.Encrypt(password);
-            
             String passwordCus = (String) customer.getPassword();
-
             if(passwordEn.equals(passwordCus)){
-                session.setAttribute("username", username);
+                session.setAttribute("email", email);
                 session.setAttribute("role", "customer");
                 return "login_thanh_cong";
             }
@@ -61,7 +59,7 @@ public class SessionController {
     }
     @GetMapping("/checkLogin")
     public String checkLogin(HttpSession session){
-        String username = (String) session.getAttribute("username");
+        String username = (String) session.getAttribute("role");
         if(username == null){
             return "chua_dang_nhap";
         }
