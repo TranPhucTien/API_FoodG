@@ -105,7 +105,6 @@ public class CategoryController {
     @PostMapping(path = "")
     // [POST] localhost:8080/categories
     public ResponseEntity<FuncResult<TblCategoryEntity>> create(HttpSession httpSession, @RequestBody TblCategoryEntity tblCategoryEntity) {
-        categoryService.insert(tblCategoryEntity);
         if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
             FuncResult<TblCategoryEntity> rs = FuncResult.create(
                     HttpStatus.OK,
@@ -114,6 +113,7 @@ public class CategoryController {
             );
             return  ResponseEntity.ok(rs);
         }
+        categoryService.insert(tblCategoryEntity);
         FuncResult<TblCategoryEntity> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.MODIFY_DATA_SUCCESS, TABLE_NAME),
@@ -127,7 +127,6 @@ public class CategoryController {
     @PutMapping(path = "")
     // [PUT] localhost:8080/categories
     public ResponseEntity<FuncResult<TblCategoryEntity>> update(HttpSession httpSession, @RequestBody TblCategoryEntity tblCategoryEntity) {
-        categoryService.update(tblCategoryEntity);
         if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
             FuncResult<TblCategoryEntity> rs = FuncResult.create(
                     HttpStatus.OK,
@@ -136,6 +135,7 @@ public class CategoryController {
             );
             return  ResponseEntity.ok(rs);
         }
+        categoryService.update(tblCategoryEntity);
         FuncResult<TblCategoryEntity> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.MODIFY_DATA_SUCCESS, TABLE_NAME),
@@ -149,7 +149,6 @@ public class CategoryController {
     @DeleteMapping(path = "{categoryID}")
     // [DELETE] localhost:8080/categories
     public ResponseEntity<FuncResult<Integer>> softDelete(HttpSession httpSession, @PathVariable("categoryID") int categoryID) {
-        categoryService.softDelete(categoryID);
         if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
             FuncResult<Integer> rs = FuncResult.create(
                     HttpStatus.OK,
@@ -158,6 +157,7 @@ public class CategoryController {
             );
             return ResponseEntity.ok(rs);
         }
+        categoryService.softDelete(categoryID);
         FuncResult<Integer> rs = FuncResult.create(
                 HttpStatus.OK,
                 MessageFormat.format(Constants.DELETE_SUCCESS, TABLE_NAME, categoryID),
