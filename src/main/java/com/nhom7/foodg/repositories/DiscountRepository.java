@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 public interface DiscountRepository extends JpaRepository<TblDiscountEntity, Integer> {
     //    TblDiscountEntity findFirstByName(String categoryName);
     boolean existsByCode(String code);
+    TblDiscountEntity getByCode( String code);
 
     @Query(value = "SELECT * FROM tbl_discount where ID = ?1", nativeQuery = true)
     TblDiscountEntity getDiscountByID(int id);

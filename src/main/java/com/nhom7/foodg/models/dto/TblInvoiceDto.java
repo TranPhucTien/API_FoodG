@@ -35,34 +35,6 @@ public class TblInvoiceDto {
     private Date dueDate;
     private Boolean paid;
     private Date paidDate;
-    public Boolean checkDiscountForInvoice(int idDiscount, DiscountRepository discountRepository,BigDecimal price) throws NotApplyDiscountExeption {
-        TblDiscountEntity tblDiscountEntity = discountRepository.findById(idDiscount).orElse(null);
-        // Kiểm tra end_date của hóa đơn còn hạn hay không
-        if (!discountRepository.existsById(idDiscount)) {
-            throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, "Tbl_Discount", idDiscount));
-        }
-        if (price.compareTo(tblDiscountEntity.getMinAmount()) < 0 || price.compareTo(tblDiscountEntity.getMaxAmount()) > 0) {
-            throw new NotApplyDiscountExeption("tong giá trị hàng không trong mức cho phép áp dụng mã");
-
-        }
-
-        // Kiểm tra end_date của hóa đơn còn hạn hay không
-        Date startDate = tblDiscountEntity.getStartDate();
-        Date endDate = tblDiscountEntity.getEndDate();
-        Date currentDate = Constants.getCurrentDay();
-        if (currentDate.before(startDate) || currentDate.after(endDate)) {
-            // Nếu hóa đơn đã hết hạn, xử lý ngoại lệ ở đây
-            throw new NotApplyDiscountExeption("ma giam gia chua duoc kich hoat");
-        }
-         //Kiểm tra trạng thái active của discount
-        else if (tblDiscountEntity.getIsActive() == false) {
-            throw new NotApplyDiscountExeption("ma giam gia chua duoc kich hoat");
-        }
-        else return true;
-    }
-
-
-
     public BigDecimal caculatorGrandTotal(BigDecimal price, TblDiscountEntity tblDiscountEntity)  {
         BigDecimal priceMulPer = price.multiply(BigDecimal.valueOf(tblDiscountEntity.getPercentage() / 100));
 
@@ -74,5 +46,34 @@ public class TblInvoiceDto {
         return price;
 
     }
+//    public Boolean checkDiscountForInvoice(int idDiscount, DiscountRepository discountRepository,BigDecimal price) throws NotApplyDiscountExeption {
+//        TblDiscountEntity tblDiscountEntity = discountRepository.findById(idDiscount).orElse(null);
+//        // Kiểm tra end_date của hóa đơn còn hạn hay không
+//        if (!discountRepository.existsById(idDiscount)) {
+//            throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, "Tbl_Discount", idDiscount));
+//        }
+//        if (price.compareTo(tblDiscountEntity.getMinAmount()) < 0 || price.compareTo(tblDiscountEntity.getMaxAmount()) > 0) {
+//            throw new NotApplyDiscountExeption("tong giá trị hàng không trong mức cho phép áp dụng mã");
+//
+//        }
+//
+//        // Kiểm tra end_date của hóa đơn còn hạn hay không
+//        Date startDate = tblDiscountEntity.getStartDate();
+//        Date endDate = tblDiscountEntity.getEndDate();
+//        Date currentDate = Constants.getCurrentDay();
+//        if (currentDate.before(startDate) || currentDate.after(endDate)) {
+//            // Nếu hóa đơn đã hết hạn, xử lý ngoại lệ ở đây
+//            throw new NotApplyDiscountExeption("ma giam gia chua den han hoat");
+//        }
+//         //Kiểm tra trạng thái active của discount
+//        else if (tblDiscountEntity.getIsActive() == false) {
+//            throw new NotApplyDiscountExeption("ma giam gia chua duoc kich hoat");
+//        }
+//        else return true;
+//    }
+
+
+
+
 
 }
