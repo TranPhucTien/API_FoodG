@@ -7,6 +7,7 @@ import com.nhom7.foodg.models.dto.TblAdminDto;
 import com.nhom7.foodg.models.dto.TblAdminDto;
 import com.nhom7.foodg.models.entities.TblAdminEntity;
 import com.nhom7.foodg.models.entities.TblAdminEntity;
+import com.nhom7.foodg.models.entities.TblAdminEntity;
 import com.nhom7.foodg.repositories.AdminRepository;
 import com.nhom7.foodg.services.AdminService;
 import com.nhom7.foodg.shareds.Constants;
@@ -57,15 +58,24 @@ public class AdminController {
                         null
                 );
                 return ResponseEntity.ok(rs);
+            } else {
+                // Đăng nhập thất bại
+                FuncResult<TblAdminEntity> rs = FuncResult.create(
+                        HttpStatus.OK,
+                        Constants.LOGIN_FAIL,
+                        null
+                );
+                return ResponseEntity.ok(rs);
             }
+        } else {
+            // Khong có tài khoản này
+            FuncResult<TblAdminEntity> rs = FuncResult.create(
+                    HttpStatus.OK,
+                    Constants.NOT_FOUND_ACCOUNT,
+                    null
+            );
+            return ResponseEntity.ok(rs);
         }
-        // Đăng nhập thất bại
-        FuncResult<TblAdminEntity> rs = FuncResult.create(
-                HttpStatus.BAD_REQUEST,
-                Constants.LOGIN_FAIL,
-                null
-        );
-        return ResponseEntity.badRequest().body(rs);
     }
 
     @PostMapping(path = "/register")
@@ -95,19 +105,19 @@ public class AdminController {
 
                 }else {
                     FuncResult<TblAdminDto> rs = FuncResult.create(
-                            HttpStatus.BAD_REQUEST,
+                            HttpStatus.OK,
                             Constants.WAITING_TIME,
                             null
                     );
-                    return ResponseEntity.badRequest().body(rs);
+                    return ResponseEntity.ok(rs);
                 }
             } else {
                 FuncResult<TblAdminDto> rs = FuncResult.create(
-                        HttpStatus.BAD_REQUEST,
+                        HttpStatus.OK,
                         MessageFormat.format(Constants.DUPLICATE_ERROR_USERNAME, admin.getUsername()),
                         null
                 );
-                return ResponseEntity.badRequest().body(rs);
+                return ResponseEntity.ok(rs);
             }
         } else {
             /*Chưa tồn tại trong DB thì tạo mới */
@@ -261,7 +271,7 @@ public class AdminController {
             );
             return ResponseEntity.ok(rs);
         } else {
-            throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR_EMAIL, TABLE_NAME, admin.getEmail()));
+            throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR_EMAIL, admin.getEmail()));
         }
     }
 
