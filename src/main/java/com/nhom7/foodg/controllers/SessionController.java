@@ -21,10 +21,10 @@ public class SessionController {
         this.customerRepository = customerRepository;
     }
 
-    @GetMapping("/loginsucess")
-    //........./loginsucess/?_username=......&_password=.............
-    public String loginsucess(HttpSession session, @RequestParam(name = "_username") String username,
-                              @RequestParam(name = "_password") String password) {
+    @GetMapping("admin/loginsuccess")
+    //.........admin/loginsuccess?_usernameAd=......&_passwordAd=.............
+    public String adminLoginSuccess(HttpSession session, @RequestParam(name = "_usernameAd") String username,
+                              @RequestParam(name = "_passwordAd") String password) {
         Encode encode = new Encode();
         Boolean exitAdmin = adminRepository.existsByUsername(username);
         if(exitAdmin){
@@ -37,11 +37,20 @@ public class SessionController {
                 return "login_thanh_cong";
             }
         }
-        Boolean exitCus = customerRepository.existsByUsername(username);
+        return "Sai password or username";
+    }
+    @GetMapping("customer/loginsuccess")
+    //.........customer/loginsucess?_usernameUser=......&_passwordUser=.............
+    public String customerLoginSuccess(HttpSession session, @RequestParam(name = "_emailUser") String email,
+                              @RequestParam(name = "_passwordUser") String password) {
+        Encode encode = new Encode();
+        Boolean exitCus = customerRepository.existsByEmail(email);
         if(exitCus){
-            TblCustomerEntity customer = customerRepository.findFirstByUsername(username);
-            if(encode.Encrypt(password) == customer.getPassword()){
-                session.setAttribute("username", username);
+            TblCustomerEntity customer = customerRepository.findFirstByEmail(email);
+            String passwordEn = (String) encode.Encrypt(password);
+            String passwordCus = (String) customer.getPassword();
+            if(passwordEn.equals(passwordCus)){
+                session.setAttribute("email", email);
                 session.setAttribute("role", "customer");
                 return "login_thanh_cong";
             }
@@ -50,7 +59,7 @@ public class SessionController {
     }
     @GetMapping("/checkLogin")
     public String checkLogin(HttpSession session){
-        String username = (String) session.getAttribute("username");
+        String username = (String) session.getAttribute("role");
         if(username == null){
             return "chua_dang_nhap";
         }
