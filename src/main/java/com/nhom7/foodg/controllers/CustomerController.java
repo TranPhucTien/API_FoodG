@@ -181,13 +181,21 @@ public class CustomerController {
         String Otp = DataUtil.generateTempPwd(6);
         String userName = tblCustomerDto.getUsername();
         if (customerRepository.existsByUsername(userName)){
-            /* username đã tồn tại trong DB rồi thì update Opt mới */
+            /* username đã tồn tại trong DB rồi mà status = false thì update Opt mới */
 
             TblCustomerEntity customer = customerRepository.findFirstByUsername(userName);
             /* Chỉ gửi lại otp đăng ký khi tài khoản chưa được kích hoạt  */
             if (customer.getStatus() == false){
                 /* Giới hạn thời gian gửi lại OTP */
 //                if (customer.isOTPRequired()){
+                    Encode encode = new Encode();
+                    String newpass = encode.Encrypt(tblCustomerDto.getPassword());
+                    customer.setPassword(newpass);
+                    customer.setBirthday(tblCustomerDto.getBirthday());
+                    customer.setGender(tblCustomerDto.getGender());
+                    customer.setRole(tblCustomerDto.getRole());
+                    customer.setEmail(tblCustomerDto.getEmail());
+                    customer.setFullName(tblCustomerDto.getFullName());
                     customer.setOtp(Otp);
                     customer.setOtpExp(Constants.getCurrentDay());
                     customerRepository.save(customer);
@@ -261,6 +269,7 @@ public class CustomerController {
                         customer.setStatus(true);
                         customer.setOtp(null);
                         customer.setOtpExp(null);
+
                         customerRepository.save(customer);
 
                         FuncResult<TblCustomerDto> rs = FuncResult.create(

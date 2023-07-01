@@ -92,6 +92,14 @@ public class AdminController {
             if (admin.getStatus() == false){
                 /* Giới hạn thời gian gửi lại OTP */
                 if (admin.isOTPRequired()){
+                    Encode encode = new Encode();
+                    String newpass = encode.Encrypt(tblAdminDto.getPassword());
+                    admin.setPassword(newpass);
+                    admin.setBirthday(tblAdminDto.getBirthday());
+                    admin.setGender(tblAdminDto.getGender());
+                    admin.setRole(tblAdminDto.getRole());
+                    admin.setEmail(tblAdminDto.getEmail());
+                    admin.setFullName(tblAdminDto.getFullName());
                     admin.setOtp(Otp);
                     admin.setOtpExp(Constants.getCurrentDay());
                     adminRepository.save(admin);
