@@ -49,6 +49,7 @@ public class SessionController {
             TblCustomerEntity customer = customerRepository.findFirstByUsername(username);
             String passwordEn = (String) encode.Encrypt(password);
             String passwordCus = (String) customer.getPassword();
+
             if(passwordEn.equals(passwordCus)){
                 session.setAttribute("username", username);
                 session.setAttribute("role", "customer");
