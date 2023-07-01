@@ -56,17 +56,31 @@ public class DiscountController {
     }
 //check discount
 @GetMapping("/checkDiscounts")
-// [GET] http://localhost:8080/discounts/checkDiscounts?code=15&price=100.00
+// [GET] http://localhost:8080/discounts/checkDiscounts?code=chung133&price=100.00
 public ResponseEntity<FuncResult<BigDecimal>> checkDiscount(@RequestParam("code") String code,
                                                          @RequestParam("price") BigDecimal price ) {
-    FuncResult<BigDecimal> rs = FuncResult.create(
-            HttpStatus.OK,
-            MessageFormat.format(Constants.ACCEPT_DISCOUNT, code),
-            discountService.checkDiscount(code,price)
+    if(discountService.checkDiscount(code,price)!= null)
+    {
+        FuncResult<BigDecimal> rs = FuncResult.create(
+                HttpStatus.OK,
+                MessageFormat.format(Constants.ACCEPT_DISCOUNT, code),
+                discountService.checkDiscount(code,price)
 
-    );
+        );
+        return ResponseEntity.ok(rs);
+    }
+     if(discountService.checkDiscount(code,price)== null){
+        FuncResult<BigDecimal> rs = FuncResult.create(
+                HttpStatus.OK,
+                MessageFormat.format(Constants.NOT_ACCEPT_DISCOUNT, code),
+                discountService.checkDiscount(code,price)
 
-    return ResponseEntity.ok(rs);
+        );
+        return ResponseEntity.ok(rs);
+    }
+    return null;
+
+
 }
     @GetMapping(path = "{id}")
     // [GET] localhost:8080/discount/1

@@ -58,7 +58,8 @@ public class DiscountServiceImpl implements DiscountService {
 
         // Kiểm tra end_date của hóa đơn còn hạn hay không
         if (!discountRepository.existsByCode(code)) {
-            throw new NotFoundException(MessageFormat.format(Constants.NOT_EXIT_DISCOUNT,  code));
+//           throw new NotFoundException(MessageFormat.format(Constants.NOT_EXIT_DISCOUNT,  code));
+            return null;
         }
 
         TblDiscountEntity tblDiscountEntity  = discountRepository.getByCode(code);
@@ -66,16 +67,16 @@ public class DiscountServiceImpl implements DiscountService {
         Date startDate = tblDiscountEntity.getStartDate();
         Date endDate = tblDiscountEntity.getEndDate();
         Date currentDate = Constants.getCurrentDay();
-        if (currentDate.before(startDate) || currentDate.after(endDate)) {
+        if (currentDate.compareTo(startDate) <= 0 || currentDate.compareTo(endDate) >= 0) {
             // Nếu hóa đơn đã hết hạn, xử lý ngoại lệ ở đây
-            throw new NotFoundException(MessageFormat.format(Constants.NOT_VALID_DATE,  code));
+//            throw new NotFoundException(MessageFormat.format(Constants.NOT_VALID_DATE,  code));
+            return null;
         }
         //Kiểm tra trạng thái active của discount
         else if (tblDiscountEntity.getIsActive() == false) {
-            throw new NotFoundException(MessageFormat.format(Constants.NOT_VALID_STATUS,  code));
+//            throw new NotFoundException(MessageFormat.format(Constants.NOT_VALID_STATUS,  code));
+            return null;
         }
-
-
 
             BigDecimal priceAfterDiscount = price.multiply(BigDecimal.valueOf(tblDiscountEntity.getPercentage()).divide(BigDecimal.valueOf(100)));
 
