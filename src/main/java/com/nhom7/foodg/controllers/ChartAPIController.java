@@ -163,6 +163,7 @@ public class ChartAPIController {
                         else{
                             MyObject myObject = new MyObject(name, quantity);
                             rs.add(myObject);
+
                         }
                     }
                     //rs.add(tblCategoryEntity);
