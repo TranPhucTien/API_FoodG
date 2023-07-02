@@ -20,6 +20,7 @@ package com.nhom7.foodg.models.dto;
 @NoArgsConstructor
 @AllArgsConstructor(staticName = "create")
 public class TblInvoiceDto {
+    private String codeDiscount;
     private int id;
     private int customerId;
     private int invoiceNumber;

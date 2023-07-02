@@ -52,40 +52,49 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 
 
-
     @Override
-    public void insert(TblInvoiceLineDto tblInvoiceLineDto)  {
+    public void insert(TblInvoiceLineDto tblInvoiceLineDto,String codeDiscount)  {
         try {
+
 //            Constants.validateRequiredFields(tblInvoiceLineDto, "customerId", "invoiceNumber", "invoiceDate", "totalAmount", "tax", "idDiscount", "grandTotal", "status", "paid" );
 //            Constants.validateIntegerFields(tblInvoiceLineDto, "customerId", "invoiceNumber", "idDiscount","status");
 //            Constants.validateDecimalFields(tblInvoiceLineDto, 5,2, "totalAmount", "grandTotal");
 //            Constants.validateDecimalFields(tblInvoiceLineDto, 2, 1, "tax");
 //            Constants.validateDateFields(tblInvoiceLineDto, "dueDate", "paidDate", "invoiceDate");
-
+            TblDiscountEntity tblDiscountEntity  = discountRepository.getByCode(codeDiscount); // code = null => tblDiscountEntity = null chỗ này nó trả veeg null r
             Random rand = new Random();
             int upperbound = 123456789;
             int id_random = rand.nextInt(upperbound);
             Date currentDate = Constants.getCurrentDay();
+            Integer discountId = null;
 
-            TblInvoiceEntity tblInvoiceEntity = TblInvoiceEntity.create(
-                    id_random,
-                    tblInvoiceLineDto.getNewInvoice().getCustomerId(),
-                    tblInvoiceLineDto.getNewInvoice().getInvoiceNumber(),
-                    currentDate,
-                    null,
-                    BigDecimal.valueOf(0),
-                    tblInvoiceLineDto.getNewInvoice().getIdDiscount(),
-                    null,
-                    Status.ACTIVE.getValue(),
-                    tblInvoiceLineDto.getNewInvoice().getIdOnePayResponse(),
-                    currentDate,
-                    currentDate,
-                    tblInvoiceLineDto.getNewInvoice().getDueDate(),
-                    tblInvoiceLineDto.getNewInvoice().getPaid(),
-                    currentDate
+            if(tblDiscountEntity != null){
+                discountId = tblDiscountEntity.getId();
+            }
 
-            );
-            invoiceRepository.save(tblInvoiceEntity);
+                TblInvoiceEntity tblInvoiceEntity = TblInvoiceEntity.create(
+                        id_random,
+                        tblInvoiceLineDto.getNewInvoice().getCustomerId(),
+                        tblInvoiceLineDto.getNewInvoice().getInvoiceNumber(),
+                        currentDate,
+                        null,
+                        BigDecimal.valueOf(0),
+                        discountId,
+
+                        //chỗ này t cho phép null trong database r mà no cứ báo k đc để null: cái idDsicountấy
+                        null,
+                        Status.ACTIVE.getValue(),
+                        tblInvoiceLineDto.getNewInvoice().getIdOnePayResponse(),
+                        currentDate,
+                        currentDate,
+                        tblInvoiceLineDto.getNewInvoice().getDueDate(),
+                        tblInvoiceLineDto.getNewInvoice().getPaid(),
+                        currentDate
+
+                );
+
+                invoiceRepository.save(tblInvoiceEntity);
+
             int a =id_random;
             BigDecimal totalAmount = new BigDecimal("0");
             for (TblLineOutDto line : tblInvoiceLineDto.getTblLineOutDtos()) {
@@ -111,8 +120,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 
                 lineRepository.save(tblLineEntity);
             }
-            TblDiscountEntity tblDiscountEntity = discountRepository.findById(tblInvoiceLineDto.getNewInvoice().getIdDiscount()).orElse(null);
-            if(tblInvoiceLineDto.getNewInvoice().getIdDiscount() != null) {
+
+            if(tblDiscountEntity != null) {
 
                 BigDecimal totalAmountMulTax = totalAmount.multiply(tblInvoiceEntity.getTax());
                 BigDecimal grandtotal = tblInvoiceLineDto.getNewInvoice().caculatorGrandTotal(totalAmount,tblDiscountEntity).add(totalAmountMulTax);
@@ -121,7 +130,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 tblInvoiceEntity.setGrandTotal(grandtotal);
             }
 
-            else if(tblInvoiceLineDto.getNewInvoice().getIdDiscount() == null){
+            else if(tblDiscountEntity == null){
                 BigDecimal totalAmountMulTax = totalAmount.multiply(tblInvoiceEntity.getTax());
                 BigDecimal grandtotal = totalAmount.add(totalAmountMulTax);
                 tblInvoiceEntity.setTotalAmount(totalAmount);

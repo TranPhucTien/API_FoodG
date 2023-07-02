@@ -17,7 +17,7 @@ package com.nhom7.foodg.services;
 public interface InvoiceService {
     List<TblInvoiceEntity> getAll();
     TblInvoiceOutDto getById(int invoiceId);
-    void insert(TblInvoiceLineDto tblInvoiceLineDto);
+    void insert(TblInvoiceLineDto tblInvoiceLineDto,String codeDiscount);
     @Transactional
     void update(TblInvoiceEntity tblInvoiceEntity);
     @Transactional
