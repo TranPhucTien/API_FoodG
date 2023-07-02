@@ -122,12 +122,13 @@ public class InvoiceServiceImpl implements InvoiceService {
             }
 
             if(tblDiscountEntity != null) {
-
+                BigDecimal totalAmountMulDiscount = totalAmount.multiply(BigDecimal.valueOf(tblDiscountEntity.getPercentage()).divide(BigDecimal.valueOf(100)));
                 BigDecimal totalAmountMulTax = totalAmount.multiply(tblInvoiceEntity.getTax());
-                BigDecimal grandtotal = tblInvoiceLineDto.getNewInvoice().caculatorGrandTotal(totalAmount,tblDiscountEntity).add(totalAmountMulTax);
-
+//                BigDecimal grandtotal = tblInvoiceLineDto.getNewInvoice().caculatorGrandTotal(totalAmount,tblDiscountEntity).add(totalAmountMulTax);
+                BigDecimal grandtotal = totalAmount.subtract(totalAmountMulDiscount) ;
                 tblInvoiceEntity.setTotalAmount(totalAmount);
                 tblInvoiceEntity.setGrandTotal(grandtotal);
+                invoiceRepository.save(tblInvoiceEntity);
             }
 
             else if(tblDiscountEntity == null){
@@ -136,6 +137,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 tblInvoiceEntity.setTotalAmount(totalAmount);
                 tblInvoiceEntity.setGrandTotal(grandtotal);
                 invoiceRepository.save(tblInvoiceEntity);
+
             }
 
 
