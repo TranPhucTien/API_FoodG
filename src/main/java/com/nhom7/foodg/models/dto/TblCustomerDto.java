@@ -13,6 +13,7 @@ import java.util.Date;
 
 @AllArgsConstructor(staticName = "create")
 public class TblCustomerDto {
+    private Integer id;
     private String username;
     private String password;
     private String email;

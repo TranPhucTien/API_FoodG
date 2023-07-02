@@ -142,17 +142,15 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Transactional
     @Override
     public void update(TblInvoiceEntity tblInvoiceEntity) {
-        if (!invoiceRepository.existsById(tblInvoiceEntity.getId())) {
+        if (!(invoiceRepository.existsById(tblInvoiceEntity.getId()) || invoiceRepository.existsByInvoiceNumber(tblInvoiceEntity.getInvoiceNumber()))) {
             throw new NotFoundException(MessageFormat.format(Constants.SEARCH_FAIL_CATCH, TABLE_NAME, tblInvoiceEntity.getId()));
         }
 
 
         try {
-            TblInvoiceEntity invoice = invoiceRepository.findById(tblInvoiceEntity.getId()).orElse(null);
+            TblInvoiceEntity invoice = invoiceRepository.findFirstByInvoiceNumber(tblInvoiceEntity.getInvoiceNumber());
 
             if (invoice != null) {
-                invoice.setCustomerId(tblInvoiceEntity.getCustomerId());
-                invoice.setInvoiceNumber(tblInvoiceEntity.getInvoiceNumber());
                 invoice.setInvoiceDate(tblInvoiceEntity.getInvoiceDate());
                 invoice.setTotalAmount(tblInvoiceEntity.getTotalAmount());
                 invoice.setTax(tblInvoiceEntity.getTax());

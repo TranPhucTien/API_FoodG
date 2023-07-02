@@ -9,6 +9,6 @@ package com.nhom7.foodg.repositories;
 @Repository
 public interface InvoiceRepository extends JpaRepository<TblInvoiceEntity, Integer> {
         TblInvoiceEntity findFirstById(int invoiceId);
-
-
+        Boolean existsByInvoiceNumber(int invoiceNumber);
+        TblInvoiceEntity findFirstByInvoiceNumber(int invoiceNumber);
 }
