@@ -21,7 +21,7 @@ public class SessionController {
         this.customerRepository = customerRepository;
     }
 
-    @GetMapping("admin/loginsuccess")
+    @GetMapping("/admin/loginsuccess")
     //.........admin/loginsuccess?_usernameAd=......&_passwordAd=.............
     public String adminLoginSuccess(HttpSession session, @RequestParam(name = "_usernameAd") String username,
                               @RequestParam(name = "_passwordAd") String password) {
@@ -39,7 +39,7 @@ public class SessionController {
         }
         return "Sai password or username";
     }
-    @GetMapping("customer/loginsuccess")
+    @GetMapping("/customer/loginsuccess")
     //.........customer/loginsucess?_usernameUser=......&_passwordUser=.............
     public String customerLoginSuccess(HttpSession session, @RequestParam(name = "_emailUser") String email,
                               @RequestParam(name = "_passwordUser") String password) {

@@ -25,7 +25,7 @@ import java.time.format.DateTimeFormatter;
 
 
 public class Constants {
-    public static final String NOT_VALID_DATE = "Mã `{0}` chưa đến hạn để được kích hoạt";
+    public static final String NOT_ACCEPT_DISCOUNT = "Mã `{0}` không sử dụng được";
     public static final String NOT_VALID_STATUS = "Mã  `{0}`chưa được kích hoạt";
     public static final String ACCEPT_DISCOUNT ="Mã `{0}` dùng được rồi nha";
     public static final String NOT_EXIT_DISCOUNT ="Mã giảm giá `{0}` không tồn tại'";
