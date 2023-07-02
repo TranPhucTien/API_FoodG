@@ -132,7 +132,7 @@ public class ProductServiceImpl implements ProductService {
                     dataJson,
                     Constants.getCurrentDay()
             );
-            System.out.println(tblProductEntity);
+
             productRepository.save(tblProductEntity);
             logProductRepository.save(log);
 

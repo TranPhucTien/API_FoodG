@@ -75,17 +75,20 @@ public class InvoiceController {
 
     // create new invoice
     @PostMapping(path = "")
-    // [POST] localhost:8080/invoices
-    public ResponseEntity<FuncResult<TblInvoiceLineDto>> create(HttpSession httpSession, @RequestBody TblInvoiceLineDto tblInvoiceLineDto) {
-        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
-            FuncResult<TblInvoiceLineDto> rs = FuncResult.create(
-                    HttpStatus.OK,
-                    "Ban Khong Phai ADMIN!!!",
-                    null
-            );
-            return  ResponseEntity.ok(rs);
-        }
-        invoiceService.insert(tblInvoiceLineDto);
+    // [POST] localhost:8080/invoices?codeDiscount=codeDiscount
+    //ggiwof sửa lại cái này ntn a?ê
+    public ResponseEntity<FuncResult<TblInvoiceLineDto>> create(HttpSession httpSession, @RequestBody TblInvoiceLineDto tblInvoiceLineDto,
+                                                                @RequestParam(name = "codeDiscount", required = false) String codeDiscount){
+
+//        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+//            FuncResult<TblInvoiceLineDto> rs = FuncResult.create(
+//                    HttpStatus.OK,
+//                    "Ban Khong Phai ADMIN!!!",
+//                    null
+//            );
+//            return  ResponseEntity.ok(rs);
+//        }
+        invoiceService.insert(tblInvoiceLineDto,codeDiscount);
 
         FuncResult<TblInvoiceLineDto> rs = FuncResult.create(
                 HttpStatus.OK,
@@ -98,14 +101,14 @@ public class InvoiceController {
     @PutMapping(path = "")
     // [PUT] localhost:8080/invoices
     public ResponseEntity<FuncResult<TblInvoiceEntity>> update(HttpSession httpSession, @RequestBody TblInvoiceEntity tblInvoiceEntity) {
-        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
-            FuncResult<TblInvoiceEntity> rs = FuncResult.create(
-                    HttpStatus.OK,
-                    "Ban Khong Phai ADMIN!!!",
-                    null
-            );
-            return  ResponseEntity.ok(rs);
-        }
+//        if(httpSession.getAttribute("role") == null || !httpSession.getAttribute("role").equals("admin")){
+//            FuncResult<TblInvoiceEntity> rs = FuncResult.create(
+//                    HttpStatus.OK,
+//                    "Ban Khong Phai ADMIN!!!",
+//                    null
+//            );
+//            return  ResponseEntity.ok(rs);
+//        }
         invoiceService.update(tblInvoiceEntity);
 
         FuncResult<TblInvoiceEntity> rs = FuncResult.create(

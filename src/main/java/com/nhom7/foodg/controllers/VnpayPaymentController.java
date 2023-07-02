@@ -1,20 +1,17 @@
 package com.nhom7.foodg.controllers;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.nhom7.foodg.models.FuncResult;
+import com.nhom7.foodg.shareds.Constants;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +21,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nhom7.foodg.configs.VnpayConfig;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletResponse;
+
 //@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(value = "/api/vnpay")
@@ -34,18 +35,19 @@ public class VnpayPaymentController {
     // [POST] localhost:8080/api/vnpay/make
     public ResponseEntity<FuncResult<Map<String, String>>> createPayment(HttpSession httpSession,HttpServletRequest request, @RequestParam(name = "vnp_OrderInfo") String vnp_OrderInfo,
                                                                                                 @RequestParam(name = "vnp_OrderType") String ordertype, @RequestParam(name = "vnp_Amount") Integer amount,
-                                                                                                @RequestParam(name = "vnp_Locale") String language, @RequestParam(name = "vnp_BankCode", defaultValue = "") String bankcode) {
-        if(httpSession.getAttribute("role") == null){
-            FuncResult<Map<String, String>> rs = FuncResult.create(
-                    HttpStatus.OK,
-                    "Ban Phai Dang Nhap De Su Dung!!!",
-                    null
-            );
-            return ResponseEntity.ok(rs);
-        }
+                                                                                                @RequestParam(name = "vnp_Locale") String language, @RequestParam(name = "vnp_BankCode", defaultValue = "") String bankcode,
+                                                                         @RequestParam(name = "vnp_TxnRef") Integer invoice_id) {
+//        if(httpSession.getAttribute("role") == null){
+//            FuncResult<Map<String, String>> rs = FuncResult.create(
+//                    HttpStatus.OK,
+//                    "Ban Phai Dang Nhap De Su Dung!!!",
+//                    null
+//            );
+//            return ResponseEntity.ok(rs);
+//        }
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
-        String vnp_TxnRef = VnpayConfig.getRandomNumber(18);
+        String vnp_TxnRef = Integer.toString(invoice_id);
         String vnp_IpAddr = VnpayConfig.getIpAddress(request);
         String vnp_TmnCode = VnpayConfig.vnp_TmnCode;
 
@@ -126,7 +128,7 @@ public class VnpayPaymentController {
 
     @GetMapping(value = "/result")
     // [GET] localhost:8080/api/vnpay/result
-    public ResponseEntity<FuncResult<Map<String, String>>> completePayment(HttpSession httpSession, HttpServletRequest request,
+    public ModelAndView completePayment(HttpSession httpSession, HttpServletRequest request,
                                                                            @RequestParam(name = "vnp_OrderInfo") String vnp_OrderInfo,
                                                                            @RequestParam(name = "vnp_Amount") Integer vnp_Amount,
                                                                            @RequestParam(name = "vnp_BankCode", defaultValue = "") String vnp_BankCode,
@@ -137,16 +139,6 @@ public class VnpayPaymentController {
                                                                            @RequestParam(name = "vnp_TransactionNo") String vnp_TransactionNo,
                                                                            @RequestParam(name = "vnp_TxnRef") String vnp_TxnRef
     ) {
-        if(httpSession.getAttribute("role") == null){
-            FuncResult<Map<String, String>> rs = FuncResult.create(
-                    HttpStatus.OK,
-                    "Ban Phai Dang Nhap De Su Dung!!!",
-                    null
-            );
-            return ResponseEntity.ok(rs);
-        }
-        Map<String, String> response = new HashMap<>();
-
         String year = vnp_PayDate.substring(0, 4);
         String month = vnp_PayDate.substring(4, 6);
         String date = vnp_PayDate.substring(6, 8);
@@ -156,28 +148,21 @@ public class VnpayPaymentController {
 
         String timePay = date + "-" + month + "-" + year + " " + hour + ":" + minutes + ":" + second;
 
-        if (vnp_ResponseCode.equals("00")) {
-            response.put("success", "true");
-        } else {
-            response.put("success", "false");
-        }
-        response.put("OrderInfo", vnp_OrderInfo);
-        response.put("Amount", vnp_Amount.toString());
-        response.put("BankCode", vnp_BankCode);
-        response.put("BankTranNo", vnp_BankTranNo);
-        response.put("CardType", vnp_CardType);
-        response.put("PayDate", timePay);
-        response.put("PaymentMethod", "VNPAY");
-        response.put("VnPay_ResponseCode", vnp_ResponseCode);
-        response.put("PaymentID", vnp_TransactionNo);
-        response.put("OrderID", vnp_TxnRef);
+        String redirectUrl = "http://localhost:3000/checkout/successful?data=";
+        String params = "success=" + (vnp_ResponseCode.equals("00") ? "true" : "false")
+                + "&OrderInfo=" + vnp_OrderInfo
+                + "&Amount=" + vnp_Amount.toString()
+                + "&BankCode=" + vnp_BankCode
+                + "&BankTranNo=" + vnp_BankTranNo
+                + "&CardType=" + vnp_CardType
+                + "&PayDate=" + timePay
+                + "&PaymentMethod=VNPAY"
+                + "&VnPay_ResponseCode=" + vnp_ResponseCode
+                + "&PaymentID=" + vnp_TransactionNo
+                + "&OrderID=" + vnp_TxnRef;
 
-        FuncResult<Map<String, String>> rs = FuncResult.create(
-                HttpStatus.OK,
-                "",
-                response
-        );
+        params = Base64.getEncoder().encodeToString(params.getBytes());
 
-        return ResponseEntity.ok(rs);
+        return new ModelAndView("redirect:" + redirectUrl + params);
     }
 }
