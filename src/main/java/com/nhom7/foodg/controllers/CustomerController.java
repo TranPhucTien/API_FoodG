@@ -300,7 +300,7 @@ public class CustomerController {
                             Constants.EXPIRED_OTP,
                             null
                     );
-                    return ResponseEntity.badRequest().body(rs);
+                    return ResponseEntity.ok(rs);
                 }
             } catch (Exception ex) {
                 throw new NotFoundException(Constants.NOT_FOUND_FIELDS);
@@ -337,7 +337,7 @@ public class CustomerController {
                                 MessageFormat.format(Constants.OTP_FAIL, "Email bạn nhận được"),
                                 null
                         );
-                        return ResponseEntity.badRequest().body(rs);
+                        return ResponseEntity.ok(rs);
                     }
                 } else {
                     FuncResult<TblCustomerDto> rs = FuncResult.create(
@@ -345,7 +345,7 @@ public class CustomerController {
                             Constants.EXPIRED_OTP,
                             null
                     );
-                    return ResponseEntity.badRequest().body(rs);
+                    return ResponseEntity.ok(rs);
                 }
             } catch (Exception ex) {
                 throw new NotFoundException(Constants.NOT_FOUND_FIELDS);
@@ -392,7 +392,12 @@ public class CustomerController {
             );
             return ResponseEntity.ok(rs);
         } else {
-            throw new DuplicateRecordException(MessageFormat.format(Constants.DUPLICATE_ERROR_EMAIL, customer.getEmail()));
+            FuncResult<TblCustomerDto> rs = FuncResult.create(
+                    HttpStatus.BAD_REQUEST,
+                    MessageFormat.format(Constants.DUPLICATE_ERROR_EMAIL, customer.getEmail()),
+                    null
+            );
+            return ResponseEntity.ok(rs);
         }
     }
 
