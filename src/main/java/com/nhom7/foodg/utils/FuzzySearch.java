@@ -45,7 +45,7 @@ public class FuzzySearch<T> {
     public String changeUnicode(String str){
         String temp = Normalizer.normalize(str, Normalizer.Form.NFD);
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-        temp = pattern.matcher(temp).replaceAll("");
+        temp = pattern.matcher(temp).replaceAll(""); //loại bỏ
         return temp.replaceAll("đ", "d").replaceAll("Đ", "D");
     }
     public boolean haveAlphabet(String str){

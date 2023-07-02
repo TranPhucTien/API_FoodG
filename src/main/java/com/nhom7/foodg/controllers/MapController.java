@@ -31,7 +31,7 @@ public class MapController {
     //http://localhost:8080/map
     public ResponseEntity<FuncResult<MapEntity>> getDistance(@RequestParam(value = "address", required = false) String address) throws UnsupportedEncodingException {
         if(address == null || address == ""){
-            String img = "  <iframe src='https://mapfoodg.glitch.me/'></iframe>";
+            String img = "<iframe src='https://mapfoodg.glitch.me/'></iframe>";
             MapEntity mapInformation = new MapEntity("0 phút", "0 km", img, 0);
             FuncResult<MapEntity> rs = FuncResult.create(
                     HttpStatus.OK,

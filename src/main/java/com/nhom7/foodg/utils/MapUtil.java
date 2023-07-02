@@ -16,12 +16,12 @@ public class MapUtil {
         address = URLEncoder.encode(address, "UTF-8");
         //address = address.replaceAll(" ","%20");
         try {
-            String urlString = "https://rsapi.goong.io/geocode?address=" + address + "&api_key=MWBiaW9yAGrpxtJ3mL8PhPsZ8rqtYDthBURDNjr6";
+            String urlString = "https://rsapi.goong.io/geocode?address=" + address + "&api_key=doXQRIAbv3GQkTV868CnpmOKG6TjmOcAJT6xcLDB";
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.connect();
             //BufferedReader rd = new BufferedReader(new InputStreamReader(((HttpURLConnection) (new URL(urlString)).openConnection()).getInputStream(), Charset.forName("UTF-8")));
-            BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream())); //getInputStream => kết nối đến nguồn, InputStreamReader => chuyển sang đọc kí tự
+            BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             StringBuilder sb = new StringBuilder();
             String line;
             while ((line = rd.readLine()) != null) {
@@ -51,7 +51,7 @@ public class MapUtil {
     public ArrayList<String> getDistance(ArrayList<Double> origin, ArrayList<Double> destination) {
         String url = "https://rsapi.goong.io/DistanceMatrix?origins=" + origin.get(0) + "," + origin.get(1)
                 + "&destinations=" + destination.get(0) + "," + destination.get(1)
-                + "&vehicle=bike&api_key=MWBiaW9yAGrpxtJ3mL8PhPsZ8rqtYDthBURDNjr6";
+                + "&vehicle=bike&api_key=doXQRIAbv3GQkTV868CnpmOKG6TjmOcAJT6xcLDB";
 
         System.out.println(url);
 
@@ -69,13 +69,16 @@ public class MapUtil {
 
                 JSONArray rows = jsonObj.getJSONArray("rows");
                 JSONObject row = rows.getJSONObject(0);
+
                 JSONArray elements = row.getJSONArray("elements");
                 JSONObject element = elements.getJSONObject(0);
+
                 JSONObject distance = element.getJSONObject("distance");
                 String distanceStr = distance.getString("text");
 
                 JSONObject duration = element.getJSONObject("duration");
                 String durationStr = duration.getString("text");
+
                 ArrayList<String> rs = new ArrayList<>();
                 rs.add(distanceStr);
                 rs.add(durationStr);
