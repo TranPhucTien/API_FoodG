@@ -21,10 +21,10 @@ public class SessionController {
         this.customerRepository = customerRepository;
     }
 
-    @GetMapping("/admin/loginsuccess")
-    //.........admin/loginsuccess?_usernameAd=......&_passwordAd=.............
-    public String adminLoginSuccess(HttpSession session, @RequestParam(name = "_usernameAd") String username,
-                              @RequestParam(name = "_passwordAd") String password) {
+    @GetMapping("/loginsucess")
+    //........./loginsucess?_username=......&_password=.............
+    public String adminLoginSuccess(HttpSession session, @RequestParam(name = "_username") String username,
+                              @RequestParam(name = "_password") String password) {
         Encode encode = new Encode();
         Boolean exitAdmin = adminRepository.existsByUsername(username);
         if(exitAdmin){
@@ -40,7 +40,7 @@ public class SessionController {
         return "Sai password or username";
     }
     @GetMapping("/customer/loginsuccess")
-    //.........customer/loginsucess?_usernameUser=......&_passwordUser=.............
+    //.........customer/loginsucess?_emailUser=......&_passwordUser=.............
     public String customerLoginSuccess(HttpSession session, @RequestParam(name = "_emailUser") String email,
                               @RequestParam(name = "_passwordUser") String password) {
         Encode encode = new Encode();
