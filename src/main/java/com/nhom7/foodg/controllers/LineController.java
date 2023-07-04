@@ -1,8 +1,11 @@
 package com.nhom7.foodg.controllers;
 
 import com.nhom7.foodg.models.FuncResult;
+import com.nhom7.foodg.models.dto.TblDiscountDto;
+import com.nhom7.foodg.models.dto.TblInvoiceOutDto;
 import com.nhom7.foodg.models.dto.TblLineDto;
 import com.nhom7.foodg.models.entities.TblLineEntity;
+import com.nhom7.foodg.models.entities.TblProductEntity;
 import com.nhom7.foodg.services.LineService;
 import com.nhom7.foodg.shareds.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/lines")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 
 public class LineController {
     private final LineService lineService;
@@ -83,4 +86,37 @@ public class LineController {
 
         return ResponseEntity.ok(rs);
     }
+//    List<TblLineEntity> lineEntities=lineRepository.GetLineStatusActive();
+//    Decimal total =0
+//    lineEntities.get().forEach(p->{
+//        TblProductEntity foundProduct=productRepository.getByID(idproduct);
+//        total+=p.getquatity * foundProduct.getPrice();
+//    })
+//       tsetTatal(total)
+//     invoice.setCreateAt(Constain.getCurren)
+
+
+//    public class TblLineOutDto {
+//        private String idProduct;
+//        private int quantity;
+//        private TblDiscountDto discountDto;
+
+        //them vao gio hang cac Linesdto(tu giao dien gio hang)
+    //lineDto:  du lieu gio hang cung cap:id sp, so luong, gia
+
+    // Insertline. Mình từ Dto để tạo lineEntity
+
+    //Tạo các dòng line
+    //Tạo ra giỏ hàng chứa các dòng Line(dto) trạng thái PENDING
+
+    ////thanh toan tao hoa don
+
+    //Viết Chức năng chuyển trạng thái PENDING sang ACTIVE và Viết View
+    //Kết hợp câu lệnh getLineStatusActive de tao listLine
+    //Dùng forEach để tính tiền + cập nhật số lưng
+    //Set time và người làm phiếu
+
+
+    //quy trinh: tao invoice, lay id_invoice tao line
+    //
 }

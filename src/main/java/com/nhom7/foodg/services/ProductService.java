@@ -12,6 +12,7 @@ import java.util.List;
 public interface ProductService {
     List<TblProductEntity> getAll();
     List<TblProductLogEntity> getEditHistoryByProductIdAndAction(String productId, String action);
+    public List<TblProductLogEntity> getAllEditAndDeleteHistory();
 
     List<TblProductEntity> getDeletedProducts();
 
@@ -25,7 +26,7 @@ public interface ProductService {
 
     void deletePermanently(String id); // xoá hẳn (Không khôi phục được)
 
-    void softDelete(String id); // xoá tạm thời (solf delete)
+    void softDelete(String productId, int adminId); // xoá tạm thời (soft delete)
 
-    void restore(String id); // khôi phục cái đã xoá
+    void restore(String productId, int adminId); // khôi phục cái đã xoá
 }

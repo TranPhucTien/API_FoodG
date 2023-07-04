@@ -12,7 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/pagination")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 //localhost:8080/pagination
 public class PaginationController {
     private final PaginationService paginationService;

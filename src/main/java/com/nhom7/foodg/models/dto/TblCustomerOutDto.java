@@ -12,14 +12,11 @@ import java.util.Date;
 @NoArgsConstructor
 
 @AllArgsConstructor(staticName = "create")
-public class TblCustomerDto {
+public class TblCustomerOutDto {
     private String username;
-    private String password;
-    private String email;
     private String fullName;
-    private Boolean gender;
-    private String avatar;
-    private Integer idProvince;
-    private Integer role;
-    private Date birthday;
+    private String email;
+
+
+
 }

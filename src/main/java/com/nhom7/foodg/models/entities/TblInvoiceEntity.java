@@ -5,9 +5,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-
 import java.math.BigDecimal;
+
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -16,7 +17,7 @@ import java.util.Objects;
 @Table(name = "tbl_invoice", schema = "dbo", catalog = "foodg")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class TblInvoiceEntity {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
     private int id;
@@ -182,6 +183,8 @@ public class TblInvoiceEntity {
         this.paidDate = paidDate;
     }
 
+//    public void setLines(List<TblLineEntity> lines){this.lines = lines;}
+//    public List<TblLineEntity> getLines()
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/products")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 //localhost:8080/products
 public class ProductController {
     private final ProductService productService;
@@ -58,6 +58,18 @@ public class ProductController {
                 HttpStatus.OK,
                 MessageFormat.format(Constants.GET_DATA_SUCCESS, TABLE_NAME),
                 productService.getByID(id)
+        );
+
+        return ResponseEntity.ok(rs);
+    }
+
+    @GetMapping(path = "edit-history")
+    // [GET] localhost:8080/products/edit-history
+    public ResponseEntity<FuncResult<List<TblProductLogEntity>>> getEditHistory() {
+        FuncResult<List<TblProductLogEntity>> rs = FuncResult.create(
+                HttpStatus.OK,
+                MessageFormat.format(Constants.GET_DATA_SUCCESS, TABLE_NAME),
+                productService.getAllEditAndDeleteHistory()
         );
 
         return ResponseEntity.ok(rs);
@@ -120,29 +132,29 @@ public class ProductController {
 
 
     // soft delete product by product id
-    @DeleteMapping(path = "{id}")
-    // [DELETE] localhost:8080/categories/1
-    public ResponseEntity<FuncResult<String>> softDelete(@PathVariable("id") String id) {
-        productService.softDelete(id);
+    @DeleteMapping(path = "{productId}/{adminId}")
+    // [DELETE] localhost:8080/products/1
+    public ResponseEntity<FuncResult<String>> softDelete(@PathVariable("productId") String productId, @PathVariable("adminId") int adminId) {
+        productService.softDelete(productId, adminId);
 
         FuncResult<String> rs = FuncResult.create(
                 HttpStatus.OK,
-                MessageFormat.format(Constants.DELETE_SUCCESS, TABLE_NAME, id),
-                id
+                MessageFormat.format(Constants.DELETE_SUCCESS, TABLE_NAME, productId),
+                productId
         );
 
         return ResponseEntity.ok(rs);
     }
 
-    @PutMapping(path = "/restore/{id}")
+    @PutMapping(path = "/restore/{productId}/{adminId}")
     // [PUT] localhost:8080/categories/restore/1
-    public ResponseEntity<FuncResult<String>> restore(@PathVariable("id") String id) {
-        productService.restore(id);
+    public ResponseEntity<FuncResult<String>> restore(@PathVariable("productId") String productId, @PathVariable("adminId") int adminId) {
+        productService.restore(productId, adminId);
 
         FuncResult<String> rs = FuncResult.create(
                 HttpStatus.OK,
-                MessageFormat.format(Constants.RESTORE_SUCCESS, TABLE_NAME, id),
-                id
+                MessageFormat.format(Constants.RESTORE_SUCCESS, TABLE_NAME, productId),
+                productId
         );
 
         return ResponseEntity.ok(rs);
